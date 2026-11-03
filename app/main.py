@@ -960,7 +960,7 @@ def export_csv(month: Optional[str] = Query(None)):
 
 @app.get("/api/system/network-info")
 def get_network_info():
-    """Returns the local network IP and port for mobile linking."""
+    """Returns the local network IP and cloud URL for mobile linking."""
     lan_ip = "127.0.0.1"
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -972,10 +972,26 @@ def get_network_info():
             lan_ip = socket.gethostbyname(socket.gethostname())
         except Exception:
             pass
+
+    cloud_url = ""
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute("SELECT value FROM settings WHERE key = 'cloud_run_url'")
+        row = c.fetchone()
+        conn.close()
+        if row and row["value"]:
+            cloud_url = row["value"].strip()
+    except Exception:
+        pass
+
+    primary_url = cloud_url if cloud_url else f"http://{lan_ip}:8000"
     return {
         "lan_ip": lan_ip,
         "port": 8000,
-        "url": f"http://{lan_ip}:8000"
+        "url": primary_url,
+        "cloud_url": cloud_url,
+        "local_url": f"http://{lan_ip}:8000"
     }
 
 @app.get("/api/dashboard")
@@ -1704,126 +1720,166 @@ def delete_note(note_id: int):
 @app.get("/api/sync/export-data")
 def export_sync_data():
     conn = get_db_connection()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
+        c.execute("SELECT * FROM transactions")
+        transactions = [dict(r) for r in c.fetchall()]
 
-    c.execute("SELECT * FROM transactions")
-    transactions = [dict(r) for r in c.fetchall()]
+        c.execute("SELECT * FROM todos")
+        todos = [dict(r) for r in c.fetchall()]
 
-    c.execute("SELECT * FROM todos")
-    todos = [dict(r) for r in c.fetchall()]
+        c.execute("SELECT * FROM habits")
+        habits = [dict(r) for r in c.fetchall()]
 
-    c.execute("SELECT * FROM habits")
-    habits = [dict(r) for r in c.fetchall()]
+        c.execute("""
+            SELECT hl.*, h.name as habit_name 
+            FROM habit_logs hl 
+            LEFT JOIN habits h ON hl.habit_id = h.id
+        """)
+        habit_logs = [dict(r) for r in c.fetchall()]
 
-    c.execute("SELECT * FROM habit_logs")
-    habit_logs = [dict(r) for r in c.fetchall()]
+        c.execute("SELECT * FROM journal_entries")
+        journal_entries = [dict(r) for r in c.fetchall()]
 
-    c.execute("SELECT * FROM journal_entries")
-    journal_entries = [dict(r) for r in c.fetchall()]
+        c.execute("SELECT * FROM notes")
+        notes = [dict(r) for r in c.fetchall()]
 
-    c.execute("SELECT * FROM notes")
-    notes = [dict(r) for r in c.fetchall()]
-
-    conn.close()
-    return {
-        "timestamp": datetime.datetime.now().isoformat(),
-        "transactions": transactions,
-        "todos": todos,
-        "habits": habits,
-        "habit_logs": habit_logs,
-        "journal_entries": journal_entries,
-        "notes": notes
-    }
+        return {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "transactions": transactions,
+            "todos": todos,
+            "habits": habits,
+            "habit_logs": habit_logs,
+            "journal_entries": journal_entries,
+            "notes": notes
+        }
+    finally:
+        conn.close()
 
 @app.post("/api/sync/import-data")
 def import_sync_data(payload: dict):
     conn = get_db_connection()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    # 1. Transactions merge
-    for t in payload.get("transactions", []):
-        c.execute("""
-            SELECT id FROM transactions 
-            WHERE date = ? AND amount = ? AND type = ? AND description = ?
-        """, (t.get("date"), t.get("amount"), t.get("type"), t.get("description")))
-        if not c.fetchone():
+        # 1. Transactions merge
+        for t in payload.get("transactions", []):
             c.execute("""
-                INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                t.get("date"), t.get("month"), t.get("week"), t.get("type"), t.get("amount"),
-                t.get("category"), t.get("description"), t.get("raw_description"), t.get("ref_no"),
-                t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0)
-            ))
+                SELECT id FROM transactions 
+                WHERE date = ? AND amount = ? AND type = ? AND description = ?
+            """, (t.get("date"), t.get("amount"), t.get("type"), t.get("description")))
+            if not c.fetchone():
+                c.execute("""
+                    INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    t.get("date"), t.get("month"), t.get("week"), t.get("type"), t.get("amount"),
+                    t.get("category"), t.get("description"), t.get("raw_description"), t.get("ref_no"),
+                    t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0)
+                ))
 
-    # 2. Todos merge
-    for item in payload.get("todos", []):
-        c.execute("SELECT id, status FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
-        row = c.fetchone()
-        if not row:
-            c.execute("""
-                INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                item.get("title"), item.get("description", ""), item.get("due_date"),
-                item.get("priority", "normal"), item.get("status", "pending"),
-                item.get("category", "Công việc"), item.get("pomodoro_est", 1),
-                item.get("pomodoro_done", 0), item.get("completed_at")
-            ))
-        else:
-            if item.get("status") == "completed" and row["status"] != "completed":
-                c.execute("UPDATE todos SET status = 'completed', completed_at = ? WHERE id = ?", (item.get("completed_at") or datetime.datetime.now().isoformat(), row["id"]))
+        # 2. Todos merge
+        for item in payload.get("todos", []):
+            c.execute("SELECT id, status FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
+            row = c.fetchone()
+            if not row:
+                c.execute("""
+                    INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    item.get("title"), item.get("description", ""), item.get("due_date"),
+                    item.get("priority", "normal"), item.get("status", "pending"),
+                    item.get("category", "Công việc"), item.get("pomodoro_est", 1),
+                    item.get("pomodoro_done", 0), item.get("completed_at")
+                ))
+            else:
+                if item.get("status") == "completed" and row["status"] != "completed":
+                    c.execute("UPDATE todos SET status = 'completed', completed_at = ? WHERE id = ?", (item.get("completed_at") or datetime.datetime.now().isoformat(), row["id"]))
 
-    # 3. Habits merge
-    for h in payload.get("habits", []):
-        c.execute("SELECT id, streak, best_streak FROM habits WHERE name = ?", (h.get("name"),))
-        row = c.fetchone()
-        if not row:
-            c.execute("INSERT INTO habits (name, icon, color, streak, best_streak) VALUES (?, ?, ?, ?, ?)",
-                      (h.get("name"), h.get("icon", "flame"), h.get("color", "#5F7465"), h.get("streak", 0), h.get("best_streak", 0)))
-        else:
-            new_streak = max(row["streak"], h.get("streak", 0))
-            new_best = max(row["best_streak"], h.get("best_streak", 0))
-            c.execute("UPDATE habits SET streak = ?, best_streak = ? WHERE id = ?", (new_streak, new_best, row["id"]))
+        # Remote habit id -> name lookup map
+        remote_habit_id_to_name = {
+            h.get("id"): h.get("name")
+            for h in payload.get("habits", [])
+            if h.get("id") and h.get("name")
+        }
 
-    # 4. Habit logs merge
-    for hl in payload.get("habit_logs", []):
-        c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (hl.get("habit_id"), hl.get("date")))
-        if not c.fetchone():
-            c.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)", (hl.get("habit_id"), hl.get("date"), hl.get("status", 1)))
+        # 3. Habits merge
+        for h in payload.get("habits", []):
+            name = h.get("name")
+            if not name:
+                continue
+            c.execute("SELECT id, streak, best_streak FROM habits WHERE name = ?", (name,))
+            row = c.fetchone()
+            if not row:
+                c.execute("INSERT INTO habits (name, icon, color, streak, best_streak) VALUES (?, ?, ?, ?, ?)",
+                          (name, h.get("icon", "flame"), h.get("color", "#5F7465"), h.get("streak", 0), h.get("best_streak", 0)))
+            else:
+                new_streak = max(row["streak"], h.get("streak", 0))
+                new_best = max(row["best_streak"], h.get("best_streak", 0))
+                c.execute("UPDATE habits SET streak = ?, best_streak = ? WHERE id = ?", (new_streak, new_best, row["id"]))
 
-    # 5. Journal entries merge
-    for j in payload.get("journal_entries", []):
-        c.execute("SELECT id FROM journal_entries WHERE date = ?", (j.get("date"),))
-        if not c.fetchone():
-            c.execute("INSERT INTO journal_entries (date, title, mood, gratitude, improvement, content) VALUES (?, ?, ?, ?, ?, ?)",
-                      (j.get("date"), j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content")))
-        else:
-            c.execute("""
-                UPDATE journal_entries SET title = COALESCE(?, title), mood = COALESCE(?, mood),
-                gratitude = COALESCE(?, gratitude), improvement = COALESCE(?, improvement), content = COALESCE(?, content)
-                WHERE date = ?
-            """, (j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"), j.get("date")))
+        # Build local habit name -> local habit id map
+        c.execute("SELECT id, name FROM habits")
+        local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
+        valid_local_habit_ids = set(local_habit_name_to_id.values())
 
-    # 6. Notes merge
-    for n in payload.get("notes", []):
-        c.execute("SELECT id FROM notes WHERE title = ?", (n.get("title"),))
-        if not c.fetchone():
-            c.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)",
-                      (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465")))
-        else:
-            c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ? WHERE title = ?",
-                      (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"), n.get("title")))
+        # 4. Habit logs merge
+        for hl in payload.get("habit_logs", []):
+            h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
+            local_h_id = local_habit_name_to_id.get(h_name)
+            if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
+                local_h_id = hl.get("habit_id")
 
-    conn.commit()
-    conn.close()
-    return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công"}
+            if local_h_id:
+                c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (local_h_id, hl.get("date")))
+                if not c.fetchone():
+                    c.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)", (local_h_id, hl.get("date"), hl.get("status", 1)))
+
+        # 5. Journal entries merge
+        for j in payload.get("journal_entries", []):
+            c.execute("SELECT id FROM journal_entries WHERE date = ?", (j.get("date"),))
+            if not c.fetchone():
+                c.execute("INSERT INTO journal_entries (date, title, mood, gratitude, improvement, content) VALUES (?, ?, ?, ?, ?, ?)",
+                          (j.get("date"), j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content")))
+            else:
+                c.execute("""
+                    UPDATE journal_entries SET title = COALESCE(?, title), mood = COALESCE(?, mood),
+                    gratitude = COALESCE(?, gratitude), improvement = COALESCE(?, improvement), content = COALESCE(?, content)
+                    WHERE date = ?
+                """, (j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"), j.get("date")))
+
+        # 6. Notes merge
+        for n in payload.get("notes", []):
+            c.execute("SELECT id FROM notes WHERE title = ?", (n.get("title"),))
+            if not c.fetchone():
+                c.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)",
+                          (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465")))
+            else:
+                c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ? WHERE title = ?",
+                          (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"), n.get("title")))
+
+        conn.commit()
+        return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công"}
+    finally:
+        conn.close()
 
 @app.post("/api/sync/trigger")
-def trigger_cloud_sync(payload: dict):
+def trigger_cloud_sync(payload: dict = None):
+    payload = payload or {}
     cloud_url = payload.get("cloud_url", "").strip().rstrip("/")
     if not cloud_url:
-        raise HTTPException(status_code=400, detail="Vui lòng cung cấp Cloud Run URL")
+        conn = get_db_connection()
+        try:
+            c = conn.cursor()
+            c.execute("SELECT value FROM settings WHERE key = 'cloud_run_url'")
+            row = c.fetchone()
+            if row and row["value"]:
+                cloud_url = row["value"].strip().rstrip("/")
+        finally:
+            conn.close()
+
+    if not cloud_url:
+        raise HTTPException(status_code=400, detail="Vui lòng cung cấp Cloud Run / Render URL")
 
     # 1. Export local data
     local_data = export_sync_data()
@@ -1845,18 +1901,22 @@ def trigger_cloud_sync(payload: dict):
 
         # Update last_cloud_sync in settings
         conn = get_db_connection()
-        c = conn.cursor()
-        now_str = datetime.datetime.now().strftime("%H:%M - %d/%m/%Y")
-        c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('cloud_run_url', ?)", (cloud_url,))
-        c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_cloud_sync', ?)", (now_str,))
-        conn.commit()
-        conn.close()
+        try:
+            c = conn.cursor()
+            now_str = datetime.datetime.now().strftime("%H:%M - %d/%m/%Y")
+            c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('cloud_run_url', ?)", (cloud_url,))
+            c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_cloud_sync', ?)", (now_str,))
+            conn.commit()
+        finally:
+            conn.close()
 
         return {
             "success": True,
             "message": "Đồng bộ 2 chiều thành công!",
             "last_synced": now_str
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Không thể kết nối Cloud Run: {str(e)}")
 

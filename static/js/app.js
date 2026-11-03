@@ -415,6 +415,7 @@ async function handleDeleteFromColumn(transId) {
     const res = await fetch(`/api/transactions/${transId}`, { method: 'DELETE' });
     if (!res.ok) throw new Error('Không thể xóa giao dịch');
     showToast('Đã xóa giao dịch thành công!', 'info');
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
     await loadTransactionColumns();
     await loadOverview();
     await renderCategoryPieChart();
@@ -1362,6 +1363,7 @@ async function submitUploadStatement() {
     closeUploadModal();
     state.selectedMonth = 'all';
     await refreshDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
 
   } catch (err) {
     showToast(err.message || 'Lỗi xử lý file', 'error');
@@ -1473,6 +1475,7 @@ async function saveManualTransaction() {
     showToast('Đã thêm giao dịch thành công!', 'success');
     closeAddTransactionModal();
     await refreshDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } catch (err) {
     showToast(err.message, 'error');
   }

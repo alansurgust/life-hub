@@ -235,56 +235,74 @@ def init_db():
     conn.close()
 
 def _seed_initial_life_hub_data(cursor):
+    import json
     import datetime
-    today_str = datetime.date.today().isoformat()
-    yesterday_str = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
 
-    # Do not auto-seed dummy todos; user manages their own authentic tasks.
+    # 1. If initial_seed.json exists and database is fresh, populate full authentic seed
+    seed_file = os.path.join(os.path.dirname(__file__), "data", "initial_seed.json")
+    if os.path.exists(seed_file):
+        cursor.execute("SELECT COUNT(*) FROM transactions")
+        tx_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM habits")
+        hb_count = cursor.fetchone()[0]
+        if tx_count == 0 and hb_count == 0:
+            try:
+                with open(seed_file, "r", encoding="utf-8") as f:
+                    seed_data = json.load(f)
 
-    # Seed Habits
-    cursor.execute("SELECT COUNT(*) FROM habits")
-    if cursor.fetchone()[0] == 0:
-        sample_habits = [
-            ("Uống đủ 2L nước mỗi ngày", "droplet", "#5F7465", 7, 6, 14),
-            ("Đọc sách 30 phút", "book-open", "#D39526", 7, 4, 10),
-            ("Tập thể dục 30 phút", "activity", "#B14720", 7, 3, 7),
-            ("Ghi chép thu chi mỗi ngày", "wallet", "#264653", 7, 7, 21),
-            ("Ngủ trước 23h tối", "moon", "#626037", 7, 5, 9),
-        ]
-        for h in sample_habits:
-            cursor.execute("INSERT INTO habits (name, icon, color, target_days, streak, best_streak) VALUES (?, ?, ?, ?, ?, ?)", h)
-            habit_id = cursor.lastrowid
-            # Log completion for the last 5 days
-            for d in range(5):
-                past_date = (datetime.date.today() - datetime.timedelta(days=d)).isoformat()
-                cursor.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, 1)", (habit_id, past_date))
+                # Transactions
+                for t in seed_data.get("transactions", []):
+                    cursor.execute("""
+                        INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        t.get("date"), t.get("month"), t.get("week"), t.get("type"), t.get("amount"),
+                        t.get("category"), t.get("description"), t.get("raw_description"), t.get("ref_no"),
+                        t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0)
+                    ))
 
-    # Seed Journal
-    cursor.execute("SELECT COUNT(*) FROM journal_entries")
-    if cursor.fetchone()[0] == 0:
-        cursor.execute("""
-            INSERT INTO journal_entries (date, title, content, mood, gratitude, improvement)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            today_str,
-            "Khởi đầu mới với Hệ điều hành cá nhân All-in-One",
-            "Hôm nay là một ngày nhiều năng lượng. Toàn bộ dữ liệu tài chính đã được dọn sang ổ D:\\Finance an toàn và ứng dụng bắt đầu được mở rộng thành một hệ thống cá nhân toàn diện gồm To-Do, Thói quen, Nhật ký và Ghi chú.",
-            "great",
-            "Biết ơn sức khỏe tốt, tinh thần tập trung và sự tiến bộ rõ rệt trong việc tự động hóa công việc.",
-            "Cần duy trì việc uống nước đều đặn hơn trong lúc ngồi làm việc lâu."
-        ))
+                # Habits
+                habit_id_map = {}
+                for h in seed_data.get("habits", []):
+                    cursor.execute("INSERT INTO habits (name, icon, color, streak, best_streak) VALUES (?, ?, ?, ?, ?)",
+                                   (h.get("name"), h.get("icon", "flame"), h.get("color", "#5F7465"), h.get("streak", 0), h.get("best_streak", 0)))
+                    habit_id_map[h.get("id")] = cursor.lastrowid
 
-    # Seed Notes
-    cursor.execute("SELECT COUNT(*) FROM notes")
-    if cursor.fetchone()[0] == 0:
-        sample_notes = [
-            ("Quy tắc 50/30/20 trong quản trị tài chính cá nhân", "• 50% Nhu cầu thiết yếu: Ăn uống, sinh hoạt, tiền nhà, hóa đơn.\n• 30% Mong muốn cá nhân: Mua sắm, giải trí, cà phê, du lịch.\n• 20% Tiết kiệm & Tích lũy: Quỹ khẩn cấp 3-6 tháng, quỹ đầu tư dài hạn.", "Tài chính", 1, "#FFFDF9"),
-            ("Kỹ thuật Pomodoro tăng năng suất làm việc", "1. Chọn 1 công việc cụ thể cần hoàn thành.\n2. Bấm giờ 25 phút tập trung tuyệt đối, không đa nhiệm.\n3. Nghỉ giải lao ngắn 5 phút (vươn vai, uống nước).\n4. Cứ sau 4 chu kỳ Pomodoro thì nghỉ dài 15 - 30 phút.", "Công việc", 1, "#FFFDF9"),
-            ("Danh sách sách phát triển bản thân quý 4", "1. Atomic Habits (Thay Đổi Tí Hon) - James Clear\n2. The Psychology of Money (Tâm Lý Học Về Tiền) - Morgan Housel\n3. Deep Work (Làm Ra Làm, Chơi Ra Chơi) - Cal Newport", "Học tập", 0, "#FFFDF9"),
-            ("Ý tưởng phát triển hệ sinh thái Life OS", "• Tích hợp liên kết chéo: Việc cần làm có thể đính kèm khoản tiền dự chi trong mục Tài chính.\n• Báo cáo năng suất cá nhân tổng hợp vào cuối tuần (Weekly Review).", "Ý tưởng", 0, "#FFFDF9"),
-        ]
-        for n in sample_notes:
-            cursor.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)", n)
+                # Habit logs
+                for hl in seed_data.get("habit_logs", []):
+                    new_h_id = habit_id_map.get(hl.get("habit_id"))
+                    if new_h_id:
+                        cursor.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
+                                       (new_h_id, hl.get("date"), hl.get("status", 1)))
+
+                # Todos
+                for item in seed_data.get("todos", []):
+                    cursor.execute("""
+                        INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        item.get("title"), item.get("description", ""), item.get("due_date"),
+                        item.get("priority", "normal"), item.get("status", "pending"),
+                        item.get("category", "Công việc"), item.get("pomodoro_est", 1),
+                        item.get("pomodoro_done", 0), item.get("completed_at")
+                    ))
+
+                # Journal
+                for j in seed_data.get("journal_entries", []):
+                    cursor.execute("""
+                        INSERT INTO journal_entries (date, title, mood, gratitude, improvement, content)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    """, (j.get("date"), j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content")))
+
+                # Notes
+                for n in seed_data.get("notes", []):
+                    cursor.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)",
+                                   (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465")))
+                return
+            except Exception as e:
+                pass
+
+    # No fake habit seeding - authentic habits only
 
 if __name__ == "__main__":
     init_db()

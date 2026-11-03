@@ -114,8 +114,10 @@ function switchLifeTab(tabName) {
   } else if (tabName === 'todos') {
     loadTodos();
     loadTodoStats();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } else if (tabName === 'habits') {
     loadHabits();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } else if (tabName === 'journal') {
     loadJournal(lifeState.currentJournalDate);
     loadJournalHistory();
@@ -220,9 +222,9 @@ function switchLifeTab(tabName) {
   }
 }
 
-function reloadActiveTabData() {
+function reloadActiveTabData(silent = false) {
   const icon = document.getElementById('reloadIcon');
-  if (icon) icon.classList.add('animate-spin');
+  if (icon && !silent) icon.classList.add('animate-spin');
 
   if (lifeState.currentTab === 'dashboard') {
     loadDashboard();
@@ -241,8 +243,10 @@ function reloadActiveTabData() {
   }
 
   setTimeout(() => {
-    if (icon) icon.classList.remove('animate-spin');
-    showToast('Đã làm mới dữ liệu từ ổ D:\\Finance', 'success');
+    if (icon && !silent) icon.classList.remove('animate-spin');
+    if (!silent) {
+      showToast('Đã làm mới dữ liệu từ ổ D:\\Finance', 'success');
+    }
   }, 500);
 }
 
@@ -1013,6 +1017,7 @@ async function deleteTodo(id) {
     loadTodos();
     loadTodoStats();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1142,6 +1147,7 @@ async function saveTodoModalAction() {
     loadTodos();
     loadTodoStats();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1713,6 +1719,7 @@ async function saveCurrentJournal() {
     if (lifeState.currentJournalDate === todayStr) {
       loadDashboard();
     }
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1900,6 +1907,7 @@ async function saveNoteModalAction() {
     showToast(isEdit ? 'Đã cập nhật ghi chú!' : 'Đã tạo ghi chú mới!', 'success');
     loadNotes();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1943,6 +1951,7 @@ async function deleteNote(id) {
     showToast('Đã xóa ghi chú', 'success');
     loadNotes();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -2283,7 +2292,75 @@ async function triggerCloudSyncNow() {
 }
 
 // Auto-run on DOM ready
+
+// =========================================================================
+// AUTOMATIC 2-WAY SYNC ENGINE (PC <-> Render Cloud)
+// =========================================================================
+let autoSyncTimeout = null;
+let lastAutoSyncTime = 0;
+let isSyncing = false;
+
+async function autoCloudSync(silent = true) {
+  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  if (!isLocal || isSyncing) return;
+
+  isSyncing = true;
+  const badge = document.getElementById('syncLastTimeBadge');
+  const icon = document.getElementById('syncSpinIcon');
+  if (icon && !silent) icon.classList.add('animate-spin');
+
+  try {
+    const res = await fetch('/api/sync/trigger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    if (res.ok) {
+      const data = await res.json();
+      lastAutoSyncTime = Date.now();
+      if (badge && data.last_synced) {
+        badge.textContent = `Đã đồng bộ: ${data.last_synced}`;
+      }
+      if (!silent) {
+        showToast(data.message || 'Đồng bộ 2 chiều thành công!', 'success');
+      }
+      // Silently refresh current view so any mobile changes appear immediately
+      reloadActiveTabData(true);
+    }
+  } catch (err) {
+    if (!silent) {
+      showToast(err.message, 'error');
+    }
+    console.warn('Auto sync skipped/failed:', err);
+  } finally {
+    isSyncing = false;
+    if (icon && !silent) icon.classList.remove('animate-spin');
+  }
+}
+
+window.scheduleAutoSync = function(delayMs = 2000) {
+  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  if (!isLocal) return;
+  if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
+  autoSyncTimeout = setTimeout(() => {
+    autoCloudSync(true);
+  }, delayMs);
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Auto background sync after initial UI load (1.5s)
+  setTimeout(() => { autoCloudSync(true); }, 1500);
+
+  // Periodic auto sync every 60s
+  setInterval(() => {
+    if (document.visibilityState === 'visible') autoCloudSync(true);
+  }, 60000);
+
+  // Auto sync when app window gets focused
+  window.addEventListener('focus', () => {
+    if (Date.now() - lastAutoSyncTime > 30000) autoCloudSync(true);
+  });
+
   // Load initial Dashboard data
   loadDashboard();
   loadSyncStatus();
