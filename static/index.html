@@ -308,21 +308,10 @@
               </button>
             </div>
 
-            <!-- 2-Way Sync Buttons: Tải về & Tải lên (Present on both Mobile & Desktop) -->
-            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0" id="headerSyncButtonGroup">
-              <!-- Button Tải về (Pull from Cloud / Export Backup) -->
-              <button onclick="headerPullData()" id="btnHeaderPull" title="Tải dữ liệu mới nhất về máy" class="inline-flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#5F7465] border border-[#5F7465]/40 shadow-2xs transition active:scale-95 cursor-pointer shrink-0">
-                <i data-lucide="download" id="headerPullIcon" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#5F7465]"></i>
-                <span class="hidden sm:inline text-xs font-bold">Tải về</span>
-              </button>
-
-              <!-- Button Tải lên (Push to Cloud / Import Backup) -->
-              <button onclick="headerPushData()" id="btnHeaderPush" title="Tải dữ liệu lên Cloud / Lưu trữ" class="inline-flex items-center justify-center gap-1 sm:gap-1.5 text-xs font-bold px-2 sm:px-2.5 py-1.5 sm:py-2 rounded-xl bg-[#233329] hover:bg-[#1A261F] text-[#FFFDF9] shadow-xs transition active:scale-95 cursor-pointer shrink-0">
-                <i data-lucide="upload" id="headerPushIcon" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFFDF9]"></i>
-                <span class="hidden sm:inline text-xs font-bold">Tải lên</span>
-              </button>
-
-              <input type="file" id="headerBackupFileInput" accept=".json" class="hidden" onchange="handleHeaderBackupUpload(event)">
+            <!-- Live Auto-Sync Status Indicator (Realtime automatic saving & sync) -->
+            <div id="liveSyncStatus" class="flex items-center gap-1.5 text-[11px] text-[#786B60] font-medium px-2 sm:px-2.5 py-1 rounded-xl bg-[#EFE7D8]/60 border border-[#DECDB5]/60 shrink-0 select-none" title="Dữ liệu được tự động lưu & đồng bộ tức thì giữa điện thoại và máy tính">
+              <span id="syncPulseDot" class="w-2 h-2 rounded-full bg-emerald-500 transition-colors"></span>
+              <span id="syncStatusText" class="hidden sm:inline font-semibold text-[#626037]">Đã đồng bộ</span>
             </div>
 
             <!-- Link Mobile Button in Header (hidden on mobile, already on phone) -->

@@ -566,6 +566,7 @@ async function quickAddTodoFromDash() {
     showToast('Đã thêm việc cần làm!', 'success');
     loadDashboard();
     loadTodoStats();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -579,6 +580,7 @@ async function toggleTodoFromDash(id) {
     showToast('Đã cập nhật trạng thái việc!', 'success');
     loadDashboard();
     loadTodoStats();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -592,6 +594,7 @@ async function toggleHabitLogFromDash(habitId, date) {
     showToast('Đã cập nhật thói quen hôm nay!', 'success');
     loadDashboard();
     loadHabits();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1003,6 +1006,7 @@ async function toggleTodo(id) {
     loadTodos();
     loadTodoStats();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1036,6 +1040,7 @@ async function updateTodoStatus(id, status) {
     loadTodos();
     loadTodoStats();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1051,6 +1056,7 @@ async function clearCompletedTodosAction() {
     loadTodos();
     loadTodoStats();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1557,6 +1563,7 @@ async function toggleHabitLog(habitId, date) {
     if (!res.ok) throw new Error('Không thể cập nhật thói quen');
     loadHabits();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1575,6 +1582,7 @@ async function quickAddHabit() {
     if (!res.ok) throw new Error('Không thể thêm thói quen');
     showToast('Đã thêm thói quen mới thành công!', 'success');
     loadHabits();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1603,6 +1611,7 @@ async function editHabit(id) {
     if (!res.ok) throw new Error('Không thể cập nhật tên thói quen');
     showToast(`Đã đổi tên thói quen thành: "${trimmed}"`, 'success');
     loadHabits();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1615,6 +1624,7 @@ async function deleteHabit(id) {
     if (!res.ok) throw new Error('Không thể xóa thói quen');
     showToast('Đã xóa thói quen', 'success');
     loadHabits();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -1938,6 +1948,7 @@ async function togglePinNote(id) {
     if (!res.ok) throw new Error('Không thể ghim ghi chú');
     loadNotes();
     loadDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message, 'error');
   }
@@ -2305,11 +2316,30 @@ let autoSyncTimeout = null;
 let lastAutoSyncTime = 0;
 let isSyncing = false;
 
+function updateSyncStatusUI(status) {
+  const dot = document.getElementById('syncPulseDot');
+  const text = document.getElementById('syncStatusText');
+  if (!dot) return;
+
+  if (status === 'syncing') {
+    dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
+    if (text) text.textContent = 'Đang lưu & đồng bộ...';
+  } else if (status === 'synced') {
+    dot.className = 'w-2 h-2 rounded-full bg-emerald-500 transition-colors';
+    if (text) text.textContent = 'Đã đồng bộ';
+  } else if (status === 'error') {
+    dot.className = 'w-2 h-2 rounded-full bg-rose-500';
+    if (text) text.textContent = 'Lỗi kết nối';
+  }
+}
+
 async function autoCloudSync(silent = true) {
   const isLocal = isLocalEnvironment();
   if (!isLocal || isSyncing) return;
 
   isSyncing = true;
+  updateSyncStatusUI('syncing');
+
   const badge = document.getElementById('syncLastTimeBadge');
   const icon = document.getElementById('syncSpinIcon');
   if (icon && !silent) icon.classList.add('animate-spin');
@@ -2323,6 +2353,7 @@ async function autoCloudSync(silent = true) {
     if (res.ok) {
       const data = await res.json();
       lastAutoSyncTime = Date.now();
+      updateSyncStatusUI('synced');
       if (badge && data.last_synced) {
         badge.textContent = `Đã đồng bộ: ${data.last_synced}`;
       }
@@ -2331,8 +2362,11 @@ async function autoCloudSync(silent = true) {
       }
       // Silently refresh current view so any mobile changes appear immediately
       reloadActiveTabData(true);
+    } else {
+      updateSyncStatusUI('error');
     }
   } catch (err) {
+    updateSyncStatusUI('error');
     if (!silent) {
       showToast(err.message, 'error');
     }
@@ -2343,9 +2377,10 @@ async function autoCloudSync(silent = true) {
   }
 }
 
-window.scheduleAutoSync = function(delayMs = 2000) {
+window.scheduleAutoSync = function(delayMs = 300) {
   const isLocal = isLocalEnvironment();
   if (!isLocal) return;
+  updateSyncStatusUI('syncing');
   if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
   autoSyncTimeout = setTimeout(() => {
     autoCloudSync(true);
@@ -2353,17 +2388,35 @@ window.scheduleAutoSync = function(delayMs = 2000) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Auto background sync after initial UI load (1.5s)
-  setTimeout(() => { autoCloudSync(true); }, 1500);
+  // Initial sync immediately after UI boot (500ms)
+  setTimeout(() => { autoCloudSync(true); }, 500);
 
-  // Periodic auto sync every 60s
+  // Fast periodic auto-sync every 10s on PC so mobile changes appear within 10 seconds!
   setInterval(() => {
-    if (document.visibilityState === 'visible') autoCloudSync(true);
-  }, 60000);
+    if (document.visibilityState === 'visible') {
+      if (isLocalEnvironment()) {
+        autoCloudSync(true);
+      } else {
+        reloadActiveTabData(true);
+      }
+    }
+  }, 10000);
 
-  // Auto sync when app window gets focused
+  // Auto-sync immediately when app window gets focused
   window.addEventListener('focus', () => {
-    if (Date.now() - lastAutoSyncTime > 30000) autoCloudSync(true);
+    autoCloudSync(true);
+  });
+
+  // Reload active tab when user returns to app/tab (crucial on mobile phones)
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      const isLocal = isLocalEnvironment();
+      if (isLocal) {
+        autoCloudSync(true);
+      } else {
+        reloadActiveTabData(true);
+      }
+    }
   });
 
   // Load initial Dashboard data

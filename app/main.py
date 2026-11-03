@@ -295,6 +295,8 @@ def create_transaction(item: TransactionCreate):
 
     conn = get_db_connection()
     c = conn.cursor()
+    trans_uid = f"{date_iso}||{item.amount}||{item.type}||{item.description}"
+    c.execute("DELETE FROM deleted_records WHERE table_name = 'transactions' AND record_uid = ?", (trans_uid,))
     c.execute("""
         INSERT INTO transactions (
             date, month, week, type, amount, category, 
@@ -475,10 +477,15 @@ def get_transaction_columns(
 def delete_transaction(trans_id: int):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM transactions WHERE id = ?", (trans_id,))
+    c.execute("SELECT date, amount, type, description FROM transactions WHERE id = ?", (trans_id,))
+    row = c.fetchone()
+    if row:
+        uid = f"{row['date']}||{row['amount']}||{row['type']}||{row['description']}"
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('transactions', ?)", (uid,))
+        c.execute("DELETE FROM transactions WHERE id = ?", (trans_id,))
     conn.commit()
     conn.close()
-    return {"status": "success"}
+    return {"status": "success", "message": "Đã xóa giao dịch thành công"}
 
 # ----------------- UPLOAD & STATEMENT INGESTION APIS -----------------
 
@@ -1193,6 +1200,8 @@ def get_todos(
 def create_todo(item: TodoCreate):
     conn = get_db_connection()
     c = conn.cursor()
+    uid = f"{item.title}||{item.due_date}"
+    c.execute("DELETE FROM deleted_records WHERE table_name = 'todos' AND record_uid = ?", (uid,))
     c.execute("""
         INSERT INTO todos (title, description, due_date, priority, category, pomodoro_est, status)
         VALUES (?, ?, ?, ?, ?, ?, 'pending')
@@ -1297,8 +1306,13 @@ def increment_todo_pomodoro(todo_id: int):
 def clear_completed_todos():
     conn = get_db_connection()
     c = conn.cursor()
+    c.execute("SELECT title, due_date FROM todos WHERE status = 'completed'")
+    rows = c.fetchall()
+    for row in rows:
+        uid = f"{row['title']}||{row['due_date']}"
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (uid,))
     c.execute("DELETE FROM todos WHERE status = 'completed'")
-    deleted = c.rowcount
+    deleted = len(rows)
     conn.commit()
     conn.close()
     return {"success": True, "deleted_count": deleted}
@@ -1307,7 +1321,12 @@ def clear_completed_todos():
 def delete_todo(todo_id: int):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
+    c.execute("SELECT title, due_date FROM todos WHERE id = ?", (todo_id,))
+    row = c.fetchone()
+    if row:
+        uid = f"{row['title']}||{row['due_date']}"
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (uid,))
+        c.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
     conn.commit()
     conn.close()
     return {"success": True, "message": "Đã xóa việc thành công"}
@@ -1492,6 +1511,7 @@ def get_habits(month: Optional[str] = None):
 def create_habit(item: HabitCreate):
     conn = get_db_connection()
     c = conn.cursor()
+    c.execute("DELETE FROM deleted_records WHERE table_name = 'habits' AND record_uid = ?", (item.name,))
     c.execute("""
         INSERT INTO habits (name, icon, color, target_days, streak, best_streak)
         VALUES (?, ?, ?, ?, 0, 0)
@@ -1568,7 +1588,11 @@ def update_habit(habit_id: int, item: HabitUpdate):
 def delete_habit(habit_id: int):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM habits WHERE id = ?", (habit_id,))
+    c.execute("SELECT name FROM habits WHERE id = ?", (habit_id,))
+    row = c.fetchone()
+    if row:
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('habits', ?)", (row['name'],))
+        c.execute("DELETE FROM habits WHERE id = ?", (habit_id,))
     conn.commit()
     conn.close()
     return {"success": True}
@@ -1654,6 +1678,7 @@ def get_notes(category: Optional[str] = None, q: Optional[str] = None):
 def create_note(item: NoteCreate):
     conn = get_db_connection()
     c = conn.cursor()
+    c.execute("DELETE FROM deleted_records WHERE table_name = 'notes' AND record_uid = ?", (item.title,))
     c.execute("""
         INSERT INTO notes (title, content, category, is_pinned, color)
         VALUES (?, ?, ?, ?, ?)
@@ -1708,7 +1733,11 @@ def toggle_pin_note(note_id: int):
 def delete_note(note_id: int):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM notes WHERE id = ?", (note_id,))
+    c.execute("SELECT title FROM notes WHERE id = ?", (note_id,))
+    row = c.fetchone()
+    if row:
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('notes', ?)", (row['title'],))
+        c.execute("DELETE FROM notes WHERE id = ?", (note_id,))
     conn.commit()
     conn.close()
     return {"success": True}
@@ -1744,8 +1773,12 @@ def export_sync_data():
         c.execute("SELECT * FROM notes")
         notes = [dict(r) for r in c.fetchall()]
 
+        c.execute("SELECT table_name, record_uid, deleted_at FROM deleted_records")
+        deleted_records = [dict(r) for r in c.fetchall()]
+
         return {
             "timestamp": datetime.datetime.now().isoformat(),
+            "deleted_records": deleted_records,
             "transactions": transactions,
             "todos": todos,
             "habits": habits,
@@ -1762,8 +1795,42 @@ def import_sync_data(payload: dict):
     try:
         c = conn.cursor()
 
+        # 0. Sync and apply tombstones (deleted records)
+        for dr in payload.get("deleted_records", []):
+            t_name = dr.get("table_name")
+            uid = dr.get("record_uid")
+            if not t_name or not uid:
+                continue
+            c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid, deleted_at) VALUES (?, ?, ?)",
+                      (t_name, uid, dr.get("deleted_at") or datetime.datetime.now().isoformat()))
+            if t_name == "todos":
+                parts = uid.split("||", 1)
+                if len(parts) == 2:
+                    c.execute("DELETE FROM todos WHERE title = ? AND due_date = ?", (parts[0], parts[1]))
+                else:
+                    c.execute("DELETE FROM todos WHERE title = ?", (parts[0],))
+            elif t_name == "notes":
+                c.execute("DELETE FROM notes WHERE title = ?", (uid,))
+            elif t_name == "habits":
+                c.execute("DELETE FROM habits WHERE name = ?", (uid,))
+            elif t_name == "transactions":
+                parts = uid.split("||", 3)
+                if len(parts) == 4:
+                    try:
+                        c.execute("DELETE FROM transactions WHERE date = ? AND amount = ? AND type = ? AND description = ?",
+                                  (parts[0], float(parts[1]), parts[2], parts[3]))
+                    except Exception:
+                        pass
+
+        # Load active deleted records
+        c.execute("SELECT table_name, record_uid FROM deleted_records")
+        del_records = {(row["table_name"], row["record_uid"]) for row in c.fetchall()}
+
         # 1. Transactions merge
         for t in payload.get("transactions", []):
+            trans_uid = f"{t.get('date')}||{t.get('amount')}||{t.get('type')}||{t.get('description')}"
+            if ("transactions", trans_uid) in del_records:
+                continue
             c.execute("""
                 SELECT id, category, is_manual_category FROM transactions 
                 WHERE date = ? AND amount = ? AND type = ? AND description = ?
@@ -1784,6 +1851,10 @@ def import_sync_data(payload: dict):
 
         # 2. Todos merge
         for item in payload.get("todos", []):
+            todo_uid = f"{item.get('title')}||{item.get('due_date')}"
+            if ("todos", todo_uid) in del_records:
+                continue
+
             c.execute("SELECT id, status FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
             row = c.fetchone()
             if not row:
@@ -1797,8 +1868,10 @@ def import_sync_data(payload: dict):
                     item.get("pomodoro_done", 0), item.get("completed_at")
                 ))
             else:
-                if item.get("status") == "completed" and row["status"] != "completed":
-                    c.execute("UPDATE todos SET status = 'completed', completed_at = ? WHERE id = ?", (item.get("completed_at") or datetime.datetime.now().isoformat(), row["id"]))
+                remote_status = item.get("status", "pending")
+                if remote_status != row["status"]:
+                    c.execute("UPDATE todos SET status = ?, completed_at = ? WHERE id = ?",
+                              (remote_status, item.get("completed_at"), row["id"]))
 
         # Remote habit id -> name lookup map
         remote_habit_id_to_name = {
@@ -1810,7 +1883,7 @@ def import_sync_data(payload: dict):
         # 3. Habits merge
         for h in payload.get("habits", []):
             name = h.get("name")
-            if not name:
+            if not name or ("habits", name) in del_records:
                 continue
             c.execute("SELECT id, streak, best_streak FROM habits WHERE name = ?", (name,))
             row = c.fetchone()
@@ -1873,7 +1946,10 @@ def import_sync_data(payload: dict):
 
         # 6. Notes merge
         for n in payload.get("notes", []):
-            c.execute("SELECT id FROM notes WHERE title = ?", (n.get("title"),))
+            title = n.get("title")
+            if not title or ("notes", title) in del_records:
+                continue
+            c.execute("SELECT id FROM notes WHERE title = ?", (title,))
             if not c.fetchone():
                 c.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)",
                           (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465")))
@@ -2006,23 +2082,24 @@ def trigger_cloud_sync(payload: dict = None):
     if not cloud_url:
         raise HTTPException(status_code=400, detail="Vui lòng cung cấp Cloud Run / Render URL")
 
-    # 1. Export local data
-    local_data = export_sync_data()
-
-    # 2. Push local data to Cloud Run
     import httpx
     try:
+        # 1. Pull latest cloud data into local database first (gets mobile changes)
+        try:
+            r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=60.0)
+            if r_pull.status_code == 200:
+                cloud_data = r_pull.json()
+                import_sync_data(cloud_data)
+        except Exception as pull_err:
+            logger.warning(f"Pull step warning: {pull_err}")
+
+        # 2. Export local data (now contains merged mobile changes + local changes + tombstones)
+        local_data = export_sync_data()
+
+        # 3. Push merged state to Cloud Run
         r_push = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=60.0)
         if r_push.status_code != 200:
             raise HTTPException(status_code=502, detail=f"Lỗi đẩy dữ liệu lên Cloud: {r_push.text}")
-
-        # 3. Pull cloud data back into local database
-        r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=60.0)
-        if r_pull.status_code != 200:
-            raise HTTPException(status_code=502, detail=f"Lỗi lấy dữ liệu từ Cloud: {r_pull.text}")
-
-        cloud_data = r_pull.json()
-        import_sync_data(cloud_data)
 
         # Update last_cloud_sync in settings
         conn = get_db_connection()

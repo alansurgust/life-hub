@@ -228,6 +228,17 @@ def init_db():
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_notes_pinned ON notes(is_pinned, updated_at)")
 
+    # ----------------- SECTION 6: SYNC DELETION TRACKING (Tombstones) -----------------
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS deleted_records (
+        table_name TEXT NOT NULL,
+        record_uid TEXT NOT NULL,
+        deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (table_name, record_uid)
+    )
+    """)
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_del_rec ON deleted_records(table_name, record_uid)")
+
     # Seed initial sample data if tables are empty
     _seed_initial_life_hub_data(cursor)
 

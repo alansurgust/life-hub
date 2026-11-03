@@ -1,5 +1,4 @@
 {
-  "timestamp": "2026-11-03T12:27:22.971746",
   "transactions": [
     {
       "id": 457,
@@ -5471,11 +5470,11 @@
       "description": "",
       "due_date": "2026-11-02",
       "priority": "normal",
-      "status": "pending",
+      "status": "completed",
       "category": "Cá nhân",
       "pomodoro_est": 1,
       "pomodoro_done": 0,
-      "completed_at": null,
+      "completed_at": "2026-11-03 05:39:12",
       "created_at": "2026-11-02 14:46:19"
     },
     {
@@ -5492,19 +5491,6 @@
       "created_at": "2026-11-02 14:46:49"
     },
     {
-      "id": 25,
-      "title": "Chạy bộ / Đi bộ 5000 bước buổi chiều",
-      "description": "Rèn luyện sức bền và thư giãn đầu óc",
-      "due_date": "2026-11-03",
-      "priority": "normal",
-      "status": "pending",
-      "category": "Sức khỏe",
-      "pomodoro_est": 1,
-      "pomodoro_done": 0,
-      "completed_at": null,
-      "created_at": "2026-11-03 04:11:58"
-    },
-    {
       "id": 27,
       "title": "đạp xe 20km",
       "description": "",
@@ -5516,6 +5502,45 @@
       "pomodoro_done": 0,
       "completed_at": "2026-11-03 05:14:00",
       "created_at": "2026-11-03 05:13:56"
+    },
+    {
+      "id": 29,
+      "title": "dọn dẹp bàn làm robot",
+      "description": "",
+      "due_date": "2026-11-03",
+      "priority": "normal",
+      "status": "completed",
+      "category": "Công việc",
+      "pomodoro_est": 1,
+      "pomodoro_done": 0,
+      "completed_at": "2026-11-03 12:41:27",
+      "created_at": "2026-11-03 12:41:24"
+    },
+    {
+      "id": 31,
+      "title": "Chạy bộ / Đi bộ 5000 bước buổi chiều",
+      "description": "Rèn luyện sức bền và thư giãn đầu óc",
+      "due_date": "2026-11-03",
+      "priority": "normal",
+      "status": "pending",
+      "category": "Sức khỏe",
+      "pomodoro_est": 1,
+      "pomodoro_done": 0,
+      "completed_at": null,
+      "created_at": "2026-11-03 12:41:49"
+    },
+    {
+      "id": 32,
+      "title": "hoàn thành họa 1 4 trang đầu",
+      "description": "",
+      "due_date": "2026-11-03",
+      "priority": "normal",
+      "status": "pending",
+      "category": "Học tập",
+      "pomodoro_est": 1,
+      "pomodoro_done": 0,
+      "completed_at": null,
+      "created_at": "2026-11-03 12:42:06"
     }
   ],
   "habits": [
@@ -5555,8 +5580,8 @@
       "icon": "sparkles",
       "color": "#5F7465",
       "target_days": 7,
-      "streak": 0,
-      "best_streak": 0,
+      "streak": 1,
+      "best_streak": 1,
       "created_at": "2026-11-02 13:39:01"
     },
     {
@@ -5565,8 +5590,8 @@
       "icon": "sparkles",
       "color": "#5F7465",
       "target_days": 7,
-      "streak": 1,
-      "best_streak": 1,
+      "streak": 2,
+      "best_streak": 2,
       "created_at": "2026-11-02 13:42:10"
     },
     {
@@ -5582,52 +5607,68 @@
   ],
   "habit_logs": [
     {
-      "id": 189,
+      "id": 628,
       "habit_id": 10,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-02 14:07:24",
+      "created_at": "2026-11-03 13:11:38",
       "habit_name": "2 liters water"
     },
     {
-      "id": 190,
+      "id": 629,
       "habit_id": 6,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-02 15:05:10",
+      "created_at": "2026-11-03 13:11:38",
       "habit_name": "wake up before 6am"
     },
     {
-      "id": 191,
+      "id": 630,
       "habit_id": 7,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-02 15:18:02",
+      "created_at": "2026-11-03 13:11:38",
       "habit_name": "sleep before 22h45 (previous night)"
     },
     {
-      "id": 192,
+      "id": 631,
       "habit_id": 11,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-02 15:18:27",
+      "created_at": "2026-11-03 13:11:38",
       "habit_name": "15m reading book"
     },
     {
-      "id": 193,
+      "id": 632,
       "habit_id": 6,
       "date": "2026-11-03",
       "status": 1,
-      "created_at": "2026-11-03 01:17:36",
+      "created_at": "2026-11-03 13:11:38",
       "habit_name": "wake up before 6am"
     },
     {
-      "id": 194,
+      "id": 633,
       "habit_id": 7,
       "date": "2026-11-03",
       "status": 1,
-      "created_at": "2026-11-03 01:50:55",
+      "created_at": "2026-11-03 13:11:38",
       "habit_name": "sleep before 22h45 (previous night)"
+    },
+    {
+      "id": 634,
+      "habit_id": 9,
+      "date": "2026-11-03",
+      "status": 1,
+      "created_at": "2026-11-03 13:11:38",
+      "habit_name": "no fap"
+    },
+    {
+      "id": 635,
+      "habit_id": 10,
+      "date": "2026-11-03",
+      "status": 1,
+      "created_at": "2026-11-03 13:11:38",
+      "habit_name": "2 liters water"
     }
   ],
   "journal_entries": [
@@ -5695,5 +5736,6 @@
       "created_at": "2026-11-03 03:35:21",
       "updated_at": "2026-11-03 03:35:21"
     }
-  ]
+  ],
+  "deleted_records": []
 }

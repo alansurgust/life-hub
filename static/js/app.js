@@ -403,6 +403,7 @@ async function handleColumnCategoryChange(transId, newCategory, sourceColumn) {
     await loadTransactionColumns();
     await loadOverview();
     await renderCategoryPieChart();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
 
   } catch (err) {
     if (card) {
@@ -1259,6 +1260,7 @@ async function handleInlineCategoryChange(transactionId, newCategory) {
 
     showToast(`Đã đổi sang "${newCategory}" & AI đã ghi nhớ quy tắc!`, 'success');
     await refreshDashboard();
+    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
     showToast(err.message || 'Lỗi khi đổi danh mục', 'error');
   }
