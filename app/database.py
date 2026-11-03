@@ -42,9 +42,10 @@ DEFAULT_CATEGORIES = [
 ]
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA busy_timeout = 30000")
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
@@ -238,21 +239,7 @@ def _seed_initial_life_hub_data(cursor):
     today_str = datetime.date.today().isoformat()
     yesterday_str = (datetime.date.today() - datetime.timedelta(days=1)).isoformat()
 
-    # Seed Todos
-    cursor.execute("SELECT COUNT(*) FROM todos")
-    if cursor.fetchone()[0] == 0:
-        sample_todos = [
-            ("Hoàn thành kế hoạch tài chính tháng 11", "Tổng kết chi tiêu tháng 10 và đặt ngân sách tiết kiệm", today_str, "urgent", "completed", "Tài chính", 2, 2, today_str + " 10:30:00"),
-            ("Đọc 20 trang sách Thiết kế Hệ thống cá nhân", "Đọc chương về xây dựng thói quen và kỹ thuật Time-blocking", today_str, "high", "in_progress", "Học tập", 1, 0, None),
-            ("Rà soát các khoản thanh toán hóa đơn cố định", "Kiểm tra hóa đơn internet, điện thoại và sinh hoạt gia đình", today_str, "normal", "pending", "Tài chính", 1, 0, None),
-            ("Chạy bộ / Đi bộ 5000 bước buổi chiều", "Rèn luyện sức bền và thư giãn đầu óc", today_str, "normal", "pending", "Sức khỏe", 1, 0, None),
-            ("Sắp xếp lại không gian làm việc gọn gàng", "Dọn bàn làm việc, vệ sinh bàn phím và chuẩn bị lịch tuần", today_str, "low", "pending", "Cá nhân", 1, 0, None),
-        ]
-        for t in sample_todos:
-            cursor.execute("""
-                INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, t)
+    # Do not auto-seed dummy todos; user manages their own authentic tasks.
 
     # Seed Habits
     cursor.execute("SELECT COUNT(*) FROM habits")

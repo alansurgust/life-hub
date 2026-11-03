@@ -190,40 +190,40 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-y-auto pb-20 md:pb-6" id="mainScrollArea">
 
       <!-- TOP HEADER -->
-      <header class="bg-[#FFFDF9]/95 backdrop-blur-md border-b border-[#DECDB5] sticky top-0 z-30 shadow-xs">
-        <div class="max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 h-16 flex items-center justify-between gap-3">
+      <header class="bg-[#FFFDF9]/95 backdrop-blur-md border-b border-[#DECDB5] sticky top-0 z-30 shadow-xs max-w-full overflow-hidden">
+        <div class="max-w-[1560px] mx-auto px-3 sm:px-8 lg:px-10 h-16 flex items-center justify-between gap-2 sm:gap-3 w-full">
           
           <!-- Breadcrumb / Section Title -->
-          <div class="flex items-center gap-2">
-            <h1 id="pageTitle" class="font-black text-xl tracking-tight text-[#233329]">Tổng quan</h1>
+          <div class="flex items-center gap-2 shrink-0 min-w-0">
+            <h1 id="pageTitle" class="font-black text-lg sm:text-xl tracking-tight text-[#233329] truncate">Tổng quan</h1>
             <span id="pageSubtitle" class="text-xs text-[#786B60] hidden md:inline">• Trung tâm điều hành tích hợp toàn diện</span>
           </div>
 
           <!-- Dynamic Controls based on active tab -->
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
             
             <!-- 0. Dashboard Tab Controls -->
             <div id="headerDashboardControls" class="flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">
+              <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526]"></i>
                 <span id="dashHeaderDate">Thứ Hai, 02/11/2026</span>
               </span>
             </div>
 
             <!-- 1. Finance Tab Controls -->
-            <div id="headerFinanceControls" class="hidden flex items-center gap-2">
+            <div id="headerFinanceControls" class="hidden flex items-center gap-1.5 sm:gap-2">
               <!-- Smart Segmented Month Navigation -->
-              <div class="flex items-center gap-1 bg-[#EFE7D8] p-1 rounded-2xl border border-[#DECDB5] shadow-2xs relative" id="monthNavContainer">
-                <button onclick="stepMonth(-1)" title="Tháng trước" class="p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition hover:shadow-xs cursor-pointer">
-                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              <div class="flex items-center gap-0.5 sm:gap-1 bg-[#EFE7D8] p-1 rounded-2xl border border-[#DECDB5] shadow-2xs relative" id="monthNavContainer">
+                <button onclick="stepMonth(-1)" title="Tháng trước" class="p-1 sm:p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition hover:shadow-xs cursor-pointer">
+                  <i data-lucide="chevron-left" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </button>
                 
                 <!-- Custom Soft Month Dropdown -->
                 <div class="relative">
-                  <button onclick="toggleMonthDropdown(event)" id="monthDropdownBtn" class="flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-[#2B231D] hover:bg-[#FFFDF9] rounded-xl transition cursor-pointer shadow-2xs">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#786B60]"></i>
-                    <span id="monthDropdownLabel">Toàn bộ thời gian</span>
-                    <i data-lucide="chevron-down" class="w-3 h-3 text-[#A49688]"></i>
+                  <button onclick="toggleMonthDropdown(event)" id="monthDropdownBtn" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 text-xs font-bold text-[#2B231D] hover:bg-[#FFFDF9] rounded-xl transition cursor-pointer shadow-2xs">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#786B60] shrink-0"></i>
+                    <span id="monthDropdownLabel" class="truncate max-w-[100px] sm:max-w-none">Toàn bộ thời gian</span>
+                    <i data-lucide="chevron-down" class="w-3 h-3 text-[#A49688] shrink-0"></i>
                   </button>
 
                   <div id="monthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-52 bg-[#FFFDF9] rounded-2xl shadow-xl border border-[#DECDB5] p-1.5 z-50 dropdown-enter text-xs max-h-64 overflow-y-auto">
@@ -231,20 +231,20 @@
                   </div>
                 </div>
 
-                <button onclick="stepMonth(1)" title="Tháng sau" class="p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition hover:shadow-xs cursor-pointer">
-                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                <button onclick="stepMonth(1)" title="Tháng sau" class="p-1 sm:p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition hover:shadow-xs cursor-pointer">
+                  <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </button>
               </div>
 
               <!-- Upload Statement Button -->
-              <button onclick="openUploadModal()" class="inline-flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="openUploadModal()" class="inline-flex items-center gap-1.5 sm:gap-2 text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
                 <i data-lucide="upload-cloud" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Tải sao kê</span>
               </button>
 
               <!-- Actions Menu Dropdown -->
               <div class="relative">
-                <button onclick="toggleActionMenu()" id="actionMenuBtn" title="Thao tác & Dữ liệu" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#2B231D] border border-[#DECDB5] shadow-2xs transition cursor-pointer">
+                <button onclick="toggleActionMenu()" id="actionMenuBtn" title="Thao tác & Dữ liệu" class="inline-flex items-center gap-1 sm:gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#2B231D] border border-[#DECDB5] shadow-2xs transition cursor-pointer">
                   <i data-lucide="layers" class="w-3.5 h-3.5 text-[#786B60]"></i>
                   <span class="hidden md:inline">Thao tác</span>
                   <i data-lucide="chevron-down" class="w-3 h-3 text-[#A49688]"></i>
@@ -274,11 +274,11 @@
 
             <!-- 2. Todos Tab Controls -->
             <div id="headerTodosControls" class="hidden flex items-center gap-2">
-              <button onclick="openTodoModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="openTodoModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Việc mới</span>
               </button>
-              <button onclick="clearCompletedTodosAction()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#B14720] hover:bg-[#FDF3EE] border border-[#DECDB5] transition cursor-pointer" title="Dọn dẹp công việc đã hoàn thành">
+              <button onclick="clearCompletedTodosAction()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#B14720] hover:bg-[#FDF3EE] border border-[#DECDB5] transition cursor-pointer" title="Dọn dẹp công việc đã hoàn thành">
                 <i data-lucide="check-check" class="w-4 h-4 text-[#5F7465]"></i>
                 <span class="hidden md:inline">Dọn việc xong</span>
               </button>
@@ -286,7 +286,7 @@
 
             <!-- 3. Habits Tab Controls -->
             <div id="headerHabitsControls" class="hidden flex items-center gap-2">
-              <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Thói quen mới</span>
               </button>
@@ -294,7 +294,7 @@
 
             <!-- 4. Journal Tab Controls -->
             <div id="headerJournalControls" class="hidden flex items-center gap-2">
-              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#5F7465] text-[#FFFDF9] hover:bg-[#4d5e52] shadow-sm transition cursor-pointer">
+              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#5F7465] text-[#FFFDF9] hover:bg-[#4d5e52] shadow-sm transition cursor-pointer">
                 <i data-lucide="save" class="w-4 h-4"></i>
                 <span>Lưu trang</span>
               </button>
@@ -302,20 +302,20 @@
 
             <!-- 5. Notes Tab Controls -->
             <div id="headerNotesControls" class="hidden flex items-center gap-2">
-              <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Ghi chú mới</span>
               </button>
             </div>
 
-            <!-- Link Mobile Button in Header -->
-            <button onclick="openMobileConnectModal()" title="Kết nối iPhone / iPad" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-[#5F7465]/10 hover:bg-[#5F7465]/20 text-[#5F7465] border border-[#5F7465]/30 transition cursor-pointer shadow-2xs">
+            <!-- Link Mobile Button in Header (hidden on mobile, already on phone) -->
+            <button onclick="openMobileConnectModal()" title="Kết nối iPhone / iPad" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-[#5F7465]/10 hover:bg-[#5F7465]/20 text-[#5F7465] border border-[#5F7465]/30 transition cursor-pointer shadow-2xs">
               <i data-lucide="smartphone" class="w-4 h-4 text-[#5F7465]"></i>
               <span class="hidden sm:inline">📱 Link Điện Thoại</span>
             </button>
 
             <!-- Global Reload Button -->
-            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\Finance" class="p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group flex items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
+            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\Finance" class="p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group flex items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
               <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#786B60] group-hover:text-[#5F7465] transition"></i>
               <span class="hidden lg:inline">Làm mới</span>
             </button>
@@ -326,7 +326,7 @@
       </header>
 
       <!-- ================= MAIN CONTENT LAYOUT ================= -->
-      <main class="max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 py-6 flex-1 w-full space-y-6">
+      <main class="max-w-[1560px] mx-auto px-3.5 sm:px-8 lg:px-10 py-5 sm:py-6 flex-1 w-full max-w-full space-y-6 overflow-x-hidden">
 
         <!-- ================= SECTION 0: DASHBOARD / OVERVIEW ================= -->
         <section id="section-dashboard" class="space-y-6">
@@ -391,22 +391,29 @@
           </div>
 
           <!-- Quick Action Shortcuts Bar -->
-          <div class="flex items-center gap-2 flex-wrap bg-[#FFFDF9] p-3 rounded-2xl border border-[#DECDB5] shadow-2xs">
-            <span class="text-xs font-bold text-[#786B60] flex items-center gap-1.5 mr-1">
-              <i data-lucide="zap" class="w-3.5 h-3.5 text-[#D39526]"></i> Thao tác nhanh:
-            </span>
-            <button onclick="openTodoModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-              <i data-lucide="plus" class="w-3.5 h-3.5 text-[#5F7465]"></i> Việc mới
-            </button>
-            <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-              <i data-lucide="sticky-note" class="w-3.5 h-3.5 text-[#626037]"></i> Ghi chú mới
-            </button>
-            <button onclick="switchLifeTab('journal')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF6E2] border border-[#DECDB5] hover:border-[#D39526] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-              <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#D39526]"></i> Viết nhật ký
-            </button>
-            <button onclick="togglePomodoro()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF3EE] border border-[#DECDB5] hover:border-[#B14720] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-              <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B14720]"></i> Bật Pomodoro
-            </button>
+          <div class="bg-[#FFFDF9] p-3 sm:p-3.5 rounded-2xl border border-[#DECDB5] shadow-2xs space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
+            <div class="text-xs font-bold text-[#786B60] flex items-center gap-1.5 shrink-0">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-[#D39526]"></i>
+              <span>Thao tác nhanh:</span>
+            </div>
+            <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2 flex-1">
+              <button onclick="openTodoModal()" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+                <i data-lucide="plus" class="w-3.5 h-3.5 text-[#5F7465] shrink-0"></i>
+                <span class="truncate">Việc mới</span>
+              </button>
+              <button onclick="openNoteModal()" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+                <i data-lucide="sticky-note" class="w-3.5 h-3.5 text-[#626037] shrink-0"></i>
+                <span class="truncate">Ghi chú mới</span>
+              </button>
+              <button onclick="switchLifeTab('journal')" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF6E2] border border-[#DECDB5] hover:border-[#D39526] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#D39526] shrink-0"></i>
+                <span class="truncate">Viết nhật ký</span>
+              </button>
+              <button onclick="togglePomodoro()" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF3EE] border border-[#DECDB5] hover:border-[#B14720] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+                <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B14720] shrink-0"></i>
+                <span class="truncate">Bật Pomodoro</span>
+              </button>
+            </div>
           </div>
 
           <!-- 2. Main Two-Column Grid: Daily Actions & Overview Insights -->
@@ -744,9 +751,9 @@
         </div>
 
         <!-- Controls: View Mode & Search -->
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <!-- Instant Search Box -->
-          <div class="relative min-w-[200px]">
+          <div class="relative w-full sm:w-auto min-w-0 sm:min-w-[180px] flex-1">
             <i data-lucide="search" class="w-3.5 h-3.5 text-[#A49688] absolute left-3 top-1/2 -translate-y-1/2"></i>
             <input type="text" id="columnSearchInput" oninput="onColumnSearchChange()" placeholder="Tìm kiếm nhanh..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#F7F2E8] rounded-xl border border-[#DECDB5] focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] outline-none transition">
           </div>

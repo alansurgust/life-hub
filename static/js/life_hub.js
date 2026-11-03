@@ -372,31 +372,29 @@ function renderDashboard(data) {
 
       todoContainer.innerHTML = data.todos.top_todos.map(t => {
         const pInfo = priorityMap[t.priority] || priorityMap.normal;
+        const isOverdue = t.due_date && t.due_date < data.today_str;
         return `
-          <div class="flex items-center justify-between p-2.5 rounded-xl bg-[#F7F2E8]/60 hover:bg-[#F7F2E8] border border-[#DECDB5]/60 transition group">
-            <div class="flex items-center gap-3 min-w-0">
-              <button onclick="toggleTodoFromDash(${t.id})" title="Đánh dấu hoàn thành" class="w-5 h-5 rounded-full border-2 border-[#5F7465] hover:bg-[#5F7465] text-white flex items-center justify-center shrink-0 transition cursor-pointer group-hover:scale-105">
-                <i data-lucide="check" class="w-3 h-3 opacity-0 hover:opacity-100 transition"></i>
+          <div class="p-3 rounded-xl bg-[#F7F2E8]/60 hover:bg-[#F7F2E8] border border-[#DECDB5]/70 transition shadow-2xs group flex items-start justify-between gap-2.5">
+            <div class="flex items-start gap-2.5 min-w-0 flex-1">
+              <button onclick="toggleTodoFromDash(${t.id})" title="Đánh dấu hoàn thành" class="mt-0.5 w-5 h-5 rounded-full border-2 border-[#5F7465] hover:bg-[#5F7465] text-white flex items-center justify-center shrink-0 transition cursor-pointer hover:scale-105 active:scale-95">
+                <i data-lucide="check" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i>
               </button>
-              <div class="min-w-0">
-                <p class="text-xs font-bold text-[#2B231D] truncate">${escapeHtml(t.title)}</p>
-                <div class="flex items-center gap-2 text-[10px] text-[#786B60] mt-0.5">
-                  <span class="px-1.5 py-0.2 rounded border font-semibold ${pInfo.class}">${pInfo.label}</span>
-                  <span>${escapeHtml(t.category)}</span>
-                  ${t.due_date && t.due_date < data.today_str ? '<span class="px-1.5 py-0.2 rounded border font-semibold bg-[#FDF3EE] text-[#B14720] border-[#F4DDD2]">Tồn đọng</span>' : ''}
-                  ${t.due_date ? `<span>• Hạn: ${formatDisplayDate(t.due_date)}</span>` : ''}
+              <div class="min-w-0 flex-1 space-y-1">
+                <p class="text-xs sm:text-[13px] font-bold text-[#2B231D] leading-snug break-words">${escapeHtml(t.title)}</p>
+                <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-[#786B60]">
+                  <span class="px-2 py-0.5 rounded-full border font-bold ${pInfo.class}">${pInfo.label}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037] font-semibold">${escapeHtml(t.category)}</span>
+                  ${isOverdue ? '<span class="px-2 py-0.5 rounded-full border font-bold bg-[#FDF3EE] text-[#B14720] border-[#F4DDD2] flex items-center gap-1"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i>Tồn đọng</span>' : ''}
+                  ${t.due_date ? `<span class="inline-flex items-center gap-1 font-medium ${isOverdue ? 'text-[#B14720] font-semibold' : ''}"><i data-lucide="calendar" class="w-2.5 h-2.5"></i>${formatDisplayDate(t.due_date)}</span>` : ''}
                 </div>
               </div>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0 ml-2">
-              <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="p-1 rounded-lg hover:bg-[#FDF3EE] text-[#B14720] transition cursor-pointer" title="Tập trung Pomodoro">
+            <div class="flex items-center gap-1 shrink-0 self-center">
+              <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="p-1.5 rounded-lg hover:bg-[#FDF3EE] text-[#B14720] transition cursor-pointer" title="Tập trung Pomodoro">
                 <i data-lucide="timer" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="openTodoModal(${t.id})" class="p-1 rounded-lg hover:bg-[#EFE7D8] text-[#786B60] transition cursor-pointer" title="Sửa">
+              <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg hover:bg-[#EFE7D8] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Chỉnh sửa">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-              </button>
-              <button onclick="toggleTodoFromDash(${t.id})" class="text-[11px] font-bold text-[#5F7465] hover:text-[#233329] px-2 py-1 rounded-lg hover:bg-white transition cursor-pointer">
-                Xong ✓
               </button>
             </div>
           </div>
@@ -798,44 +796,54 @@ function renderTodoList() {
   container.innerHTML = lifeState.todos.map(t => {
     const isDone = t.status === 'completed';
     const pri = priorityMeta[t.priority] || priorityMeta.normal;
-    const isOverdue = !isDone && t.due_date < todayStr;
+    const isOverdue = !isDone && t.due_date && t.due_date < todayStr;
 
     return `
-      <div class="flex items-center justify-between p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-2xs group">
-        <div class="flex items-center gap-3.5 min-w-0 flex-1">
-          <button onclick="toggleTodo(${t.id})" class="w-6 h-6 rounded-full border-2 ${isDone ? 'bg-[#5F7465] border-[#5F7465] text-white' : 'border-[#DECDB5] hover:border-[#5F7465] bg-transparent'} flex items-center justify-center transition shrink-0 cursor-pointer" title="${isDone ? 'Bỏ hoàn thành' : 'Đánh dấu hoàn thành'}">
-            ${isDone ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
-          </button>
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="font-bold text-sm ${isDone ? 'line-through text-[#A49688]' : 'text-[#2B231D]'}">${escapeHtml(t.title)}</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${pri.bg} ${pri.text} ${pri.border}">${pri.label}</span>
-              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037]">${escapeHtml(t.category)}</span>
-              ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2]">Tồn đọng</span>' : ''}
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-2xs group space-y-2.5">
+        <!-- Top Row: Checkbox, Title (full width), Edit & Delete Actions -->
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-start gap-3 min-w-0 flex-1">
+            <button onclick="toggleTodo(${t.id})" class="mt-0.5 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 ${isDone ? 'bg-[#5F7465] border-[#5F7465] text-white' : 'border-[#DECDB5] hover:border-[#5F7465] bg-transparent'} flex items-center justify-center transition shrink-0 cursor-pointer hover:scale-105 active:scale-95" title="${isDone ? 'Bỏ hoàn thành' : 'Đánh dấu hoàn thành'}">
+              ${isDone ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
+            </button>
+            <div class="min-w-0 flex-1">
+              <h4 class="font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-[#A49688]' : 'text-[#2B231D]'} break-words">${escapeHtml(t.title)}</h4>
+              ${t.description ? `<p class="text-xs text-[#786B60] mt-1 leading-relaxed break-words">${escapeHtml(t.description)}</p>` : ''}
             </div>
-            ${t.description ? `<p class="text-xs text-[#786B60] truncate mt-0.5">${escapeHtml(t.description)}</p>` : ''}
+          </div>
+
+          <!-- Quick Action Buttons: Accessible on mobile, no opacity-0 hiding -->
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#5F7465] hover:bg-[#F0F5F2] transition cursor-pointer" title="Chỉnh sửa việc">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="deleteTodo(${t.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition cursor-pointer" title="Xóa việc">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-3">
-          <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#B14720] hover:bg-[#FDF3EE] border border-transparent hover:border-[#DECDB5] px-2 py-1 rounded-xl transition cursor-pointer" title="Bắt đầu Pomodoro cho việc này">
-            <i data-lucide="timer" class="w-3.5 h-3.5"></i>
-            <span>${t.pomodoro_done || 0}/${t.pomodoro_est || 1}</span>
-          </button>
-
-          <div class="text-right">
-            <span class="text-xs font-semibold ${isOverdue ? 'text-[#B14720] font-bold' : 'text-[#786B60]'}">
-              ${isOverdue ? '⚠️ ' : ''}${formatDisplayDate(t.due_date)}
-            </span>
+        <!-- Bottom Row: Metadata Pills & Due Date & Pomodoro -->
+        <div class="flex items-center justify-between gap-2 flex-wrap pt-2 border-t border-[#DECDB5]/50 text-xs">
+          <!-- Left: Badges -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${pri.bg} ${pri.text} ${pri.border}">${pri.label}</span>
+            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037]">${escapeHtml(t.category)}</span>
+            ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] flex items-center gap-1"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i>Tồn đọng</span>' : ''}
           </div>
 
-          <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#5F7465] hover:bg-[#F0F5F2] transition opacity-0 group-hover:opacity-100 cursor-pointer" title="Chỉnh sửa việc">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-          </button>
+          <!-- Right: Date and Pomodoro -->
+          <div class="flex items-center gap-2 text-xs">
+            <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#B14720] bg-[#FDF3EE] hover:bg-[#FBE8DE] border border-[#F4DDD2] px-2 py-0.5 rounded-lg transition cursor-pointer" title="Bắt đầu Pomodoro">
+              <i data-lucide="timer" class="w-3 h-3"></i>
+              <span>${t.pomodoro_done || 0}/${t.pomodoro_est || 1}</span>
+            </button>
 
-          <button onclick="deleteTodo(${t.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition opacity-0 group-hover:opacity-100 cursor-pointer" title="Xóa việc">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          </button>
+            <span class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-lg ${isOverdue ? 'bg-[#FDF3EE] text-[#B14720] font-bold border border-[#F4DDD2]' : 'bg-[#F7F2E8] text-[#786B60] border border-[#DECDB5]'}">
+              <i data-lucide="calendar" class="w-3 h-3"></i>
+              <span>${formatDisplayDate(t.due_date)}</span>
+            </span>
+          </div>
         </div>
       </div>
     `;
