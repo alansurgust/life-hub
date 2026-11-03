@@ -1,0 +1,185 @@
+/* ==========================================================================
+   THE VINTAGE PALETTE DESIGN SYSTEM
+   Inspired by: alexpate/awesome-design-systems
+   Palette: Timeless Editorial Vintage (8 Core Swatches + Warm Paper Canvas)
+   ========================================================================== */
+
+:root {
+  /* Vintage Canvas & Surfaces */
+  --vintage-bg: #F7F2E8;              /* Warm Parchment / Retro Paper Canvas */
+  --vintage-surface: #FFFDF9;         /* Pure Warm Ivory Card Surface */
+  --vintage-surface-muted: #EFE7D8;   /* Subtle Secondary Paper Surface */
+  --vintage-surface-subtle: #F3ECE0;  /* Inset / Table Header Tone */
+
+  /* Vintage Borders */
+  --vintage-border: #DECDB5;          /* Soft Tactile Paper Border */
+  --vintage-border-strong: #C5B194;   /* Pronounced Vintage Outline */
+  --vintage-border-focus: #B14720;    /* Terracotta Focus Outline */
+
+  /* Vintage Typography Inks */
+  --vintage-text: #2B231D;            /* Deep Warm Espresso Ink (Primary) */
+  --vintage-text-muted: #786B60;      /* Warm Sepia (Secondary / Caption) */
+  --vintage-text-subtle: #A49688;     /* Faded Vintage Ink */
+
+  /* 8 Authentic Vintage Palette Swatches */
+  --vintage-swatch-1-sage: #5F7465;   /* Swatch 1: Sage Slate Green */
+  --vintage-swatch-2-gold: #D39526;   /* Swatch 2: Vintage Mustard Gold */
+  --vintage-swatch-3-terracotta: #B14720; /* Swatch 3: Terracotta Red */
+  --vintage-swatch-4-olive: #626037;  /* Swatch 4: Heritage Olive Moss */
+  --vintage-swatch-5-rust: #C3651F;   /* Swatch 5: Warm Amber Rust */
+  --vintage-swatch-6-sienna: #663B1B; /* Swatch 6: Tobacco / Warm Sienna */
+  --vintage-swatch-7-brick: #7C3929;  /* Swatch 7: Vintage Brick Crimson */
+  --vintage-swatch-8-espresso: #552F26; /* Swatch 8: Deep Mahogany */
+
+  /* Deep Forest Accent (for primary buttons & logo) */
+  --vintage-forest: #233329;
+  --vintage-forest-hover: #1A261F;
+
+  /* Vintage Paper Elevation / Shadows */
+  --vintage-shadow-xs: 0 1px 2px rgba(43, 35, 29, 0.04);
+  --vintage-shadow-sm: 0 2px 6px rgba(43, 35, 29, 0.05), 0 1px 2px rgba(43, 35, 29, 0.03);
+  --vintage-shadow-md: 0 6px 18px rgba(43, 35, 29, 0.06), 0 2px 6px rgba(43, 35, 29, 0.04);
+  --vintage-shadow-lg: 0 14px 32px rgba(43, 35, 29, 0.09), 0 4px 10px rgba(43, 35, 29, 0.05);
+}
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background-color: var(--vintage-bg);
+    color: var(--vintage-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Typography - Clean Vietnamese-compatible Font Family */
+.font-serif-vintage {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* Tabular figures for financial numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom Vintage Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DECDB5;
+  border-radius: 9999px;
+  border: 1px solid #EFE7D8;
+}
+
+/* Subtle animation for today's active check ring */
+@keyframes pulseSubtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2.8s infinite ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C5B194;
+}
+
+/* Vintage Paper Card Hover Animation */
+.card-hover {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--vintage-shadow-md);
+  border-color: var(--vintage-border-strong);
+}
+
+/* Toast Slide In */
+@keyframes slideIn {
+  from {
+    transform: translateY(-12px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Dropdown menu animation */
+@keyframes dropDown {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-enter {
+  animation: dropDown 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Vintage Skeleton loading */
+@keyframes vintageShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #F3ECE0 25%, #EFE7D8 50%, #F3ECE0 75%);
+  background-size: 200% 100%;
+  animation: vintageShimmer 1.8s infinite;
+}
+
+/* Tab Switching Transitions: Smooth Staggered Fade Up & Out / Float Up & In */
+@keyframes tabBoxFadeOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes tabBoxFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-box-exit {
+  animation: tabBoxFadeOutUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+
+.tab-box-enter {
+  animation: tabBoxFadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}

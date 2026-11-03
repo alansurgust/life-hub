@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Finance & Life Hub - Quản Lý Cá Nhân All-in-One</title>
+  <link rel="icon" type="image/png" href="/static/Finance_500k.png">
+  <link rel="shortcut icon" href="/static/Finance_500k.ico">
+  
+  <!-- Apple Web App & PWA Support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Life Hub">
+  <link rel="apple-touch-icon" href="/static/Finance_500k.png">
+  <meta name="theme-color" content="#F7F2E8">
+
+  <!-- Local Offline Vendor Assets (Instant Startup, Zero CDN Blocking) -->
+  <script src="/static/vendor/tailwind.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            vintage: {
+              bg: '#F7F2E8',
+              surface: '#FFFDF9',
+              muted: '#EFE7D8',
+              subtle: '#F3ECE0',
+              border: '#DECDB5',
+              'border-strong': '#C5B194',
+              text: '#2B231D',
+              'text-muted': '#786B60',
+              'text-subtle': '#A49688',
+              sage: '#5F7465',
+              'sage-light': '#F0F5F2',
+              gold: '#D39526',
+              'gold-light': '#FDF6E2',
+              terracotta: '#B14720',
+              'terracotta-light': '#FDF3EE',
+              olive: '#626037',
+              rust: '#C3651F',
+              sienna: '#663B1B',
+              brick: '#7C3929',
+              espresso: '#552F26',
+              forest: '#233329',
+              'forest-hover': '#1A261F'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+            serif: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <script src="/static/vendor/chart.min.js"></script>
+  <script src="/static/vendor/lucide.min.js"></script>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-[#F7F2E8] text-[#2B231D] h-screen overflow-hidden antialiased font-sans selection:bg-[#5F7465] selection:text-[#FFFDF9]">
+
+  <!-- ================= APP WRAPPER WITH LEFT SIDEBAR ================= -->
+  <div class="flex h-screen overflow-hidden bg-[#F7F2E8]">
+
+    <!-- ================= LEFT NAVIGATION SIDEBAR ================= -->
+    <aside id="appSidebar" class="w-64 bg-[#F2ECE1] border-r border-[#DECDB5] flex flex-col justify-between shrink-0 select-none z-40 hidden md:flex">
+      <div class="flex flex-col">
+        <!-- Brand Header -->
+        <div class="p-4 sm:p-5 border-b border-[#DECDB5] flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl overflow-hidden shadow-xs border border-[#DECDB5] bg-[#FFFDF9] flex items-center justify-center p-0.5 shrink-0">
+            <img src="/static/Finance_500k.png" alt="Life Hub Icon" class="w-full h-full object-contain">
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="font-black text-lg tracking-tight text-[#233329]">LIFE HUB</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#DECDB5]/70 text-[#626037]">OS</span>
+            </div>
+            <p class="text-[11px] text-[#786B60] truncate font-medium">Finance & Life System</p>
+          </div>
+        </div>
+
+        <!-- Navigation Links (Dashboard + 5 Life Sections) -->
+        <nav class="p-3 space-y-1 text-sm font-semibold">
+          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer bg-[#233329] text-[#FFFDF9] shadow-xs">
+            <div class="flex items-center gap-3">
+              <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+              <span>Tổng quan</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20" id="sidebarDashBadge">Live</span>
+          </button>
+
+          <button onclick="switchLifeTab('finance')" id="navTabFinance" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+            <div class="flex items-center gap-3">
+              <i data-lucide="wallet" class="w-4 h-4"></i>
+              <span>Tài chính</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarFinanceBadge">319</span>
+          </button>
+
+          <button onclick="switchLifeTab('todos')" id="navTabTodos" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+            <div class="flex items-center gap-3">
+              <i data-lucide="check-square" class="w-4 h-4"></i>
+              <span>Việc cần làm</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarTodosBadge">4</span>
+          </button>
+
+          <button onclick="switchLifeTab('habits')" id="navTabHabits" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+            <div class="flex items-center gap-3">
+              <i data-lucide="flame" class="w-4 h-4 text-[#C3651F]"></i>
+              <span>Thói quen</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarHabitsBadge">5</span>
+          </button>
+
+          <button onclick="switchLifeTab('journal')" id="navTabJournal" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+            <div class="flex items-center gap-3">
+              <i data-lucide="book-open" class="w-4 h-4"></i>
+              <span>Nhật ký & Cảm xúc</span>
+            </div>
+          </button>
+
+          <button onclick="switchLifeTab('notes')" id="navTabNotes" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+            <div class="flex items-center gap-3">
+              <i data-lucide="sticky-note" class="w-4 h-4"></i>
+              <span>Ghi chú & Tri thức</span>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarNotesBadge">4</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Bottom Sidebar: Pomodoro Focus Widget (Super Productivity) & Storage info -->
+      <div class="p-3 border-t border-[#DECDB5] space-y-3">
+        <!-- Pomodoro Widget -->
+        <div class="bg-[#FFFDF9] border border-[#DECDB5] rounded-2xl p-3 shadow-2xs">
+          <div class="flex items-center justify-between text-xs text-[#786B60] font-bold mb-1.5">
+            <span class="flex items-center gap-1.5 text-[#B14720]">
+              <i data-lucide="timer" class="w-3.5 h-3.5"></i> Pomodoro Focus
+            </span>
+            <span id="pomoSessionCount" class="text-[10px] px-1.5 py-0.5 bg-[#EFE7D8] rounded text-[#626037]">0 phiên</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div id="pomoTimeDisplay" class="text-2xl font-black text-[#2B231D] tabular-nums tracking-tight">25:00</div>
+            <div class="flex items-center gap-1">
+              <button onclick="togglePomodoro()" id="pomoToggleBtn" class="p-2 rounded-xl bg-[#5F7465] text-white hover:bg-[#4d5e52] transition shadow-2xs cursor-pointer" title="Bắt đầu / Tạm dừng">
+                <i data-lucide="play" id="pomoPlayIcon" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="resetPomodoro()" class="p-2 rounded-xl hover:bg-[#EFE7D8] text-[#786B60] transition cursor-pointer" title="Đặt lại">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pomodoro Mode Selector (25m Focus / 5m Break / 15m Long Break) -->
+          <div class="grid grid-cols-3 gap-1 mt-2.5 pt-2 border-t border-[#DECDB5]/60 text-[10px] font-bold text-center">
+            <button onclick="setPomoMode('focus')" id="pomoMode_focus" class="py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer">25m Tập trung</button>
+            <button onclick="setPomoMode('short')" id="pomoMode_short" class="py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">5m Nghỉ</button>
+            <button onclick="setPomoMode('long')" id="pomoMode_long" class="py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">15m Nghỉ</button>
+          </div>
+
+          <!-- Active Linked Task Banner -->
+          <div id="pomoActiveTaskBanner" class="hidden mt-2 pt-1.5 border-t border-[#DECDB5]/60 flex items-center justify-between text-[11px] text-[#786B60]">
+            <span class="truncate flex-1 mr-1">🎯 <strong id="pomoActiveTaskTitle" class="text-[#2B231D]">...</strong></span>
+            <button onclick="clearActivePomoTask()" class="text-[#A49688] hover:text-[#B14720] text-xs p-0.5 cursor-pointer" title="Hủy liên kết">✕</button>
+          </div>
+        </div>
+
+        <!-- Mobile Link Pill Button -->
+        <button onclick="openMobileConnectModal()" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#5F7465]/10 hover:bg-[#5F7465]/20 text-[#5F7465] border border-[#5F7465]/25 text-xs font-bold transition cursor-pointer">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
+          <span>Link iPhone / iPad</span>
+        </button>
+
+        <!-- Storage Info & Settings -->
+        <div class="flex items-center justify-between px-1 text-xs text-[#786B60]">
+          <span class="text-[10px] font-semibold text-[#626037] flex items-center gap-1">
+            <i data-lucide="hard-drive" class="w-3 h-3 text-[#5F7465]"></i> D:\Finance
+          </span>
+          <button onclick="openSettingsModal()" class="p-1.5 rounded-lg hover:bg-[#E7DEC8] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Cài đặt">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================= RIGHT MAIN SCROLLABLE CONTENT ================= -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto pb-20 md:pb-6" id="mainScrollArea">
+
+      <!-- TOP HEADER -->
+      <header class="bg-[#FFFDF9]/95 backdrop-blur-md border-b border-[#DECDB5] sticky top-0 z-30 shadow-xs">
+        <div class="max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 h-16 flex items-center justify-between gap-3">
+          
+          <!-- Breadcrumb / Section Title -->
+          <div class="flex items-center gap-2">
+            <h1 id="pageTitle" class="font-black text-xl tracking-tight text-[#233329]">Tổng quan</h1>
+            <span id="pageSubtitle" class="text-xs text-[#786B60] hidden md:inline">• Trung tâm điều hành tích hợp toàn diện</span>
+          </div>
+
+          <!-- Dynamic Controls based on active tab -->
+          <div class="flex items-center gap-2">
+            
+            <!-- 0. Dashboard Tab Controls -->
+            <div id="headerDashboardControls" class="flex items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526]"></i>
+                <span id="dashHeaderDate">Thứ Hai, 02/11/2026</span>
+              </span>
+            </div>
+
+            <!-- 1. Finance Tab Controls -->
+            <div id="headerFinanceControls" class="hidden flex items-center gap-2">
+              <!-- Smart Segmented Month Navigation -->
+              <div class="flex items-center gap-1 bg-[#EFE7D8] p-1 rounded-2xl border border-[#DECDB5] shadow-2xs relative" id="monthNavContainer">
+                <button onclick="stepMonth(-1)" title="Tháng trước" class="p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition hover:shadow-xs cursor-pointer">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- Custom Soft Month Dropdown -->
+                <div class="relative">
+                  <button onclick="toggleMonthDropdown(event)" id="monthDropdownBtn" class="flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-[#2B231D] hover:bg-[#FFFDF9] rounded-xl transition cursor-pointer shadow-2xs">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#786B60]"></i>
+                    <span id="monthDropdownLabel">Toàn bộ thời gian</span>
+                    <i data-lucide="chevron-down" class="w-3 h-3 text-[#A49688]"></i>
+                  </button>
+
+                  <div id="monthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-52 bg-[#FFFDF9] rounded-2xl shadow-xl border border-[#DECDB5] p-1.5 z-50 dropdown-enter text-xs max-h-64 overflow-y-auto">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <button onclick="stepMonth(1)" title="Tháng sau" class="p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition hover:shadow-xs cursor-pointer">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <!-- Upload Statement Button -->
+              <button onclick="openUploadModal()" class="inline-flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+                <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Tải sao kê</span>
+              </button>
+
+              <!-- Actions Menu Dropdown -->
+              <div class="relative">
+                <button onclick="toggleActionMenu()" id="actionMenuBtn" title="Thao tác & Dữ liệu" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#2B231D] border border-[#DECDB5] shadow-2xs transition cursor-pointer">
+                  <i data-lucide="layers" class="w-3.5 h-3.5 text-[#786B60]"></i>
+                  <span class="hidden md:inline">Thao tác</span>
+                  <i data-lucide="chevron-down" class="w-3 h-3 text-[#A49688]"></i>
+                </button>
+
+                <div id="actionMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-[#FFFDF9] rounded-2xl shadow-xl border border-[#DECDB5] p-1.5 z-50 dropdown-enter text-xs">
+                  <button onclick="seedDemoData(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#FDF6E2] text-[#2B231D] hover:text-[#7A5408] transition font-medium cursor-pointer">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-[#D39526]"></i>
+                    <span>Nạp 32 giao dịch mẫu</span>
+                  </button>
+                  <button onclick="triggerAICategorize(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#F0F5F2] text-[#2B231D] hover:text-[#233329] transition font-medium cursor-pointer">
+                    <i data-lucide="bot" class="w-4 h-4 text-[#5F7465]"></i>
+                    <span>AI Phân loại lại tất cả</span>
+                  </button>
+                  <button onclick="exportCSV(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#F0F5F2] text-[#2B231D] hover:text-[#233329] transition font-medium cursor-pointer">
+                    <i data-lucide="download" class="w-4 h-4 text-[#5F7465]"></i>
+                    <span>Xuất dữ liệu Excel / CSV</span>
+                  </button>
+                  <div class="border-t border-[#DECDB5]/60 my-1"></div>
+                  <button onclick="resetAllData(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#FDF3EE] text-[#B14720] transition font-medium cursor-pointer">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 text-[#B14720]"></i>
+                    <span>Xóa & Đặt lại từ đầu</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Todos Tab Controls -->
+            <div id="headerTodosControls" class="hidden flex items-center gap-2">
+              <button onclick="openTodoModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Việc mới</span>
+              </button>
+              <button onclick="clearCompletedTodosAction()" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#B14720] hover:bg-[#FDF3EE] border border-[#DECDB5] transition cursor-pointer" title="Dọn dẹp công việc đã hoàn thành">
+                <i data-lucide="check-check" class="w-4 h-4 text-[#5F7465]"></i>
+                <span class="hidden md:inline">Dọn việc xong</span>
+              </button>
+            </div>
+
+            <!-- 3. Habits Tab Controls -->
+            <div id="headerHabitsControls" class="hidden flex items-center gap-2">
+              <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Thói quen mới</span>
+              </button>
+            </div>
+
+            <!-- 4. Journal Tab Controls -->
+            <div id="headerJournalControls" class="hidden flex items-center gap-2">
+              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#5F7465] text-[#FFFDF9] hover:bg-[#4d5e52] shadow-sm transition cursor-pointer">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span>Lưu trang</span>
+              </button>
+            </div>
+
+            <!-- 5. Notes Tab Controls -->
+            <div id="headerNotesControls" class="hidden flex items-center gap-2">
+              <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">Ghi chú mới</span>
+              </button>
+            </div>
+
+            <!-- Link Mobile Button in Header -->
+            <button onclick="openMobileConnectModal()" title="Kết nối iPhone / iPad" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-[#5F7465]/10 hover:bg-[#5F7465]/20 text-[#5F7465] border border-[#5F7465]/30 transition cursor-pointer shadow-2xs">
+              <i data-lucide="smartphone" class="w-4 h-4 text-[#5F7465]"></i>
+              <span class="hidden sm:inline">📱 Link Điện Thoại</span>
+            </button>
+
+            <!-- Global Reload Button -->
+            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\Finance" class="p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group flex items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
+              <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#786B60] group-hover:text-[#5F7465] transition"></i>
+              <span class="hidden lg:inline">Làm mới</span>
+            </button>
+
+          </div>
+
+        </div>
+      </header>
+
+      <!-- ================= MAIN CONTENT LAYOUT ================= -->
+      <main class="max-w-[1560px] mx-auto px-5 sm:px-8 lg:px-10 py-6 flex-1 w-full space-y-6">
+
+        <!-- ================= SECTION 0: DASHBOARD / OVERVIEW ================= -->
+        <section id="section-dashboard" class="space-y-6">
+
+          <!-- 1. Hero Pulse Greeting & High-level Status -->
+          <div class="bg-gradient-to-br from-[#FFFDF9] via-[#F7F2E8] to-[#EFE7D8] p-6 sm:p-7 rounded-3xl border border-[#DECDB5] shadow-xs relative overflow-hidden">
+            <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DECDB5]/60 text-[#626037] text-xs font-bold mb-2">
+                  <span class="w-2 h-2 rounded-full bg-[#5F7465] animate-pulse"></span>
+                  <span id="dashHeroDate">Thứ Hai, 02/11/2026</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#2B231D] tracking-tight" id="dashHeroGreeting">Chào buổi tối!</h2>
+                <p class="text-xs sm:text-sm text-[#786B60] mt-1 max-w-xl" id="dashHeroQuote">
+                  "Sự kiên trì từng ngày tạo nên những kết quả phi thường."
+                </p>
+              </div>
+
+              <!-- 4 Quick Pulse Metric Pills (Interactive shortcuts) -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:gap-3.5">
+                <!-- Finance pulse -->
+                <div onclick="switchLifeTab('finance')" class="bg-[#FFFDF9]/90 hover:bg-white p-3 rounded-2xl border border-[#DECDB5] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#786B60]">
+                    <span>Tài chính</span>
+                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+                  </div>
+                  <div class="text-sm font-black text-[#2B231D] mt-2 truncate" id="dashPulseBalance">0 ₫</div>
+                  <div class="text-[10px] text-[#786B60] mt-0.5" id="dashPulseExpenseSub">Chi tiêu tháng này</div>
+                </div>
+
+                <!-- Todos pulse -->
+                <div onclick="switchLifeTab('todos')" class="bg-[#FFFDF9]/90 hover:bg-white p-3 rounded-2xl border border-[#DECDB5] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#786B60]">
+                    <span>Việc cần làm</span>
+                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#233329]"></i>
+                  </div>
+                  <div class="text-sm font-black text-[#2B231D] mt-2" id="dashPulseTodos">0 việc</div>
+                  <div class="text-[10px] text-[#5F7465] font-semibold mt-0.5" id="dashPulseTodosSub">Đang hoàn thành 0%</div>
+                </div>
+
+                <!-- Habits pulse -->
+                <div onclick="switchLifeTab('habits')" class="bg-[#FFFDF9]/90 hover:bg-white p-3 rounded-2xl border border-[#DECDB5] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#786B60]">
+                    <span>Thói quen</span>
+                    <i data-lucide="flame" class="w-3.5 h-3.5 text-[#C3651F]"></i>
+                  </div>
+                  <div class="text-sm font-black text-[#2B231D] mt-2" id="dashPulseHabits">0/0 đã làm</div>
+                  <div class="text-[10px] text-[#C3651F] font-semibold mt-0.5" id="dashPulseHabitsSub">Chuỗi liên tiếp</div>
+                </div>
+
+                <!-- Mood pulse -->
+                <div onclick="switchLifeTab('journal')" class="bg-[#FFFDF9]/90 hover:bg-white p-3 rounded-2xl border border-[#DECDB5] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#786B60]">
+                    <span>Tâm trạng</span>
+                    <i data-lucide="smile" class="w-3.5 h-3.5 text-[#D39526]"></i>
+                  </div>
+                  <div class="text-sm font-black text-[#2B231D] mt-2 truncate" id="dashPulseMood">Tuyệt vời</div>
+                  <div class="text-[10px] text-[#786B60] mt-0.5">Nhật ký hôm nay</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Shortcuts Bar -->
+          <div class="flex items-center gap-2 flex-wrap bg-[#FFFDF9] p-3 rounded-2xl border border-[#DECDB5] shadow-2xs">
+            <span class="text-xs font-bold text-[#786B60] flex items-center gap-1.5 mr-1">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-[#D39526]"></i> Thao tác nhanh:
+            </span>
+            <button onclick="openTodoModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5 text-[#5F7465]"></i> Việc mới
+            </button>
+            <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+              <i data-lucide="sticky-note" class="w-3.5 h-3.5 text-[#626037]"></i> Ghi chú mới
+            </button>
+            <button onclick="switchLifeTab('journal')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF6E2] border border-[#DECDB5] hover:border-[#D39526] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+              <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#D39526]"></i> Viết nhật ký
+            </button>
+            <button onclick="togglePomodoro()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF3EE] border border-[#DECDB5] hover:border-[#B14720] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
+              <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B14720]"></i> Bật Pomodoro
+            </button>
+          </div>
+
+          <!-- 2. Main Two-Column Grid: Daily Actions & Overview Insights -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- LEFT COLUMN (7 cols): Focus & Execution (To-Dos + Habits) -->
+            <div class="lg:col-span-7 space-y-6">
+
+              <!-- Card: Việc Cần Làm Hôm Nay -->
+              <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#233329] flex items-center justify-center">
+                      <i data-lucide="check-square" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[#2B231D] text-sm">Việc Ưu Tiên Cần Làm</h3>
+                      <p class="text-[11px] text-[#786B60]">Nhiệm vụ chưa hoàn tất trong danh sách của bạn</p>
+                    </div>
+                  </div>
+                  <button onclick="switchLifeTab('todos')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
+                    <span>Xem tất cả</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                  </button>
+                </div>
+
+                <!-- Interactive Quick Todo List -->
+                <div id="dashTodoListContainer" class="space-y-2 mb-3">
+                  <!-- Populated by JS -->
+                </div>
+
+                <!-- Quick add To-do directly from Dashboard -->
+                <div class="flex items-center gap-2 pt-2 border-t border-[#DECDB5]/50">
+                  <input type="text" id="dashQuickTodoTitle" placeholder="Thêm nhanh việc cần làm... (nhấn Enter)" 
+                         class="flex-1 bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs text-[#2B231D] placeholder-[#A49688] focus:bg-[#FFFDF9] focus:outline-none focus:ring-1 focus:ring-[#5F7465]"
+                         onkeydown="if(event.key==='Enter') quickAddTodoFromDash()">
+                  <button onclick="quickAddTodoFromDash()" class="px-3 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] text-xs font-bold hover:bg-[#1A261F] transition cursor-pointer flex items-center gap-1">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Thêm</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card: Check-in Thói Quen Hôm Nay -->
+              <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#FDF3EE] border border-[#F4DDD2] text-[#B14720] flex items-center justify-center">
+                      <i data-lucide="flame" class="w-4 h-4 text-[#C3651F]"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[#2B231D] text-sm">Thói Quen Cần Rèn Luyện Hôm Nay</h3>
+                      <p class="text-[11px] text-[#786B60]">Bấm vào vòng tròn để tích hoàn thành ngay lập tức</p>
+                    </div>
+                  </div>
+                  <button onclick="switchLifeTab('habits')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
+                    <span>Lịch & Biểu đồ</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                  </button>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-4 bg-[#F7F2E8] rounded-xl p-3 border border-[#DECDB5]/60 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-[#2B231D]">Tiến độ hôm nay:</span>
+                    <span id="dashHabitsRateBadge" class="text-xs font-bold text-[#5F7465]">0%</span>
+                  </div>
+                  <div class="w-1/2 bg-[#EFE7D8] h-2 rounded-full overflow-hidden">
+                    <div id="dashHabitsProgressBar" class="bg-[#5F7465] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                  <span id="dashHabitsFraction" class="text-xs font-semibold text-[#786B60]">0/0</span>
+                </div>
+
+                <!-- Habits List -->
+                <div id="dashHabitsListContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN (5 cols): Finance, Second Brain & Journal -->
+            <div class="lg:col-span-5 space-y-6">
+
+              <!-- Card: Tài Chính Tháng -->
+              <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#5F7465] flex items-center justify-center">
+                      <i data-lucide="wallet" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[#2B231D] text-sm">Tài Chính Gần Nhất</h3>
+                      <p class="text-[11px] text-[#786B60]" id="dashFinanceMonthLabel">Tháng 10/2026</p>
+                    </div>
+                  </div>
+                  <button onclick="switchLifeTab('finance')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
+                    <span>Chi tiết</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                  </button>
+                </div>
+
+                <!-- 3 Metric pills -->
+                <div class="grid grid-cols-3 gap-2.5 p-3 rounded-xl bg-[#F7F2E8] border border-[#DECDB5]/60 mb-4">
+                  <div>
+                    <div class="text-[10px] font-bold text-[#786B60] uppercase">Thu</div>
+                    <div class="text-xs sm:text-sm font-black text-[#5F7465] truncate" id="dashFinIncome">0 ₫</div>
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-bold text-[#786B60] uppercase">Chi</div>
+                    <div class="text-xs sm:text-sm font-black text-[#B14720] truncate" id="dashFinExpense">0 ₫</div>
+                  </div>
+                  <div>
+                    <div class="text-[10px] font-bold text-[#786B60] uppercase">Số Dư</div>
+                    <div class="text-xs sm:text-sm font-black text-[#2B231D] truncate" id="dashFinBalance">0 ₫</div>
+                  </div>
+                </div>
+
+                <!-- Recent Transactions list -->
+                <div class="text-xs font-bold text-[#786B60] uppercase tracking-wider mb-2">Giao dịch gần đây</div>
+                <div id="dashRecentTransList" class="space-y-2">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Card: Nhật Ký & Cảm Xúc -->
+              <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#FDF6E2] border border-[#F4E6C3] text-[#D39526] flex items-center justify-center">
+                      <i data-lucide="book-open" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[#2B231D] text-sm">Nhật Ký Hôm Nay</h3>
+                      <p class="text-[11px] text-[#786B60]">Lòng biết ơn & đúc kết bài học</p>
+                    </div>
+                  </div>
+                  <button onclick="switchLifeTab('journal')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
+                    <span>Mở nhật ký</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                  </button>
+                </div>
+
+                <div id="dashJournalContainer" class="space-y-2.5 text-xs">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+              <!-- Card: Ghi Chú Đã Ghim (Second Brain) -->
+              <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] border border-[#DECDB5] text-[#626037] flex items-center justify-center">
+                      <i data-lucide="sticky-note" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[#2B231D] text-sm">Ghi Chú Nổi Bật</h3>
+                      <p class="text-[11px] text-[#786B60]">Second Brain & ý tưởng lưu trữ</p>
+                    </div>
+                  </div>
+                  <button onclick="switchLifeTab('notes')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
+                    <span>Kho tri thức</span>
+                    <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                  </button>
+                </div>
+
+                <div id="dashNotesContainer" class="space-y-2 text-xs">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ================= SECTION 1: FINANCE ================= -->
+        <section id="section-finance" class="hidden space-y-6">
+
+    <!-- KPI Metric Summary Cards (3 Cards) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+      
+      <!-- Total Expense -->
+      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Tổng Chi Tiêu</span>
+          <div class="w-10 h-10 rounded-xl bg-[#FDF3EE] border border-[#F4DDD2] text-[#B14720] flex items-center justify-center">
+            <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-2xl sm:text-[28px] font-black text-[#B14720] tabular-nums tracking-tight my-1" id="cardTotalExpense">0 ₫</div>
+        <div class="mt-3 flex items-center gap-2 text-xs text-[#B14720] font-semibold">
+          <span class="w-2 h-2 rounded-full bg-[#B14720] shrink-0"></span>
+          <span id="cardExpenseCount">0 giao dịch chi</span>
+        </div>
+      </div>
+
+      <!-- Total Income -->
+      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Tổng Thu Nhập</span>
+          <div class="w-10 h-10 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#5F7465] flex items-center justify-center">
+            <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-2xl sm:text-[28px] font-black text-[#5F7465] tabular-nums tracking-tight my-1" id="cardTotalIncome">0 ₫</div>
+        <div class="mt-3 flex items-center gap-2 text-xs text-[#5F7465] font-semibold">
+          <span class="w-2 h-2 rounded-full bg-[#5F7465] shrink-0"></span>
+          <span id="cardIncomeCount">Tiền vào tài khoản</span>
+        </div>
+      </div>
+
+      <!-- Net Balance & Savings Progress -->
+      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Số Dư Tích Lũy</span>
+          <div class="w-10 h-10 rounded-xl bg-[#F7F4EE] border border-[#E5DEC7] text-[#626037] flex items-center justify-center">
+            <i data-lucide="wallet" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div class="text-2xl sm:text-[28px] font-black text-[#2B231D] tabular-nums tracking-tight my-1" id="cardNetBalance">0 ₫</div>
+        <div class="mt-3 space-y-1.5">
+          <div class="flex items-center justify-between text-xs text-[#786B60] font-medium">
+            <span>Tỷ lệ tích lũy:</span>
+            <span id="cardSavingsRate" class="font-bold text-[#5F7465]">0%</span>
+          </div>
+          <!-- Visual Mini Bar -->
+          <div class="w-full bg-[#EFE7D8] rounded-full h-1.5 overflow-hidden">
+            <div id="savingsProgressBar" class="bg-[#5F7465] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= CHARTS SECTION ================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+      <!-- Left: Donut Chart - Category Breakdown (5 Cols) -->
+      <div class="lg:col-span-5 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <div>
+              <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Phân Bổ Chi Tiêu</h3>
+              <p class="text-xs text-[#786B60]">Tỷ lệ theo từng danh mục</p>
+            </div>
+            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#786B60] font-semibold border border-[#DECDB5]" id="pieChartMonthLabel">Tháng này</span>
+          </div>
+
+          <!-- Chart Canvas Container -->
+          <div class="relative h-56 flex items-center justify-center my-2">
+            <canvas id="categoryPieChart"></canvas>
+            <div id="pieNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#A49688]">
+              <i data-lucide="pie-chart" class="w-8 h-8 mb-1.5 opacity-40"></i>
+              <span class="text-xs">Chưa có giao dịch chi tiêu</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Legends / Quick Breakdown List -->
+        <div class="border-t border-[#DECDB5]/60 pt-3 max-h-44 overflow-y-auto space-y-1.5 pr-1" id="categoryLegendList">
+          <!-- Dynamic category list items -->
+        </div>
+      </div>
+
+      <!-- Right: Trends with Tab Switching (Weekly vs Monthly) (7 Cols) -->
+      <div class="lg:col-span-7 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
+        <div>
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div>
+              <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight" id="trendChartHeaderTitle">Tiến Độ Chi Tiêu Theo Tuần</h3>
+              <p class="text-xs text-[#786B60]" id="trendChartHeaderSubtitle">Theo dõi nhịp độ thu - chi các tuần trong tháng</p>
+            </div>
+            
+            <!-- Segmented Tab Switcher -->
+            <div class="flex items-center bg-[#EFE7D8] p-0.5 rounded-xl border border-[#DECDB5] text-xs">
+              <button onclick="switchChartTab('weekly')" id="tabWeeklyBtn" class="px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition">
+                Theo tuần
+              </button>
+              <button onclick="switchChartTab('monthly')" id="tabMonthlyBtn" class="px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition">
+                Theo tháng
+              </button>
+            </div>
+          </div>
+
+          <!-- Chart Canvas: Weekly View -->
+          <div id="weeklyChartContainer" class="relative h-64 mt-2">
+            <canvas id="weeklyBarChart"></canvas>
+            <div id="weeklyNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#A49688]">
+              <i data-lucide="bar-chart-2" class="w-8 h-8 mb-1.5 opacity-40"></i>
+              <span class="text-xs">Chưa có dữ liệu tuần</span>
+            </div>
+          </div>
+
+          <!-- Chart Canvas: Monthly View (Initially Hidden) -->
+          <div id="monthlyChartContainer" class="relative h-64 mt-2 hidden">
+            <canvas id="monthlyTrendChart"></canvas>
+            <div id="monthlyNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#A49688]">
+              <i data-lucide="line-chart" class="w-8 h-8 mb-1.5 opacity-40"></i>
+              <span class="text-xs">Chưa có đủ dữ liệu tháng</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom legend -->
+        <div class="mt-3 border-t border-[#DECDB5]/60 pt-2.5 text-xs text-[#786B60] flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#B14720] inline-block"></span>
+              <span>Chi tiêu</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#5F7465] inline-block"></span>
+              <span>Thu nhập</span>
+            </div>
+          </div>
+          <span id="monthlySummaryText" class="font-bold text-[#2B231D] text-xs"></span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= 3-COLUMN CATEGORIZATION & REVIEW BOARD (PRIMARY VIEW) ================= -->
+    <div id="threeColumnsContainer" class="bg-[#FFFDF9] rounded-2xl border border-[#DECDB5] shadow-2xs p-4 sm:p-5 space-y-4">
+      
+      <!-- Board Header & View Switcher -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#DECDB5]/70">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-extrabold text-base sm:text-lg text-[#2B231D] tracking-tight">Chi Tiết Phân Loại Giao Dịch (3 Cột)</h3>
+            <span id="columnsTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#2B231D] font-bold border border-[#DECDB5]">0 mục</span>
+          </div>
+          <p class="text-xs text-[#786B60]">Mục AI tự đoán có độ chính xác dưới 65% ở cột giữa. Chọn danh mục để tự động chuyển sang cột tương ứng.</p>
+        </div>
+
+        <!-- Controls: View Mode & Search -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Instant Search Box -->
+          <div class="relative min-w-[200px]">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#A49688] absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="columnSearchInput" oninput="onColumnSearchChange()" placeholder="Tìm kiếm nhanh..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#F7F2E8] rounded-xl border border-[#DECDB5] focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] outline-none transition">
+          </div>
+
+          <!-- Add manual transaction -->
+          <button onclick="openAddTransactionModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition shadow-2xs">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Thêm GD</span>
+          </button>
+
+          <!-- View Switcher -->
+          <div class="flex items-center bg-[#EFE7D8] p-0.5 rounded-xl border border-[#DECDB5] text-xs">
+            <button onclick="switchMainView('columns')" id="btnViewColumns" class="btn-switch-columns px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition flex items-center gap-1.5">
+              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+              <span>3 Cột</span>
+            </button>
+            <button onclick="switchMainView('table')" id="btnViewTable" class="btn-switch-table px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition flex items-center gap-1.5">
+              <i data-lucide="table" class="w-3.5 h-3.5 text-[#786B60]"></i>
+              <span>Dạng Bảng</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 COLUMNS KANBAN GRID -->
+      <div id="kanbanGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+        <!-- CỘT 1: ĐÃ PHÂN LOẠI -->
+        <div class="bg-[#FBF8F2] rounded-2xl border border-[#DECDB5] p-4 flex flex-col h-[700px] shadow-2xs">
+          <!-- Column Header -->
+          <div class="pb-3 border-b border-[#DECDB5] shrink-0 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#5F7465] shadow-xs flex items-center justify-center text-[#FFFDF9] text-[9px] font-bold">✓</span>
+                <h4 class="font-extrabold text-xs text-[#2B231D] tracking-wide uppercase">ĐÃ PHÂN LOẠI</h4>
+              </div>
+              <span id="colCountCategorized" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#F0F5F2] text-[#3E5244] border border-[#D7E4DB]">0 giao dịch</span>
+            </div>
+            <div class="flex items-center justify-between text-xs bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-3 py-1.5 shadow-2xs">
+              <span class="text-[#786B60] font-semibold text-[11px]">Tổng tiền chi tiêu:</span>
+              <span id="colAmountCategorized" class="font-black text-[#2B231D] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
+            </div>
+          </div>
+
+          <!-- Cards Scroll Area -->
+          <div id="colListCategorized" class="flex-1 overflow-y-auto space-y-3 pt-3 pr-1">
+            <!-- Dynamic Cards -->
+          </div>
+        </div>
+
+        <!-- CỘT 2: CHƯA PHÂN LOẠI (< 65%) -->
+        <div class="bg-[#FDFBF5] rounded-2xl border-2 border-[#D39526] p-4 flex flex-col h-[700px] shadow-xs">
+          <!-- Column Header -->
+          <div class="pb-3 border-b border-[#D39526]/50 shrink-0 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#D39526] shadow-xs animate-pulse flex items-center justify-center text-[#FFFDF9] text-[9px] font-bold">!</span>
+                <h4 class="font-extrabold text-xs text-[#7A5408] tracking-wide uppercase">CHƯA PHÂN LOẠI (&lt; 65%)</h4>
+              </div>
+              <span id="colCountUnclassified" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#FDF3D9] text-[#7A5408] border border-[#F3DB9A]">0 cần chọn</span>
+            </div>
+            <div class="flex items-center justify-between text-xs bg-[#FDF6E2] border border-[#F3DB9A] rounded-xl px-3 py-1.5 shadow-2xs">
+              <span class="text-[#7A5408] font-semibold text-[11px]">Tổng tiền cần phân loại:</span>
+              <span id="colAmountUnclassified" class="font-black text-[#7A5408] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
+            </div>
+          </div>
+
+          <!-- Cards Scroll Area -->
+          <div id="colListUnclassified" class="flex-1 overflow-y-auto space-y-3 pt-3 pr-1">
+            <!-- Dynamic Cards with Action Dropdown -->
+          </div>
+        </div>
+
+        <!-- CỘT 3: KHÁC -->
+        <div class="bg-[#F9F5EC] rounded-2xl border border-[#DECDB5] p-4 flex flex-col h-[700px] shadow-2xs">
+          <!-- Column Header -->
+          <div class="pb-3 border-b border-[#DECDB5] shrink-0 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-[#786B60] shadow-xs flex items-center justify-center text-[#FFFDF9] text-[9px] font-bold">•</span>
+                <h4 class="font-extrabold text-xs text-[#55473C] tracking-wide uppercase">MỤC KHÁC</h4>
+              </div>
+              <span id="colCountOther" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#55473C] border border-[#DECDB5]">0 giao dịch</span>
+            </div>
+            <div class="flex items-center justify-between text-xs bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-3 py-1.5 shadow-2xs">
+              <span class="text-[#786B60] font-semibold text-[11px]">Tổng tiền mục khác:</span>
+              <span id="colAmountOther" class="font-black text-[#2B231D] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
+            </div>
+          </div>
+
+          <!-- Cards Scroll Area -->
+          <div id="colListOther" class="flex-1 overflow-y-auto space-y-3 pt-3 pr-1">
+            <!-- Dynamic Cards -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= FULL TABLE VIEW (OPTIONAL ALTERNATIVE VIEW) ================= -->
+    <div id="tableViewContainer" class="hidden bg-[#FFFDF9] rounded-2xl border border-[#DECDB5] shadow-2xs overflow-hidden">
+      
+      <!-- Table Controls Header -->
+      <div class="p-4 border-b border-[#DECDB5] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-extrabold text-base sm:text-lg text-[#2B231D] tracking-tight">Bảng Toàn Bộ Giao Dịch</h3>
+            <span id="tableCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#2B231D] font-bold border border-[#DECDB5]">0 mục</span>
+          </div>
+          <p class="text-xs text-[#786B60]">Xem dạng danh sách phẳng truyền thống với phân trang.</p>
+        </div>
+
+        <!-- Filter Controls & View Switcher -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Instant Search Box -->
+          <div class="relative min-w-[180px]">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#A49688] absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="searchInput" oninput="onSearchChange()" placeholder="Tìm nội dung..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#F7F2E8] rounded-xl border border-[#DECDB5] focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] outline-none transition">
+          </div>
+
+          <!-- Type filter -->
+          <select id="typeFilter" onchange="onFilterChange()" class="py-1.5 px-2.5 text-xs bg-[#F7F2E8] rounded-xl border border-[#DECDB5] font-semibold text-[#2B231D] outline-none cursor-pointer">
+            <option value="all">Tất cả loại</option>
+            <option value="expense">Chi tiêu</option>
+            <option value="income">Thu nhập</option>
+          </select>
+
+          <!-- Category filter -->
+          <select id="categoryFilter" onchange="onFilterChange()" class="py-1.5 px-2.5 text-xs bg-[#F7F2E8] rounded-xl border border-[#DECDB5] font-semibold text-[#2B231D] outline-none cursor-pointer">
+            <option value="all">Tất cả danh mục</option>
+          </select>
+
+          <!-- View Switcher in Table View -->
+          <div class="flex items-center bg-[#EFE7D8] p-0.5 rounded-xl border border-[#DECDB5] text-xs">
+            <button onclick="switchMainView('columns')" id="btnViewColumnsTbl" class="btn-switch-columns px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition flex items-center gap-1.5">
+              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-[#786B60]"></i>
+              <span>3 Cột</span>
+            </button>
+            <button onclick="switchMainView('table')" id="btnViewTableTbl" class="btn-switch-table px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition flex items-center gap-1.5">
+              <i data-lucide="table" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+              <span>Dạng Bảng</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Body Container -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-[#F7F2E8] border-b border-[#DECDB5] text-[#786B60] font-bold uppercase tracking-wider text-[10px]">
+              <th class="py-3 px-4 w-28">Ngày</th>
+              <th class="py-3 px-4">Nội Dung Giao Dịch</th>
+              <th class="py-3 px-4 w-48">Danh Mục</th>
+              <th class="py-3 px-4 text-right w-36">Số Tiền</th>
+              <th class="py-3 px-4 text-center w-14"></th>
+            </tr>
+          </thead>
+          <tbody id="transactionTableBody" class="divide-y divide-[#EFE7D8]">
+            <!-- Dynamic Rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer & Pagination -->
+      <div class="p-3.5 border-t border-[#DECDB5] bg-[#F7F2E8]/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 text-[#786B60]">
+          <span>Hiển thị</span>
+          <select id="pageSizeSelect" onchange="onPageSizeChange()" class="bg-[#FFFDF9] border border-[#DECDB5] rounded-lg px-2 py-1 font-semibold text-[#2B231D] outline-none">
+            <option value="15">15 dòng</option>
+            <option value="25" selected>25 dòng</option>
+            <option value="50">50 dòng</option>
+          </select>
+          <span id="paginationInfo">1 - 25 của 0</span>
+        </div>
+
+        <div class="flex items-center gap-1.5" id="paginationButtons">
+          <button onclick="changePage(-1)" id="prevPageBtn" class="px-2.5 py-1 rounded-lg border border-[#DECDB5] bg-[#FFFDF9] font-semibold text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] disabled:opacity-40 disabled:cursor-not-allowed transition">
+            Trước
+          </button>
+          <span id="pageNumbersContainer" class="flex items-center gap-1 font-bold text-[#2B231D] px-2"></span>
+          <button onclick="changePage(1)" id="nextPageBtn" class="px-2.5 py-1 rounded-lg border border-[#DECDB5] bg-[#FFFDF9] font-semibold text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] disabled:opacity-40 disabled:cursor-not-allowed transition">
+            Sau
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    </section>
+
+    <!-- ================= SECTION 2: TO-DO & PRODUCTIVITY TRACKING (Vikunja & Super Productivity) ================= -->
+    <section id="section-todos" class="space-y-6 hidden">
+      <!-- 3 KPI Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+        <!-- Today Completion -->
+        <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Tỷ Lệ Xong Hôm Nay</span>
+            <div class="w-10 h-10 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#5F7465] flex items-center justify-center">
+              <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-[28px] font-black text-[#5F7465] tabular-nums tracking-tight my-1" id="todoKpiTodayRate">0%</div>
+          <div class="mt-3 space-y-1.5">
+            <div class="flex items-center justify-between text-xs text-[#786B60] font-semibold">
+              <span id="todoKpiTodayCount">0 / 0 việc hôm nay</span>
+            </div>
+            <div class="w-full bg-[#EFE7D8] rounded-full h-1.5 overflow-hidden">
+              <div id="todoKpiProgressBar" class="bg-[#5F7465] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Urgent Tasks -->
+        <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Việc Cần Làm Gấp</span>
+            <div class="w-10 h-10 rounded-xl bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] flex items-center justify-center">
+              <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-[28px] font-black text-[#B14720] tabular-nums tracking-tight my-1" id="todoKpiUrgentCount">0</div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-[#B14720] font-semibold">
+            <span class="w-2 h-2 rounded-full bg-[#B14720] shrink-0"></span>
+            <span>Mức độ ưu tiên khẩn cấp</span>
+          </div>
+        </div>
+
+        <!-- Week Completed Velocity -->
+        <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Năng Suất 7 Ngày Qua</span>
+            <div class="w-10 h-10 rounded-xl bg-[#FDF6E2] border border-[#DECDB5] text-[#D39526] flex items-center justify-center">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-[28px] font-black text-[#2B231D] tabular-nums tracking-tight my-1" id="todoKpiWeekDone">0 việc</div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-[#626037] font-semibold">
+            <span class="w-2 h-2 rounded-full bg-[#5F7465] shrink-0"></span>
+            <span>Nhịp độ hoàn thành công việc</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tracking Charts Section (Chart.js) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        <!-- Bar Chart: 7-day velocity -->
+        <div class="lg:col-span-8 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
+              <p class="text-xs text-[#786B60]">Số việc hoàn thành so với việc tạo mới trong 7 ngày gần nhất</p>
+            </div>
+          </div>
+          <div class="relative h-64 mt-2">
+            <canvas id="todoVelocityChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Donut: Category breakdown -->
+        <div class="lg:col-span-4 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
+          <div class="mb-2">
+            <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Phân Bổ Theo Nhóm</h3>
+            <p class="text-xs text-[#786B60]">Tỷ lệ công việc theo danh mục</p>
+          </div>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="todoCategoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Add & Task Board Area -->
+      <div class="bg-[#FFFDF9] rounded-3xl border border-[#DECDB5] p-5 sm:p-6 shadow-xs space-y-5">
+        <!-- Quick Add Input Bar -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#F7F2E8] p-2 rounded-2xl border border-[#DECDB5]">
+          <div class="flex items-center gap-2 flex-1 px-3">
+            <i data-lucide="plus" class="w-4 h-4 text-[#786B60] shrink-0"></i>
+            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới... (Gõ tiêu đề và nhấn Enter)" class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
+          </div>
+          <div class="flex items-center gap-2 shrink-0 flex-wrap">
+            <select id="todoQuickPriority" class="bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#2B231D] outline-none cursor-pointer">
+              <option value="urgent">Khẩn cấp 🔴</option>
+              <option value="high">Ưu tiên cao 🟡</option>
+              <option value="normal" selected>Bình thường 🟢</option>
+              <option value="low">Thấp ⚪</option>
+            </select>
+            <select id="todoQuickCategory" class="bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#2B231D] outline-none cursor-pointer">
+              <option value="Công việc">Công việc</option>
+              <option value="Học tập">Học tập</option>
+              <option value="Tài chính">Tài chính</option>
+              <option value="Sức khỏe">Sức khỏe</option>
+              <option value="Cá nhân">Cá nhân</option>
+            </select>
+            <input type="date" id="todoQuickDate" class="bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#2B231D] outline-none cursor-pointer">
+            <button onclick="quickAddTodo(null)" class="px-4 py-1.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold transition shadow-xs cursor-pointer">
+              + Thêm
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Pills & View Switcher -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-b border-[#DECDB5]/50 pb-4">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button onclick="setTodoFilter('all')" id="todoFilterBtn_all" class="px-3 py-1 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer">Tất cả</button>
+            <button onclick="setTodoFilter('today')" id="todoFilterBtn_today" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Hôm nay</button>
+            <button onclick="setTodoFilter('week')" id="todoFilterBtn_week" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Tuần này</button>
+            <button onclick="setTodoFilter('urgent')" id="todoFilterBtn_urgent" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Khẩn cấp</button>
+            <button onclick="setTodoFilter('completed')" id="todoFilterBtn_completed" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Đã hoàn thành</button>
+          </div>
+
+          <!-- View Switcher -->
+          <div class="inline-flex items-center bg-[#EFE7D8] p-1 rounded-xl border border-[#DECDB5]">
+            <button onclick="setTodoView('list')" id="todoViewListBtn" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FFFDF9] text-[#2B231D] shadow-2xs cursor-pointer">
+              <i data-lucide="list" class="w-3.5 h-3.5 inline mr-1"></i> Danh sách
+            </button>
+            <button onclick="setTodoView('kanban')" id="todoViewKanbanBtn" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">
+              <i data-lucide="columns-3" class="w-3.5 h-3.5 inline mr-1"></i> Bảng Kanban
+            </button>
+          </div>
+        </div>
+
+        <!-- List View Container -->
+        <div id="todoListItems" class="space-y-2.5">
+          <!-- Populated via life_hub.js -->
+        </div>
+
+        <!-- Kanban View Container -->
+        <div id="todoKanbanContainer" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-[#F7F2E8] p-4 rounded-2xl border border-[#DECDB5] space-y-3">
+            <div class="flex items-center justify-between font-extrabold text-xs text-[#2B231D] border-b border-[#DECDB5] pb-2">
+              <span>📋 Cần làm (Pending)</span>
+            </div>
+            <div id="kanbanColPending" class="space-y-2"></div>
+          </div>
+          <div class="bg-[#FDF6E2] p-4 rounded-2xl border border-[#DECDB5] space-y-3">
+            <div class="flex items-center justify-between font-extrabold text-xs text-[#D39526] border-b border-[#DECDB5] pb-2">
+              <span>⚡ Đang làm (In Progress)</span>
+            </div>
+            <div id="kanbanColInProgress" class="space-y-2"></div>
+          </div>
+          <div class="bg-[#F0F5F2] p-4 rounded-2xl border border-[#DECDB5] space-y-3">
+            <div class="flex items-center justify-between font-extrabold text-xs text-[#5F7465] border-b border-[#DECDB5] pb-2">
+              <span>✅ Đã hoàn thành (Done)</span>
+            </div>
+            <div id="kanbanColCompleted" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 3: HABITS & STREAKS (Habitica) ================= -->
+    <section id="section-habits" class="space-y-6 hidden">
+      <!-- 3 KPI Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+        <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Chuỗi Kỷ Luật Dài Nhất</span>
+            <div class="w-10 h-10 rounded-xl bg-[#FDF6E2] border border-[#DECDB5] text-[#C3651F] flex items-center justify-center">
+              <i data-lucide="flame" class="w-5 h-5 fill-[#C3651F]"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-[28px] font-black text-[#C3651F] tabular-nums tracking-tight my-1" id="habitKpiMaxStreak">0 ngày</div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-[#786B60] font-semibold">
+            <span>Kỷ lục kiên trì liên tục</span>
+          </div>
+        </div>
+
+        <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Check-in Hôm Nay</span>
+            <div class="w-10 h-10 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#5F7465] flex items-center justify-center">
+              <i data-lucide="calendar-check" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-[28px] font-black text-[#5F7465] tabular-nums tracking-tight my-1" id="habitKpiTodayDone">0 / 0</div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-[#5F7465] font-semibold">
+            <span>Thói quen đã hoàn thành hôm nay</span>
+          </div>
+        </div>
+
+        <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[#786B60] uppercase tracking-wider">Điểm Kiên Trì (7 Ngày)</span>
+            <div class="w-10 h-10 rounded-xl bg-[#EFE7D8] border border-[#DECDB5] text-[#626037] flex items-center justify-center">
+              <i data-lucide="activity" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="text-2xl sm:text-[28px] font-black text-[#2B231D] tabular-nums tracking-tight my-1" id="habitKpiConsistency">0%</div>
+          <div class="mt-3 flex items-center gap-2 text-xs text-[#626037] font-semibold">
+            <span>Tỷ lệ hoàn thành thói quen tuần</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Month Navigation Controller for Habits (Xem các tháng cũ & hiện cả tháng) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFDF9] p-4 rounded-3xl border border-[#DECDB5] shadow-2xs">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB] shrink-0">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-[#2B231D] tracking-tight">Lịch Theo Dõi Cả Tháng & Tháng Cũ</h3>
+            <p class="text-[11px] text-[#786B60]">Chọn tháng để xem lịch chi tiết và biểu đồ nhịp độ từng tháng</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Month Stepper -->
+          <div class="flex items-center gap-1 bg-[#EFE7D8] p-1 rounded-2xl border border-[#DECDB5] shadow-2xs relative">
+            <button onclick="stepHabitMonth(-1)" class="p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Tháng trước">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+            
+            <div class="relative">
+              <button onclick="toggleHabitMonthDropdown(event)" id="habitMonthDropdownBtn" class="flex items-center gap-1.5 px-3 py-1 text-xs font-black text-[#2B231D] hover:bg-[#FFFDF9] rounded-xl transition cursor-pointer">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+                <span id="habitMonthDropdownLabel">Tháng 11/2026</span>
+                <i data-lucide="chevron-down" class="w-3 h-3 text-[#A49688]"></i>
+              </button>
+              <div id="habitMonthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#FFFDF9] rounded-2xl shadow-xl border border-[#DECDB5] p-1.5 z-50 text-xs max-h-60 overflow-y-auto dropdown-enter">
+                <!-- Populated dynamically via life_hub.js -->
+              </div>
+            </div>
+
+            <button onclick="stepHabitMonth(1)" class="p-1.5 rounded-xl hover:bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Tháng sau">
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Quick Jump Current Month -->
+          <button onclick="jumpHabitCurrentMonth()" class="px-3 py-1.5 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#2B231D] text-xs font-bold border border-[#DECDB5] shadow-2xs transition cursor-pointer">
+            Tháng hiện tại
+          </button>
+
+          <!-- Add Habit button -->
+          <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-xs cursor-pointer">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Thêm thói quen</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Biểu Đồ Miền (Area Chart): Thống kê số thói quen đã hoàn thành theo ngày trong tháng -->
+      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-3xl border border-[#DECDB5] shadow-2xs space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DECDB5]/50 pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB]">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight" id="habitAreaChartTitle">Biểu Đồ Miền: Xu Hướng Hoàn Thành Thói Quen (Tháng 11/2026)</h3>
+            </div>
+            <p class="text-xs text-[#786B60] mt-1" id="habitAreaChartSubtitle">Số lượng thói quen bạn đã check-in mỗi ngày xuyên suốt cả tháng</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] px-3 py-1 rounded-full border border-[#D7E4DB] flex items-center gap-1.5" id="habitAreaChartBadge">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> <span id="habitAvgBadgeText">Đang duy trì nhịp độ tốt</span>
+            </span>
+          </div>
+        </div>
+        <div class="relative h-60 mt-1">
+          <canvas id="habitAreaChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Habit Board Header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-extrabold text-lg text-[#2B231D] tracking-tight">Lịch Thói Quen Cả Tháng</h3>
+        </div>
+      </div>
+
+      <!-- Habit Cards Container -->
+      <div id="habitListContainer" class="space-y-4">
+        <!-- Rendered via life_hub.js -->
+      </div>
+    </section>
+
+    <!-- ================= SECTION 4: JOURNAL & MOOD (AppFlowy) ================= -->
+    <section id="section-journal" class="space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Main Notebook -->
+        <div class="lg:col-span-8 bg-[#FFFDF9] rounded-3xl border border-[#DECDB5] p-6 shadow-xs space-y-5">
+          <!-- Date & Mood Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#DECDB5]/60 pb-4">
+            <div class="flex items-center gap-2 flex-wrap">
+              <label class="text-xs font-bold text-[#786B60]">Ngày viết:</label>
+              <div class="flex items-center gap-1 bg-[#F7F2E8] p-1 rounded-xl border border-[#DECDB5]">
+                <button onclick="stepJournalDate(-1)" class="p-1 hover:bg-[#FFFDF9] rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Hôm trước">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <input type="date" id="journalDateInput" onchange="loadJournal(this.value)" class="bg-transparent border-none text-xs font-bold text-[#2B231D] outline-none cursor-pointer px-1">
+                <button onclick="stepJournalDate(1)" class="p-1 hover:bg-[#FFFDF9] rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Hôm sau">
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <button onclick="jumpJournalToday()" class="px-2.5 py-1 text-xs font-bold rounded-xl bg-[#DECDB5]/60 hover:bg-[#DECDB5] text-[#2B231D] transition cursor-pointer">
+                Hôm nay
+              </button>
+              <span id="journalSaveStatus" class="text-[11px] text-[#5F7465] font-semibold hidden sm:inline ml-1"></span>
+            </div>
+
+            <!-- Mood Selectors -->
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-xs font-bold text-[#786B60] mr-1">Tâm trạng:</span>
+              <button onclick="setJournalMood('great')" id="moodBtn_great" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Rất tuyệt vời">😄 Rất tốt</button>
+              <button onclick="setJournalMood('good')" id="moodBtn_good" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Vui vẻ">😊 Vui</button>
+              <button onclick="setJournalMood('neutral')" id="moodBtn_neutral" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Bình thường">😐 Bình ổn</button>
+              <button onclick="setJournalMood('tired')" id="moodBtn_tired" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Mệt mỏi">🥱 Mệt</button>
+              <button onclick="setJournalMood('stressed')" id="moodBtn_stressed" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Căng thẳng">😰 Áp lực</button>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div>
+            <label class="block text-xs font-bold text-[#786B60] mb-1">Tiêu đề ngày hôm nay</label>
+            <input type="text" id="journalTitleInput" placeholder="VD: Một ngày làm việc tập trung và an yên..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-2xl px-4 py-2.5 text-sm font-bold text-[#2B231D] outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] transition">
+          </div>
+
+          <!-- Gratitude Prompt -->
+          <div class="bg-[#FDF6E2] p-4 rounded-2xl border border-[#DECDB5]/80 space-y-1">
+            <label class="block text-xs font-extrabold text-[#7A5408] flex items-center gap-1.5">
+              <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526] fill-[#D39526]"></i> Điều tôi cảm thấy biết ơn hôm nay (Gratitude)
+            </label>
+            <textarea id="journalGratitudeInput" rows="2" placeholder="Ghi lại 1-3 điều khiến bạn cảm thấy may mắn, biết ơn trong ngày hôm nay..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
+          </div>
+
+          <!-- Improvement / Reflection Prompt -->
+          <div class="bg-[#F0F5F2] p-4 rounded-2xl border border-[#D7E4DB] space-y-1">
+            <label class="block text-xs font-extrabold text-[#233329] flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> Bài học & Điều cần làm tốt hơn (Reflection)
+            </label>
+            <textarea id="journalImprovementInput" rows="2" placeholder="Điều gì bạn có thể cải thiện hoặc bài học rút ra sau hôm nay?..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
+          </div>
+
+          <!-- Freeform Content -->
+          <div>
+            <label class="block text-xs font-bold text-[#786B60] mb-1">Nhật ký tự do & Cảm nghĩ</label>
+            <textarea id="journalContentInput" rows="7" placeholder="Viết tự do về những suy nghĩ, câu chuyện hay sự kiện diễn ra trong ngày..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-2xl p-4 text-xs font-medium text-[#2B231D] outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] transition leading-relaxed"></textarea>
+          </div>
+
+          <!-- Save Button & Shortcut Hint -->
+          <div class="flex items-center justify-between pt-2 border-t border-[#DECDB5]/50 flex-wrap gap-2">
+            <span class="text-[11px] text-[#A49688]">💡 Mẹo: Nhấn <kbd class="px-1.5 py-0.5 rounded bg-[#EFE7D8] text-[#2B231D] font-mono text-[10px] border border-[#DECDB5]">Ctrl + S</kbd> để lưu nhanh</span>
+            <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-sm transition cursor-pointer">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Lưu Trang Nhật Ký</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- History Sidebar -->
+        <div class="lg:col-span-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-extrabold text-sm text-[#2B231D]">Lịch Sử Nhật Ký</h4>
+            <span class="text-[11px] text-[#786B60]">10 ngày gần nhất</span>
+          </div>
+          <div id="journalHistoryList" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+            <!-- Rendered via life_hub.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECTION 5: NOTES & SECOND BRAIN (AppFlowy & Vikunja) ================= -->
+    <section id="section-notes" class="space-y-6 hidden">
+      <!-- Search & Category Filters -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFDF9] p-4 rounded-3xl border border-[#DECDB5] shadow-xs">
+        <div class="flex items-center gap-2 flex-1 max-w-md bg-[#F7F2E8] px-3.5 py-2 rounded-2xl border border-[#DECDB5]">
+          <i data-lucide="search" class="w-4 h-4 text-[#786B60]"></i>
+          <input type="text" oninput="searchNotes(this.value)" placeholder="Tìm kiếm ghi chú theo từ khóa..." class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="flex items-center gap-1 bg-[#EFE7D8] p-1 rounded-xl border border-[#DECDB5]">
+            <button onclick="setNoteFilter('all')" id="noteFilterBtn_all" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer">Tất cả</button>
+            <button onclick="setNoteFilter('Ý tưởng')" id="noteFilterBtn_Ý tưởng" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Ý tưởng</button>
+            <button onclick="setNoteFilter('Công việc')" id="noteFilterBtn_Công việc" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Công việc</button>
+            <button onclick="setNoteFilter('Học tập')" id="noteFilterBtn_Học tập" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Học tập</button>
+            <button onclick="setNoteFilter('Tài chính')" id="noteFilterBtn_Tài chính" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Tài chính</button>
+          </div>
+
+          <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-xs transition cursor-pointer">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Tạo ghi chú</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Notes Grid Container -->
+      <div id="notesGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via life_hub.js -->
+      </div>
+    </section>
+
+  </main>
+  </div>
+</div>
+
+  <!-- ================= UPLOAD STATEMENT MODAL ================= -->
+  <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB]">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tải Lên Sao Kê Ngân Hàng</h3>
+            <p class="text-xs text-[#786B60]">Lưu vào D:\Finance • Hỗ trợ Excel, CSV, PDF</p>
+          </div>
+        </div>
+        <button onclick="closeUploadModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Drag and drop zone -->
+      <div id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#DECDB5] hover:border-[#5F7465] rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer bg-[#F7F2E8] hover:bg-[#F0F5F2] transition text-center group">
+        <input type="file" id="fileInput" onchange="handleFileSelect(event)" accept=".xlsx,.xls,.csv,.pdf" class="hidden">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFFDF9] shadow-xs border border-[#DECDB5] flex items-center justify-center text-[#5F7465] group-hover:scale-110 transition duration-300 mb-2">
+          <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+        </div>
+        <p class="text-xs font-bold text-[#2B231D]">Kéo thả file sao kê vào đây hoặc <span class="text-[#5F7465] underline">chọn từ máy tính</span></p>
+        <p class="text-[11px] text-[#786B60] mt-1">Hỗ trợ VCB, Techcombank, MB, VPBank, ACB, ViettelPay, v.v.</p>
+        <div id="selectedFileName" class="hidden mt-3 text-xs font-bold text-[#3E5244] bg-[#F0F5F2] border border-[#D7E4DB] px-3 py-1.5 rounded-xl flex items-center gap-2">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span id="selectedFileNameText"></span>
+        </div>
+      </div>
+
+      <!-- Smart Deduplication Note -->
+      <div class="bg-[#F0F5F2] border border-[#D7E4DB] rounded-xl p-3 flex items-start gap-2 text-xs text-[#233329]">
+        <i data-lucide="shield-check" class="w-4 h-4 text-[#5F7465] shrink-0 mt-0.5"></i>
+        <span><strong>Tự động khử trùng lặp thông minh:</strong> Khi bạn tải sao kê 60 ngày hoặc các kỳ gối đầu nhau, hệ thống sẽ tự động đối soát và loại bỏ các giao dịch đã ghi nhận từ trước.</span>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeUploadModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#DECDB5] text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition">
+          Hủy bỏ
+        </button>
+        <button id="uploadSubmitBtn" onclick="submitUploadStatement()" disabled class="px-5 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          <span>Xử lý & Phân loại</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SETTINGS MODAL ================= -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-md w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Cấu Hình AI Phân Loại</h3>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Mô Hình AI (LLM)</label>
+          <select id="settingsProvider" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold text-[#2B231D] outline-none">
+            <option value="gemini">Google Gemini (Miễn phí & Tối ưu)</option>
+            <option value="openai">OpenAI ChatGPT (GPT-4o-mini)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">API Key</label>
+          <input type="password" id="settingsApiKey" placeholder="Nhập API Key nếu muốn dùng AI đám mây" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+          <p class="text-[11px] text-[#786B60] mt-1">Dữ liệu được lưu tại: <strong class="text-[#2B231D] font-mono">D:\Finance\expense_data.db</strong></p>
+        </div>
+
+        <!-- Google Cloud Run Sync Section -->
+        <div class="pt-3 border-t border-[#DECDB5]/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-[#233329] flex items-center gap-1.5">
+              <i data-lucide="cloud" class="w-4 h-4 text-[#5F7465]"></i>
+              <span>Đồng Bộ Google Cloud Run (2 chiều)</span>
+            </label>
+            <span id="syncLastTimeBadge" class="text-[10px] text-[#786B60] font-medium">Chưa đồng bộ</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="url" id="settingsCloudUrl" placeholder="https://life-hub-xxxx.a.run.app" class="flex-1 bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+            <button onclick="triggerCloudSyncNow()" id="btnTriggerSync" class="px-3 py-2 text-xs font-bold rounded-xl bg-[#5F7465] text-white hover:bg-[#4d5e52] transition flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs">
+              <i data-lucide="refresh-cw" id="syncSpinIcon" class="w-3.5 h-3.5"></i>
+              <span>Đồng bộ ngay</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-[#786B60] leading-relaxed">
+            Nhập đường link Cloud Run sau khi triển khai. Nhấn <strong>Đồng bộ ngay</strong> để kéo mọi dữ liệu bạn nhập trên iPhone về máy tính và ngược lại!
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#DECDB5] text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition">
+          Đóng
+        </button>
+        <button onclick="saveSettings()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition shadow-sm">
+          Lưu cài đặt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MOBILE CONNECT MODAL ================= -->
+  <div id="mobileConnectModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#5F7465]/15 border border-[#5F7465]/30 text-[#5F7465] flex items-center justify-center">
+            <i data-lucide="smartphone" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Kết Nối iPhone & iPad</h3>
+            <p class="text-[11px] text-[#786B60]">Mở ứng dụng trên điện thoại qua Wi-Fi</p>
+          </div>
+        </div>
+        <button onclick="closeMobileConnectModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition cursor-pointer">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- QR Code & Link Container -->
+      <div class="text-center py-2 space-y-3">
+        <div class="inline-block p-3 rounded-2xl bg-white border border-[#DECDB5] shadow-xs">
+          <img id="mobileQrImg" src="" alt="Mã QR kết nối điện thoại" class="w-48 h-48 mx-auto rounded-xl">
+        </div>
+        <div class="space-y-1">
+          <p class="text-xs font-bold text-[#2B231D]">Quét mã QR bằng Camera iPhone / iPad</p>
+          <p class="text-[11px] text-[#786B60]">Hoặc truy cập trực tiếp bằng trình duyệt Safari:</p>
+        </div>
+        <div class="flex items-center gap-2 bg-[#F7F2E8] p-2 rounded-xl border border-[#DECDB5]">
+          <input type="text" id="mobileConnectUrlInput" readonly class="bg-transparent text-xs font-bold text-[#5F7465] flex-1 outline-none px-2 select-all">
+          <button onclick="copyMobileUrl()" id="mobileCopyBtn" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition cursor-pointer shrink-0">
+            Sao chép
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-Step Setup Instructions -->
+      <div class="bg-[#F0F5F2] p-4 rounded-2xl border border-[#D7E4DB] space-y-2 text-xs text-[#2B231D]">
+        <h4 class="font-bold text-[#233329] flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+          <span>Cách cài thành ứng dụng toàn màn hình trên iPhone / iPad:</span>
+        </h4>
+        <ol class="space-y-1.5 text-[11px] text-[#554B41] list-decimal list-inside leading-relaxed">
+          <li>Đảm bảo điện thoại đang kết nối <strong>cùng Wi-Fi</strong> với laptop.</li>
+          <li>Mở link bằng <strong>Safari</strong> trên iPhone/iPad.</li>
+          <li>Bấm nút <strong>Chia sẻ (Share)</strong> ở thanh dưới Safari -> Chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong>.</li>
+        </ol>
+      </div>
+
+      <!-- Cloud 24/7 notice -->
+      <div class="bg-[#FDF6E2] p-3 rounded-2xl border border-[#F4E6C3] text-[11px] text-[#7A5408] leading-relaxed flex items-start gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-[#D39526] shrink-0 mt-0.5"></i>
+        <span><strong>Lưu ý:</strong> Khi kết nối qua Wi-Fi nội bộ, laptop đóng vai trò máy chủ nên cần mở máy. Nếu bạn muốn dùng 24/7 ở bất kỳ đâu ngay cả khi <strong>laptop tắt nguồn</strong>, chúng tôi có thể thiết lập đưa dữ liệu lên Cloud (Render/Railway) miễn phí cho bạn.</span>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button onclick="closeMobileConnectModal()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition cursor-pointer">
+          Đã hiểu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ADD TRANSACTION MODAL ================= -->
+  <div id="addTransactionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Thêm Giao Dịch Thủ Công</h3>
+        </div>
+        <button onclick="closeAddTransactionModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Ngày giao dịch</label>
+          <input type="date" id="transDate" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+        </div>
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Mô tả giao dịch</label>
+          <input type="text" id="transDesc" placeholder="VD: Ăn bún chả, Mua đồ WinMart..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Số tiền (VNĐ)</label>
+            <input type="number" id="transAmount" placeholder="50000" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+          </div>
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Loại</label>
+            <select id="transType" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold text-[#2B231D] outline-none">
+              <option value="expense">Chi tiêu (-)</option>
+              <option value="income">Thu nhập (+)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Danh mục</label>
+          <select id="transCategory" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold text-[#2B231D] outline-none">
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeAddTransactionModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#DECDB5] text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition">
+          Hủy bỏ
+        </button>
+        <button onclick="saveManualTransaction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition shadow-sm">
+          Thêm mới
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TO-DO MODAL (CREATE / EDIT) ================= -->
+  <div id="todoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#233329] flex items-center justify-center border border-[#D7E4DB]">
+            <i data-lucide="check-square" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight" id="todoModalHeader">Công Việc Mới</h3>
+            <p class="text-xs text-[#786B60]">Lên lịch & thiết lập ưu tiên</p>
+          </div>
+        </div>
+        <button onclick="closeTodoModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="todoModalId" value="">
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Tên công việc <span class="text-[#B14720]">*</span></label>
+          <input type="text" id="todoModalTitle" placeholder="VD: Hoàn thành bài tập, Gặp đối tác..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Mô tả chi tiết</label>
+          <textarea id="todoModalDesc" rows="2" placeholder="Ghi chú thêm về yêu cầu, checklist hoặc link tài liệu..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Hạn hoàn thành</label>
+            <input type="date" id="todoModalDueDate" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D]">
+          </div>
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Mức độ ưu tiên</label>
+            <select id="todoModalPriority" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-bold text-[#2B231D] outline-none">
+              <option value="urgent">🔴 Khẩn cấp</option>
+              <option value="high">🟠 Ưu tiên cao</option>
+              <option value="normal" selected>🟢 Bình thường</option>
+              <option value="low">⚪ Thấp</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Danh mục</label>
+            <select id="todoModalCategory" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold text-[#2B231D] outline-none">
+              <option value="Công việc">Công việc</option>
+              <option value="Học tập">Học tập</option>
+              <option value="Tài chính">Tài chính</option>
+              <option value="Sức khỏe">Sức khỏe</option>
+              <option value="Cá nhân">Cá nhân</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Ước tính Pomodoro (25p)</label>
+            <input type="number" id="todoModalPomoEst" min="1" max="20" value="1" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-bold text-[#2B231D] outline-none">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#DECDB5]/60">
+        <button onclick="closeTodoModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#DECDB5] text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">
+          Hủy bỏ
+        </button>
+        <button onclick="saveTodoModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition shadow-sm cursor-pointer">
+          Lưu công việc
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= NOTE MODAL (CREATE / EDIT) ================= -->
+  <div id="noteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#626037] flex items-center justify-center border border-[#DECDB5]">
+            <i data-lucide="sticky-note" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight" id="noteModalHeader">Ghi Chú Mới</h3>
+            <p class="text-xs text-[#786B60]">Lưu trữ tri thức & ý tưởng (Second Brain)</p>
+          </div>
+        </div>
+        <button onclick="closeNoteModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="noteModalId" value="">
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Tiêu đề ghi chú <span class="text-[#B14720]">*</span></label>
+          <input type="text" id="noteModalTitle" placeholder="VD: Quy tắc đầu tư, Kỹ thuật Pomodoro..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block font-bold text-[#2B231D] mb-1">Chủ đề / Danh mục</label>
+            <select id="noteModalCategory" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold text-[#2B231D] outline-none">
+              <option value="Ý tưởng">Ý tưởng</option>
+              <option value="Công việc">Công việc</option>
+              <option value="Học tập">Học tập</option>
+              <option value="Tài chính">Tài chính</option>
+              <option value="Cá nhân">Cá nhân</option>
+            </select>
+          </div>
+          <div class="flex items-center pt-5">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="noteModalIsPinned" class="rounded accent-[#5F7465] w-4 h-4 cursor-pointer">
+              <span class="text-xs font-bold text-[#2B231D]">Ghim lên đầu trang</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#2B231D] mb-1">Nội dung ghi chú</label>
+          <textarea id="noteModalContent" rows="6" placeholder="Viết nội dung, gạch đầu dòng, công thức hoặc đoạn văn bản cần nhớ..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl p-3 text-xs outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition resize-none leading-relaxed"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#DECDB5]/60">
+        <button onclick="closeNoteModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#DECDB5] text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">
+          Hủy bỏ
+        </button>
+        <button onclick="saveNoteModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] transition shadow-sm cursor-pointer">
+          Lưu ghi chú
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Floating Category Picker Dropdown (Soft Vintage Style, identical to 'Thao tác') -->
+  <div id="globalCategoryPicker" class="hidden fixed bg-[#FFFDF9] rounded-2xl shadow-xl border border-[#DECDB5] p-1.5 z-50 dropdown-enter text-xs max-h-72 w-56 overflow-y-auto">
+    <!-- Populated dynamically -->
+  </div>
+
+  <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait) ================= -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-2 py-1.5 flex items-center justify-around shadow-lg">
+    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="flex flex-col items-center gap-0.5 text-[#233329] font-bold text-[10px] py-1 px-2 rounded-xl transition bg-[#EFE7D8]/60 cursor-pointer">
+      <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+      <span>Tổng quan</span>
+    </button>
+    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+      <i data-lucide="wallet" class="w-4 h-4"></i>
+      <span>Tài chính</span>
+    </button>
+    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+      <i data-lucide="check-square" class="w-4 h-4"></i>
+      <span>Việc làm</span>
+    </button>
+    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+      <i data-lucide="flame" class="w-4 h-4"></i>
+      <span>Thói quen</span>
+    </button>
+    <button onclick="switchLifeTab('journal')" id="mobileNav_journal" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+      <i data-lucide="book-open" class="w-4 h-4"></i>
+      <span>Nhật ký</span>
+    </button>
+    <button onclick="switchLifeTab('notes')" id="mobileNav_notes" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+      <i data-lucide="file-text" class="w-4 h-4"></i>
+      <span>Ghi chú</span>
+    </button>
+  </nav>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
+
+  <!-- Application Logic -->
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/life_hub.js"></script>
+</body>
+</html>
