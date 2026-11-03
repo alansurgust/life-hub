@@ -132,18 +132,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // One-click Reload function for Header button
-async function reloadAllData() {
+async function reloadAllData(silent = false) {
   const icon = document.getElementById('reloadIcon');
-  if (icon) icon.classList.add('animate-spin');
+  if (icon && !silent) icon.classList.add('animate-spin');
 
   try {
     await refreshDashboard();
-    showToast('Đã làm mới dữ liệu từ D:\\Finance thành công!', 'success');
+    if (!silent) {
+      showToast('Đã làm mới dữ liệu từ D:\\Finance thành công!', 'success');
+    }
   } catch (err) {
-    showToast('Lỗi khi làm mới: ' + err.message, 'error');
+    if (!silent) {
+      showToast('Lỗi khi làm mới: ' + err.message, 'error');
+    }
   } finally {
     setTimeout(() => {
-      if (icon) icon.classList.remove('animate-spin');
+      if (icon && !silent) icon.classList.remove('animate-spin');
     }, 500);
   }
 }

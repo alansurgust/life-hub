@@ -1765,10 +1765,11 @@ def import_sync_data(payload: dict):
         # 1. Transactions merge
         for t in payload.get("transactions", []):
             c.execute("""
-                SELECT id FROM transactions 
+                SELECT id, category, is_manual_category FROM transactions 
                 WHERE date = ? AND amount = ? AND type = ? AND description = ?
             """, (t.get("date"), t.get("amount"), t.get("type"), t.get("description")))
-            if not c.fetchone():
+            row = c.fetchone()
+            if not row:
                 c.execute("""
                     INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -1777,6 +1778,9 @@ def import_sync_data(payload: dict):
                     t.get("category"), t.get("description"), t.get("raw_description"), t.get("ref_no"),
                     t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0)
                 ))
+            else:
+                if t.get("is_manual_category") == 1 and (row["category"] != t.get("category") or row["is_manual_category"] == 0):
+                    c.execute("UPDATE transactions SET category = ?, is_manual_category = 1 WHERE id = ?", (t.get("category"), row["id"]))
 
         # 2. Todos merge
         for item in payload.get("todos", []):
@@ -1823,17 +1827,36 @@ def import_sync_data(payload: dict):
         local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
         valid_local_habit_ids = set(local_habit_name_to_id.values())
 
-        # 4. Habit logs merge
-        for hl in payload.get("habit_logs", []):
-            h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
-            local_h_id = local_habit_name_to_id.get(h_name)
-            if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
-                local_h_id = hl.get("habit_id")
+        # 4. Habit logs reconciliation (reconciles active 35-day window to prevent unticked habit resurrection)
+        active_local_h_ids = list(local_habit_name_to_id.values())
+        if active_local_h_ids and "habit_logs" in payload:
+            thirty_five_days_ago = (datetime.date.today() - datetime.timedelta(days=35)).isoformat()
+            placeholders = ",".join(["?"] * len(active_local_h_ids))
+            c.execute(f"""
+                DELETE FROM habit_logs 
+                WHERE habit_id IN ({placeholders}) AND date >= ?
+            """, (*active_local_h_ids, thirty_five_days_ago))
 
-            if local_h_id:
-                c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (local_h_id, hl.get("date")))
-                if not c.fetchone():
-                    c.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)", (local_h_id, hl.get("date"), hl.get("status", 1)))
+            for hl in payload.get("habit_logs", []):
+                h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
+                local_h_id = local_habit_name_to_id.get(h_name)
+                if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
+                    local_h_id = hl.get("habit_id")
+
+                if local_h_id:
+                    c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
+                              (local_h_id, hl.get("date"), hl.get("status", 1)))
+        else:
+            for hl in payload.get("habit_logs", []):
+                h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
+                local_h_id = local_habit_name_to_id.get(h_name)
+                if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
+                    local_h_id = hl.get("habit_id")
+
+                if local_h_id:
+                    c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (local_h_id, hl.get("date")))
+                    if not c.fetchone():
+                        c.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)", (local_h_id, hl.get("date"), hl.get("status", 1)))
 
         # 5. Journal entries merge
         for j in payload.get("journal_entries", []):
@@ -1863,6 +1886,108 @@ def import_sync_data(payload: dict):
     finally:
         conn.close()
 
+@app.post("/api/sync/push")
+def push_to_cloud(payload: dict = None):
+    payload = payload or {}
+    cloud_url = payload.get("cloud_url", "").strip().rstrip("/")
+    if not cloud_url:
+        conn = get_db_connection()
+        try:
+            c = conn.cursor()
+            c.execute("SELECT value FROM settings WHERE key = 'cloud_run_url'")
+            row = c.fetchone()
+            if row and row["value"]:
+                cloud_url = row["value"].strip().rstrip("/")
+        finally:
+            conn.close()
+
+    if not cloud_url:
+        raise HTTPException(status_code=400, detail="Vui lòng cung cấp Cloud Run / Render URL")
+
+    local_data = export_sync_data()
+    import httpx
+    try:
+        r_push = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=60.0)
+        if r_push.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"Lỗi đẩy dữ liệu lên Cloud: {r_push.text}")
+
+        conn = get_db_connection()
+        try:
+            c = conn.cursor()
+            now_str = datetime.datetime.now().strftime("%H:%M - %d/%m/%Y")
+            c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('cloud_run_url', ?)", (cloud_url,))
+            c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_cloud_sync', ?)", (now_str,))
+            conn.commit()
+        finally:
+            conn.close()
+
+        return {
+            "success": True,
+            "message": "Đã tải dữ liệu lên Cloud thành công!",
+            "last_synced": now_str,
+            "counts": {
+                "transactions": len(local_data.get("transactions", [])),
+                "todos": len(local_data.get("todos", [])),
+                "habits": len(local_data.get("habits", []))
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Không thể kết nối Cloud Run: {str(e)}")
+
+@app.post("/api/sync/pull")
+def pull_from_cloud(payload: dict = None):
+    payload = payload or {}
+    cloud_url = payload.get("cloud_url", "").strip().rstrip("/")
+    if not cloud_url:
+        conn = get_db_connection()
+        try:
+            c = conn.cursor()
+            c.execute("SELECT value FROM settings WHERE key = 'cloud_run_url'")
+            row = c.fetchone()
+            if row and row["value"]:
+                cloud_url = row["value"].strip().rstrip("/")
+        finally:
+            conn.close()
+
+    if not cloud_url:
+        raise HTTPException(status_code=400, detail="Vui lòng cung cấp Cloud Run / Render URL")
+
+    import httpx
+    try:
+        r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=60.0)
+        if r_pull.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"Lỗi lấy dữ liệu từ Cloud: {r_pull.text}")
+
+        cloud_data = r_pull.json()
+        import_sync_data(cloud_data)
+
+        conn = get_db_connection()
+        try:
+            c = conn.cursor()
+            now_str = datetime.datetime.now().strftime("%H:%M - %d/%m/%Y")
+            c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('cloud_run_url', ?)", (cloud_url,))
+            c.execute("INSERT OR REPLACE INTO settings (key, value) VALUES ('last_cloud_sync', ?)", (now_str,))
+            conn.commit()
+        finally:
+            conn.close()
+
+        return {
+            "success": True,
+            "message": "Đã tải dữ liệu từ Cloud về máy thành công!",
+            "last_synced": now_str,
+            "counts": {
+                "transactions": len(cloud_data.get("transactions", [])),
+                "todos": len(cloud_data.get("todos", [])),
+                "habits": len(cloud_data.get("habits", []))
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Không thể kết nối Cloud Run: {str(e)}")
+
 @app.post("/api/sync/trigger")
 def trigger_cloud_sync(payload: dict = None):
     payload = payload or {}
@@ -1887,12 +2012,12 @@ def trigger_cloud_sync(payload: dict = None):
     # 2. Push local data to Cloud Run
     import httpx
     try:
-        r_push = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=30.0)
+        r_push = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=60.0)
         if r_push.status_code != 200:
             raise HTTPException(status_code=502, detail=f"Lỗi đẩy dữ liệu lên Cloud: {r_push.text}")
 
         # 3. Pull cloud data back into local database
-        r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=30.0)
+        r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=60.0)
         if r_pull.status_code != 200:
             raise HTTPException(status_code=502, detail=f"Lỗi lấy dữ liệu từ Cloud: {r_pull.text}")
 

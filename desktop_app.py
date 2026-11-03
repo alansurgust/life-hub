@@ -294,8 +294,11 @@ def main():
             server_thread.stop()
             os._exit(0)
 
-    except BaseException as ex:
-        log_step(f"main() CRITICAL BASE EXCEPTION: {type(ex).__name__}: {ex}\n{traceback.format_exc()}")
+    except (SystemExit, KeyboardInterrupt):
+        log_step("main() exit requested.")
+        sys.exit(0)
+    except Exception as ex:
+        log_step(f"main() CRITICAL EXCEPTION: {type(ex).__name__}: {ex}\n{traceback.format_exc()}")
         show_fatal_error(f"Lỗi khởi động Finance:\n{ex}\n\n{traceback.format_exc()}")
         sys.exit(1)
 

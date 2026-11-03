@@ -300,7 +300,8 @@ def _seed_initial_life_hub_data(cursor):
                                    (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465")))
                 return
             except Exception as e:
-                pass
+                import logging
+                logging.getLogger(__name__).error(f"Lỗi nạp initial_seed.json: {e}", exc_info=True)
 
     # No fake habit seeding - authentic habits only
 

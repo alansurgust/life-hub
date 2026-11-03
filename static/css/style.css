@@ -200,3 +200,29 @@ html, body {
   overscroll-behavior-x: none;
 }
 
+
+/* ==========================================================================
+   SAFE AREA & MOBILE HEADER OPTIMIZATIONS (iPhone Notch & Dynamic Island)
+   ========================================================================== */
+.app-top-header {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@media (max-width: 768px) {
+  .app-top-header {
+    /* Provide guaranteed comfortable clearance under status bar & Dynamic Island */
+    padding-top: max(env(safe-area-inset-top, 0px), 14px);
+  }
+}
+
+.app-bottom-nav {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 10px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+#mainScrollArea {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}

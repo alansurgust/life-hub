@@ -229,7 +229,7 @@ function reloadActiveTabData(silent = false) {
   if (lifeState.currentTab === 'dashboard') {
     loadDashboard();
   } else if (lifeState.currentTab === 'finance') {
-    if (typeof reloadAllData === 'function') reloadAllData();
+    if (typeof reloadAllData === 'function') reloadAllData(silent);
   } else if (lifeState.currentTab === 'todos') {
     loadTodos();
     loadTodoStats();
@@ -2296,12 +2296,17 @@ async function triggerCloudSyncNow() {
 // =========================================================================
 // AUTOMATIC 2-WAY SYNC ENGINE (PC <-> Render Cloud)
 // =========================================================================
+function isLocalEnvironment() {
+  const h = window.location.hostname;
+  return h === '127.0.0.1' || h === 'localhost' || /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(h);
+}
+
 let autoSyncTimeout = null;
 let lastAutoSyncTime = 0;
 let isSyncing = false;
 
 async function autoCloudSync(silent = true) {
-  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  const isLocal = isLocalEnvironment();
   if (!isLocal || isSyncing) return;
 
   isSyncing = true;
@@ -2339,7 +2344,7 @@ async function autoCloudSync(silent = true) {
 }
 
 window.scheduleAutoSync = function(delayMs = 2000) {
-  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  const isLocal = isLocalEnvironment();
   if (!isLocal) return;
   if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
   autoSyncTimeout = setTimeout(() => {
@@ -2416,3 +2421,150 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// =========================================================================
+// HEADER SYNC ACTIONS: TẢI LÊN & TẢI VỀ (Mobile & Desktop)
+// =========================================================================
+
+// 1. Tải lên (Push to Cloud / Import Backup)
+async function headerPushData() {
+  const btn = document.getElementById('btnHeaderPush');
+  const icon = document.getElementById('headerPushIcon');
+  const isLocal = isLocalEnvironment();
+
+  if (icon) icon.classList.add('animate-spin');
+  if (btn) btn.disabled = true;
+
+  try {
+    if (isLocal) {
+      showToast('Đang tải toàn bộ dữ liệu lên Cloud...', 'info');
+      const res = await fetch('/api/sync/push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (_) {
+        data = { detail: `HTTP ${res.status}: ${res.statusText || 'Lỗi phản hồi máy chủ'}` };
+      }
+      if (!res.ok) throw new Error(data.detail || 'Không thể tải dữ liệu lên Cloud');
+
+      const badge = document.getElementById('syncLastTimeBadge');
+      if (badge && data.last_synced) badge.textContent = `Đã đồng bộ: ${data.last_synced}`;
+
+      showToast(data.message || '✅ Đã tải dữ liệu lên Cloud thành công!', 'success');
+    } else {
+      const proceed = confirm('Bạn có muốn tải tệp sao lưu dữ liệu (.json) lên hệ thống không?');
+      if (proceed) {
+        const fileInput = document.getElementById('headerBackupFileInput');
+        if (fileInput) fileInput.click();
+      }
+    }
+  } catch (err) {
+    showToast(`Lỗi: ${err.message}`, 'error');
+  } finally {
+    if (icon) icon.classList.remove('animate-spin');
+    if (btn) btn.disabled = false;
+  }
+}
+
+// 2. Tải về (Pull from Cloud / Export Backup)
+async function headerPullData() {
+  const btn = document.getElementById('btnHeaderPull');
+  const icon = document.getElementById('headerPullIcon');
+  const isLocal = isLocalEnvironment();
+
+  if (icon) icon.classList.add('animate-spin');
+  if (btn) btn.disabled = true;
+
+  try {
+    if (isLocal) {
+      showToast('Đang tải dữ liệu từ Cloud về máy...', 'info');
+      const res = await fetch('/api/sync/pull', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (_) {
+        data = { detail: `HTTP ${res.status}: ${res.statusText || 'Lỗi phản hồi máy chủ'}` };
+      }
+      if (!res.ok) throw new Error(data.detail || 'Không thể tải dữ liệu từ Cloud');
+
+      const badge = document.getElementById('syncLastTimeBadge');
+      if (badge && data.last_synced) badge.textContent = `Đã đồng bộ: ${data.last_synced}`;
+
+      showToast(data.message || '✅ Đã tải dữ liệu từ Cloud về máy thành công!', 'success');
+      reloadActiveTabData(true);
+    } else {
+      showToast('Đang làm mới & tải tệp dữ liệu về máy...', 'info');
+      const res = await fetch('/api/sync/export-data');
+      if (!res.ok) throw new Error('Không thể xuất dữ liệu từ máy chủ');
+      const data = await res.json();
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+      a.href = url;
+      a.download = `life_hub_backup_${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      reloadActiveTabData(true);
+      showToast('✅ Đã tải dữ liệu về máy thành công!', 'success');
+    }
+  } catch (err) {
+    showToast(`Lỗi: ${err.message}`, 'error');
+  } finally {
+    if (icon) icon.classList.remove('animate-spin');
+    if (btn) btn.disabled = false;
+  }
+}
+
+// 3. Handle upload of backup JSON file
+async function handleHeaderBackupUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const btn = document.getElementById('btnHeaderPush');
+  const icon = document.getElementById('headerPushIcon');
+  if (icon) icon.classList.add('animate-spin');
+  if (btn) btn.disabled = true;
+
+  try {
+    showToast('Đang đọc và nạp tệp sao lưu...', 'info');
+    const text = await file.text();
+    const payload = JSON.parse(text);
+
+    const res = await fetch('/api/sync/import-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_) {
+      data = { detail: `HTTP ${res.status}: ${res.statusText || 'Lỗi nạp tệp'}` };
+    }
+    if (!res.ok) throw new Error(data.detail || 'Không thể nhập dữ liệu');
+
+    showToast('✅ Đã nạp và cập nhật dữ liệu thành công!', 'success');
+    reloadActiveTabData(true);
+  } catch (err) {
+    showToast(`Lỗi nạp tệp: ${err.message}`, 'error');
+  } finally {
+    if (icon) icon.classList.remove('animate-spin');
+    if (btn) btn.disabled = false;
+    event.target.value = '';
+  }
+}
