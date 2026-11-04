@@ -1387,11 +1387,12 @@ def get_todo_stats():
         """, (d_str, d_str))
         completed_series.append(c.fetchone()[0])
 
+        # 2. Cột màu be: Gộp tổng việc mới trong ngày và việc tồn đọng từ hôm trước chưa hoàn thành
         c.execute("""
             SELECT COUNT(*) FROM todos 
-            WHERE (date(created_at) = ? AND (due_date >= ? OR due_date IS NULL))
-               OR (date(created_at) > ? AND due_date = ?)
-        """, (d_str, d_str, d_str, d_str))
+            WHERE (date(created_at) <= ? OR (due_date IS NOT NULL AND due_date <= ?))
+              AND (completed_at IS NULL OR date(completed_at) >= ?)
+        """, (d_str, d_str, d_str))
         created_series.append(c.fetchone()[0])
 
     c.execute("SELECT category, COUNT(*) as count FROM todos GROUP BY category ORDER BY count DESC")

@@ -96,7 +96,7 @@
               <i data-lucide="wallet" class="w-4 h-4"></i>
               <span>Tài chính</span>
             </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarFinanceBadge">319</span>
+            
           </button>
 
           <button onclick="switchLifeTab('todos')" id="navTabTodos" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
@@ -109,7 +109,7 @@
 
           <button onclick="switchLifeTab('habits')" id="navTabHabits" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
             <div class="flex items-center gap-3">
-              <i data-lucide="flame" class="w-4 h-4 text-[#C3651F]"></i>
+              <i data-lucide="flame" class="w-4 h-4 text-[#786B60]"></i>
               <span>Thói quen</span>
             </div>
             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarHabitsBadge">5</span>
@@ -127,7 +127,7 @@
               <i data-lucide="sticky-note" class="w-4 h-4"></i>
               <span>Ghi chú & Tri thức</span>
             </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarNotesBadge">4</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D] hidden" id="sidebarNotesBadge"></span>
           </button>
         </nav>
       </div>
@@ -156,9 +156,9 @@
 
           <!-- Pomodoro Mode Selector (25m Focus / 5m Break / 15m Long Break) -->
           <div class="grid grid-cols-3 gap-1 mt-2.5 pt-2 border-t border-[#DECDB5]/60 text-[10px] font-bold text-center">
-            <button onclick="setPomoMode('focus')" id="pomoMode_focus" class="py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer">25m Tập trung</button>
-            <button onclick="setPomoMode('short')" id="pomoMode_short" class="py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">5m Nghỉ</button>
-            <button onclick="setPomoMode('long')" id="pomoMode_long" class="py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">15m Nghỉ</button>
+            <button onclick="setPomoMode('focus')" id="pomoMode_focus" title="Tập trung 25 phút" class="py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer">25m</button>
+            <button onclick="setPomoMode('short')" id="pomoMode_short" title="Nghỉ ngắn 5 phút" class="py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">5m</button>
+            <button onclick="setPomoMode('long')" id="pomoMode_long" title="Nghỉ dài 15 phút" class="py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer">15m</button>
           </div>
 
           <!-- Active Linked Task Banner -->
@@ -321,7 +321,7 @@
             </button>
 
             <!-- Global Reload Button -->
-            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\Finance" class="p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group flex items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
+            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\Finance" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
               <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#786B60] group-hover:text-[#5F7465] transition"></i>
               <span class="hidden lg:inline">Làm mới</span>
             </button>
@@ -396,31 +396,7 @@
             </div>
           </div>
 
-          <!-- Quick Action Shortcuts Bar -->
-          <div class="bg-[#FFFDF9] p-3 sm:p-3.5 rounded-2xl border border-[#DECDB5] shadow-2xs space-y-2.5 sm:space-y-0 sm:flex sm:items-center sm:gap-3">
-            <div class="text-xs font-bold text-[#786B60] flex items-center gap-1.5 shrink-0">
-              <i data-lucide="zap" class="w-3.5 h-3.5 text-[#D39526]"></i>
-              <span>Thao tác nhanh:</span>
-            </div>
-            <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2 flex-1">
-              <button onclick="openTodoModal()" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-                <i data-lucide="plus" class="w-3.5 h-3.5 text-[#5F7465] shrink-0"></i>
-                <span class="truncate">Việc mới</span>
-              </button>
-              <button onclick="openNoteModal()" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#F0F5F2] border border-[#DECDB5] hover:border-[#5F7465] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-                <i data-lucide="sticky-note" class="w-3.5 h-3.5 text-[#626037] shrink-0"></i>
-                <span class="truncate">Ghi chú mới</span>
-              </button>
-              <button onclick="switchLifeTab('journal')" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF6E2] border border-[#DECDB5] hover:border-[#D39526] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-                <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#D39526] shrink-0"></i>
-                <span class="truncate">Viết nhật ký</span>
-              </button>
-              <button onclick="togglePomodoro()" class="flex items-center justify-center sm:justify-start gap-1.5 px-3 py-2 rounded-xl bg-[#F7F2E8] hover:bg-[#FDF3EE] border border-[#DECDB5] hover:border-[#B14720] text-xs font-bold text-[#2B231D] transition shadow-2xs cursor-pointer">
-                <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B14720] shrink-0"></i>
-                <span class="truncate">Bật Pomodoro</span>
-              </button>
-            </div>
-          </div>
+
 
           <!-- 2. Main Two-Column Grid: Daily Actions & Overview Insights -->
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -431,12 +407,10 @@
               <!-- Card: Việc Cần Làm Hôm Nay -->
               <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
                 <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#233329] flex items-center justify-center">
-                      <i data-lucide="check-square" class="w-4 h-4"></i>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-square" class="w-4 h-4 text-[#233329]"></i>
                     <div>
-                      <h3 class="font-bold text-[#2B231D] text-sm">Việc Ưu Tiên Cần Làm</h3>
+                      <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Việc Ưu Tiên Cần Làm</h3>
                       <p class="text-[11px] text-[#786B60]">Nhiệm vụ chưa hoàn tất trong danh sách của bạn</p>
                     </div>
                   </div>
@@ -466,12 +440,10 @@
               <!-- Card: Check-in Thói Quen Hôm Nay -->
               <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
                 <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#FDF3EE] border border-[#F4DDD2] text-[#B14720] flex items-center justify-center">
-                      <i data-lucide="flame" class="w-4 h-4 text-[#C3651F]"></i>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="flame" class="w-4 h-4 text-[#C3651F]"></i>
                     <div>
-                      <h3 class="font-bold text-[#2B231D] text-sm">Thói Quen Cần Rèn Luyện Hôm Nay</h3>
+                      <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Thói Quen Cần Rèn Luyện Hôm Nay</h3>
                       <p class="text-[11px] text-[#786B60]">Bấm vào vòng tròn để tích hoàn thành ngay lập tức</p>
                     </div>
                   </div>
@@ -507,12 +479,10 @@
               <!-- Card: Tài Chính Tháng -->
               <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
                 <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] border border-[#D7E4DB] text-[#5F7465] flex items-center justify-center">
-                      <i data-lucide="wallet" class="w-4 h-4"></i>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="wallet" class="w-4 h-4 text-[#5F7465]"></i>
                     <div>
-                      <h3 class="font-bold text-[#2B231D] text-sm">Tài Chính Gần Nhất</h3>
+                      <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Tài Chính Gần Nhất</h3>
                       <p class="text-[11px] text-[#786B60]" id="dashFinanceMonthLabel">Tháng 10/2026</p>
                     </div>
                   </div>
@@ -548,12 +518,10 @@
               <!-- Card: Nhật Ký & Cảm Xúc -->
               <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
                 <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#FDF6E2] border border-[#F4E6C3] text-[#D39526] flex items-center justify-center">
-                      <i data-lucide="book-open" class="w-4 h-4"></i>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-4 h-4 text-[#D39526]"></i>
                     <div>
-                      <h3 class="font-bold text-[#2B231D] text-sm">Nhật Ký Hôm Nay</h3>
+                      <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Nhật Ký Hôm Nay</h3>
                       <p class="text-[11px] text-[#786B60]">Lòng biết ơn & đúc kết bài học</p>
                     </div>
                   </div>
@@ -571,12 +539,10 @@
               <!-- Card: Ghi Chú Đã Ghim (Second Brain) -->
               <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs">
                 <div class="flex items-center justify-between mb-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] border border-[#DECDB5] text-[#626037] flex items-center justify-center">
-                      <i data-lucide="sticky-note" class="w-4 h-4"></i>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="sticky-note" class="w-4 h-4 text-[#626037]"></i>
                     <div>
-                      <h3 class="font-bold text-[#2B231D] text-sm">Ghi Chú Nổi Bật</h3>
+                      <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Ghi Chú Nổi Bật</h3>
                       <p class="text-[11px] text-[#786B60]">Second Brain & ý tưởng lưu trữ</p>
                     </div>
                   </div>
@@ -784,11 +750,24 @@
         </div>
       </div>
 
+      <!-- Mobile Kanban Column Switcher (Visible on Phones < 768px only) -->
+      <div class="md:hidden flex items-center bg-[#EFE7D8] p-1 rounded-2xl border border-[#DECDB5] mb-4" id="mobileKanbanTabSwitcher">
+        <button onclick="switchMobileKanbanCol('unclassified')" id="mColBtn_unclassified" class="flex-1 py-2 text-xs font-bold rounded-xl transition bg-[#233329] text-[#FFFDF9] shadow-xs cursor-pointer">
+          Chưa duyệt <span id="mColBadge_unclassified" class="text-[10px] px-1.5 py-0.5 rounded-full bg-[#D39526] text-white ml-1">0</span>
+        </button>
+        <button onclick="switchMobileKanbanCol('categorized')" id="mColBtn_categorized" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-[#786B60] hover:text-[#2B231D] cursor-pointer">
+          Đã phân loại
+        </button>
+        <button onclick="switchMobileKanbanCol('other')" id="mColBtn_other" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-[#786B60] hover:text-[#2B231D] cursor-pointer">
+          Mục khác
+        </button>
+      </div>
+
       <!-- 3 COLUMNS KANBAN GRID -->
       <div id="kanbanGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
         <!-- CỘT 1: ĐÃ PHÂN LOẠI -->
-        <div class="bg-[#FBF8F2] rounded-2xl border border-[#DECDB5] p-4 flex flex-col h-[700px] shadow-2xs">
+        <div id="kanbanCol_categorized" class="bg-[#FBF8F2] rounded-2xl border border-[#DECDB5] p-4 flex flex-col kanban-column-body shadow-2xs hidden md:flex">
           <!-- Column Header -->
           <div class="pb-3 border-b border-[#DECDB5] shrink-0 space-y-2">
             <div class="flex items-center justify-between">
@@ -811,7 +790,7 @@
         </div>
 
         <!-- CỘT 2: CHƯA PHÂN LOẠI (< 65%) -->
-        <div class="bg-[#FDFBF5] rounded-2xl border-2 border-[#D39526] p-4 flex flex-col h-[700px] shadow-xs">
+        <div id="kanbanCol_unclassified" class="bg-[#FDFBF5] rounded-2xl border border-[#D39526]/80 p-4 flex flex-col kanban-column-body shadow-xs flex">
           <!-- Column Header -->
           <div class="pb-3 border-b border-[#D39526]/50 shrink-0 space-y-2">
             <div class="flex items-center justify-between">
@@ -834,7 +813,7 @@
         </div>
 
         <!-- CỘT 3: KHÁC -->
-        <div class="bg-[#F9F5EC] rounded-2xl border border-[#DECDB5] p-4 flex flex-col h-[700px] shadow-2xs">
+        <div id="kanbanCol_other" class="bg-[#F9F5EC] rounded-2xl border border-[#DECDB5] p-4 flex flex-col kanban-column-body shadow-2xs hidden md:flex">
           <!-- Column Header -->
           <div class="pb-3 border-b border-[#DECDB5] shrink-0 space-y-2">
             <div class="flex items-center justify-between">
@@ -1013,7 +992,7 @@
           <div class="flex items-center justify-between mb-2">
             <div>
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
-              <p class="text-xs text-[#786B60]">Số việc hoàn thành so với việc tạo mới trong 7 ngày gần nhất</p>
+              <p class="text-xs text-[#786B60]">Số việc hoàn thành so với việc cần làm (mới & tồn đọng) trong 7 ngày gần nhất</p>
             </div>
           </div>
           <div class="relative h-64 mt-2">
@@ -1282,17 +1261,17 @@
           </div>
 
           <!-- Gratitude Prompt -->
-          <div class="bg-[#FDF6E2] p-4 rounded-2xl border border-[#DECDB5]/80 space-y-1">
-            <label class="block text-xs font-extrabold text-[#7A5408] flex items-center gap-1.5">
-              <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526] fill-[#D39526]"></i> Điều tôi cảm thấy biết ơn hôm nay (Gratitude)
+          <div class="bg-[#FFFDF9] p-4 rounded-2xl border border-[#DECDB5] space-y-1.5 focus-within:border-[#5F7465] transition shadow-2xs">
+            <label class="block text-xs font-semibold text-[#663B1B] flex items-center gap-1.5">
+              <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526]"></i> <span>Điều tôi biết ơn hôm nay (Gratitude)</span>
             </label>
             <textarea id="journalGratitudeInput" rows="2" placeholder="Ghi lại 1-3 điều khiến bạn cảm thấy may mắn, biết ơn trong ngày hôm nay..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
           </div>
 
           <!-- Improvement / Reflection Prompt -->
-          <div class="bg-[#F0F5F2] p-4 rounded-2xl border border-[#D7E4DB] space-y-1">
-            <label class="block text-xs font-extrabold text-[#233329] flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> Bài học & Điều cần làm tốt hơn (Reflection)
+          <div class="bg-[#FFFDF9] p-4 rounded-2xl border border-[#DECDB5] space-y-1.5 focus-within:border-[#5F7465] transition shadow-2xs">
+            <label class="block text-xs font-semibold text-[#233329] flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> <span>Bài học & Điều cần làm tốt hơn (Reflection)</span>
             </label>
             <textarea id="journalImprovementInput" rows="2" placeholder="Điều gì bạn có thể cải thiện hoặc bài học rút ra sau hôm nay?..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
           </div>
@@ -1363,7 +1342,7 @@
 
   <!-- ================= UPLOAD STATEMENT MODAL ================= -->
   <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB]">
@@ -1414,7 +1393,7 @@
 
   <!-- ================= SETTINGS MODAL ================= -->
   <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-md w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
@@ -1539,7 +1518,7 @@
 
   <!-- ================= ADD TRANSACTION MODAL ================= -->
   <div id="addTransactionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
@@ -1594,7 +1573,7 @@
 
   <!-- ================= TO-DO MODAL (CREATE / EDIT) ================= -->
   <div id="todoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#233329] flex items-center justify-center border border-[#D7E4DB]">
@@ -1670,7 +1649,7 @@
 
   <!-- ================= NOTE MODAL (CREATE / EDIT) ================= -->
   <div id="noteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4">
+    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#626037] flex items-center justify-center border border-[#DECDB5]">
@@ -1705,7 +1684,7 @@
               <option value="Cá nhân">Cá nhân</option>
             </select>
           </div>
-          <div class="flex items-center pt-5">
+          <div class="flex items-end pb-1.5">
             <label class="flex items-center gap-2 cursor-pointer select-none">
               <input type="checkbox" id="noteModalIsPinned" class="rounded accent-[#5F7465] w-4 h-4 cursor-pointer">
               <span class="text-xs font-bold text-[#2B231D]">Ghim lên đầu trang</span>
@@ -1736,29 +1715,29 @@
   </div>
 
   <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait) ================= -->
-  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-2 py-1.5 flex items-center justify-around shadow-lg">
-    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="flex flex-col items-center gap-0.5 text-[#233329] font-bold text-[10px] py-1 px-2 rounded-xl transition bg-[#EFE7D8]/60 cursor-pointer">
+  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-1 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem]">
+    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
       <span>Tổng quan</span>
     </button>
-    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="wallet" class="w-4 h-4"></i>
       <span>Tài chính</span>
     </button>
-    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="check-square" class="w-4 h-4"></i>
       <span>Việc làm</span>
     </button>
-    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="flame" class="w-4 h-4"></i>
       <span>Thói quen</span>
     </button>
-    <button onclick="switchLifeTab('journal')" id="mobileNav_journal" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('journal')" id="mobileNav_journal" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="book-open" class="w-4 h-4"></i>
       <span>Nhật ký</span>
     </button>
-    <button onclick="switchLifeTab('notes')" id="mobileNav_notes" class="flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer">
-      <i data-lucide="file-text" class="w-4 h-4"></i>
+    <button onclick="switchLifeTab('notes')" id="mobileNav_notes" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+      <i data-lucide="sticky-note" class="w-4 h-4"></i>
       <span>Ghi chú</span>
     </button>
   </nav>

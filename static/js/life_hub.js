@@ -73,9 +73,9 @@ function switchLifeTab(tabName) {
     const mBtn = document.getElementById(`mobileNav_${t}`);
     if (mBtn) {
       if (t === tabName) {
-        mBtn.className = 'flex flex-col items-center gap-0.5 text-[#233329] font-bold text-[10px] py-1 px-2 rounded-xl transition bg-[#EFE7D8]/60 cursor-pointer';
+        mBtn.className = 'flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer';
       } else {
-        mBtn.className = 'flex flex-col items-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1 px-2 rounded-xl transition cursor-pointer';
+        mBtn.className = 'flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer';
       }
     }
   });
@@ -383,11 +383,12 @@ function renderDashboard(data) {
               </button>
               <div class="min-w-0 flex-1 space-y-1">
                 <p class="text-xs sm:text-[13px] font-bold text-[#2B231D] leading-snug break-words">${escapeHtml(t.title)}</p>
-                <div class="flex items-center gap-1.5 flex-wrap text-[10px] text-[#786B60]">
-                  <span class="px-2 py-0.5 rounded-full border font-bold ${pInfo.class}">${pInfo.label}</span>
-                  <span class="px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037] font-semibold">${escapeHtml(t.category)}</span>
-                  ${isOverdue ? '<span class="px-2 py-0.5 rounded-full border font-bold bg-[#FDF3EE] text-[#B14720] border-[#F4DDD2] flex items-center gap-1"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i>Tồn đọng</span>' : ''}
-                  ${t.due_date ? `<span class="inline-flex items-center gap-1 font-medium ${isOverdue ? 'text-[#B14720] font-semibold' : ''}"><i data-lucide="calendar" class="w-2.5 h-2.5"></i>${formatDisplayDate(t.due_date)}</span>` : ''}
+                <div class="flex items-center gap-1.5 text-[11px] text-[#786B60]">
+                  <span class="font-semibold text-[#626037]">${escapeHtml(t.category)}</span>
+                  <span class="text-[#DECDB5]">•</span>
+                  <span class="${isOverdue ? 'text-[#B14720] font-bold' : ''}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
+                  ${t.priority === 'urgent' ? '<span class="text-[#B14720] font-bold ml-1">• Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[#D39526] font-bold ml-1">• Cao</span>' : '')}
+                  ${isOverdue ? '<span class="text-[#B14720] font-bold ml-1">• Tồn đọng</span>' : ''}
                 </div>
               </div>
             </div>
@@ -672,6 +673,7 @@ function renderTodoCharts(stats) {
       todoCharts.velocity.data.labels = stats.chart.labels;
       todoCharts.velocity.data.datasets[0].data = stats.chart.completed;
       todoCharts.velocity.data.datasets[1].data = stats.chart.created;
+      todoCharts.velocity.data.datasets[1].label = 'Cần làm (Mới & Tồn)';
       todoCharts.velocity.update('none');
     } else {
       todoCharts.velocity = new Chart(ctxVel.getContext('2d'), {
@@ -687,7 +689,7 @@ function renderTodoCharts(stats) {
             barPercentage: 0.6
           },
           {
-            label: 'Tạo mới',
+            label: 'Cần làm (Mới & Tồn)',
             data: stats.chart.created,
             backgroundColor: '#DECDB5',
             borderRadius: 6,
@@ -839,26 +841,23 @@ function renderTodoList() {
           </div>
         </div>
 
-        <!-- Bottom Row: Metadata Pills & Due Date & Pomodoro -->
-        <div class="flex items-center justify-between gap-2 flex-wrap pt-2 border-t border-[#DECDB5]/50 text-xs">
-          <!-- Left: Badges -->
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${pri.bg} ${pri.text} ${pri.border}">${pri.label}</span>
-            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037]">${escapeHtml(t.category)}</span>
-            ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] flex items-center gap-1"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i>Tồn đọng</span>' : ''}
+        <!-- Bottom Row: Clean Minimalist Typographic Line -->
+        <div class="flex items-center justify-between gap-2 flex-wrap pt-1 text-xs">
+          <!-- Left: Clean Typographic Metadata -->
+          <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-[#786B60]">
+            <span class="font-semibold text-[#626037]">${escapeHtml(t.category)}</span>
+            <span class="text-[#DECDB5]">•</span>
+            <span class="${isOverdue ? 'text-[#B14720] font-bold' : 'text-[#786B60]'}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
+            ${t.priority === 'urgent' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#DECDB5]/60 ml-1">Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF6E2] text-[#D39526] border border-[#DECDB5]/60 ml-1">Ưu tiên</span>' : '')}
+            ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] ml-1">Tồn đọng</span>' : ''}
           </div>
 
-          <!-- Right: Date and Pomodoro -->
+          <!-- Right: Pomodoro Quick Trigger -->
           <div class="flex items-center gap-2 text-xs">
-            <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#B14720] bg-[#FDF3EE] hover:bg-[#FBE8DE] border border-[#F4DDD2] px-2 py-0.5 rounded-lg transition cursor-pointer" title="Bắt đầu Pomodoro">
-              <i data-lucide="timer" class="w-3 h-3"></i>
+            <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#786B60] hover:text-[#B14720] px-2 py-0.5 rounded-lg hover:bg-[#FDF3EE] transition cursor-pointer" title="Bắt đầu Pomodoro">
+              <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B14720]"></i>
               <span>${t.pomodoro_done || 0}/${t.pomodoro_est || 1}</span>
             </button>
-
-            <span class="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-lg ${isOverdue ? 'bg-[#FDF3EE] text-[#B14720] font-bold border border-[#F4DDD2]' : 'bg-[#F7F2E8] text-[#786B60] border border-[#DECDB5]'}">
-              <i data-lucide="calendar" class="w-3 h-3"></i>
-              <span>${formatDisplayDate(t.due_date)}</span>
-            </span>
           </div>
         </div>
       </div>
@@ -1294,7 +1293,7 @@ function renderHabits(data) {
     // Generate empty padding cells for 1st day offset
     let paddingCells = '';
     for (let p = 0; p < firstWeekday; p++) {
-      paddingCells += '<div class="h-9 sm:h-10"></div>';
+      paddingCells += '<div class="h-6 sm:h-7"></div>';
     }
 
     // Generate Calendar day cells
@@ -1304,50 +1303,32 @@ function renderHabits(data) {
       const isPast = ws.is_past;
 
       if (isToday) {
-        // TODAY: ALWAYS HAS THE CIRCULAR CHECKBOX TO TICK!
-        let circleClass = '';
-        let circleIcon = '';
-        if (isDone) {
-          circleClass = 'bg-[#5F7465] text-white shadow-2xs scale-105';
-          circleIcon = '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>';
-        } else {
-          circleClass = 'border-2 border-dashed border-[#5F7465] text-[#5F7465] group-hover:bg-[#5F7465] group-hover:text-white group-hover:border-solid transition-all animate-pulse-subtle';
-          circleIcon = '<i data-lucide="plus" class="w-3 h-3 opacity-70 group-hover:opacity-100"></i>';
-        }
-
+        // TODAY: Compact checkable cell
         return `
-          <div onclick="toggleHabitLog(${h.id}, '${ws.date}')" class="flex flex-col items-center justify-between p-1 rounded-xl bg-[#FFFDF9] border border-[#5F7465]/50 shadow-xs cursor-pointer select-none ring-2 ring-[#5F7465]/20 group hover:border-[#5F7465] min-h-[44px]" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
-            <span class="text-[11px] font-black ${isDone ? 'text-[#2B231D]' : 'text-[#5F7465]'}">${ws.day}</span>
-            <div class="w-6 h-6 rounded-full flex items-center justify-center pointer-events-none mt-0.5 ${circleClass}">
-              ${circleIcon}
-            </div>
+          <div onclick="toggleHabitLog(${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border border-[#5F7465] bg-[#FFFDF9] text-[#5F7465] hover:border-[#233329]'} cursor-pointer select-none h-6 sm:h-7 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
+            <span>${ws.day}</span>
+            ${isDone ? '<i data-lucide="check" class="w-2.5 h-2.5 ml-0.5 stroke-[3]"></i>' : '<i data-lucide="plus" class="w-2.5 h-2.5 ml-0.5 opacity-70"></i>'}
           </div>
         `;
       } else if (isPast) {
-        // PAST DAYS: NO TICK CIRCLE AT ALL!
-        // If completed: Cell is solidly filled with vintage sage & number prominently highlighted!
-        // If not completed: Neutral soft background with muted number.
         if (isDone) {
           return `
-            <div class="flex flex-col items-center justify-center p-1 rounded-xl bg-[#5F7465] text-white shadow-2xs select-none transition min-h-[44px]" title="Ngày ${ws.day}: Đã hoàn thành">
-              <span class="text-xs font-black tracking-tight">${ws.day}</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-white/90 mt-1"></span>
+            <div class="flex items-center justify-center rounded-lg bg-[#5F7465] text-white shadow-2xs select-none transition h-6 sm:h-7 text-[10px] font-bold" title="Ngày ${ws.day}: Đã hoàn thành">
+              <span>${ws.day}</span>
             </div>
           `;
         } else {
           return `
-            <div class="flex flex-col items-center justify-center p-1 rounded-xl bg-[#F7F2E8]/60 text-[#A49688] select-none min-h-[44px]" title="Ngày ${ws.day}: Chưa hoàn thành">
-              <span class="text-xs font-medium">${ws.day}</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-transparent mt-1"></span>
+            <div class="flex items-center justify-center rounded-lg bg-[#F7F2E8]/60 text-[#A49688] select-none h-6 sm:h-7 text-[10px] font-medium" title="Ngày ${ws.day}: Chưa hoàn thành">
+              <span>${ws.day}</span>
             </div>
           `;
         }
       } else {
         // FUTURE DAYS: Dotted neutral placeholder
         return `
-          <div class="flex flex-col items-center justify-center p-1 rounded-xl bg-transparent text-[#DECDB5] select-none opacity-40 min-h-[44px]">
-            <span class="text-xs font-normal">${ws.day}</span>
-            <span class="w-1.5 h-1.5 mt-1"></span>
+          <div class="flex items-center justify-center rounded-lg bg-transparent text-[#DECDB5]/60 select-none h-6 sm:h-7 text-[10px]">
+            <span>${ws.day}</span>
           </div>
         `;
       }
@@ -1356,56 +1337,55 @@ function renderHabits(data) {
     const completedRate = Math.round(((h.month_completed_count || 0) / daysInMonth) * 100);
 
     return `
-      <div class="p-5 rounded-3xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col xl:flex-row xl:items-start justify-between gap-5">
-        <!-- Habit Metadata & Controls -->
-        <div class="flex items-start gap-4 xl:w-72 shrink-0">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] shrink-0">
-            <i data-lucide="${h.icon || 'sparkles'}" class="w-6 h-6"></i>
+      <div class="p-4 sm:p-5 rounded-3xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
+        <!-- Habit Metadata & Controls: Expansive room for habit name without truncation -->
+        <div class="flex items-start gap-3.5 sm:gap-4 flex-1 min-w-0">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] shrink-0">
+            <i data-lucide="${h.icon || 'sparkles'}" class="w-5 h-5 sm:w-6 sm:h-6"></i>
           </div>
-          <div class="space-y-1 min-w-0">
-            <div class="flex items-center gap-2">
-              <h4 onclick="editHabit(${h.id})" class="font-extrabold text-base text-[#2B231D] hover:text-[#5F7465] cursor-pointer transition truncate" title="Nhấp để sửa tên thói quen">${escapeHtml(h.name)}</h4>
-              <button onclick="editHabit(${h.id})" class="p-1 text-[#A49688] hover:text-[#5F7465] hover:bg-[#F0F5F2] rounded-lg transition cursor-pointer shrink-0" title="Sửa tên thói quen">
-                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-              </button>
+          <div class="space-y-1.5 flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <h4 onclick="editHabit(${h.id})" class="font-bold text-base sm:text-lg text-[#2B231D] hover:text-[#5F7465] cursor-pointer transition break-words leading-snug" title="Nhấp để sửa tên thói quen">${escapeHtml(h.name)}</h4>
+              <div class="flex items-center gap-1 shrink-0 pt-0.5">
+                <button onclick="editHabit(${h.id})" class="p-1 text-[#A49688] hover:text-[#5F7465] hover:bg-[#F0F5F2] rounded-lg transition cursor-pointer" title="Sửa tên thói quen">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteHabit(${h.id})" class="p-1 text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] rounded-lg transition cursor-pointer" title="Xóa thói quen">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
             </div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="inline-flex items-center gap-1 text-xs font-bold text-[#C3651F] bg-[#FDF6E2] px-2 py-0.5 rounded-full border border-[#DECDB5]">
+
+            <div class="flex items-center gap-2 flex-wrap pt-0.5">
+              <span class="inline-flex items-center gap-1 text-xs font-bold text-[#C3651F] bg-[#FDF6E2] px-2.5 py-0.5 rounded-full border border-[#DECDB5]">
                 <i data-lucide="flame" class="w-3.5 h-3.5 fill-[#C3651F]"></i> ${h.streak} ngày liên tiếp
               </span>
               <span class="text-xs text-[#786B60]">Kỷ lục: ${h.best_streak} ngày</span>
             </div>
-            <div class="pt-1 text-xs text-[#5F7465] font-semibold flex items-center gap-1.5">
+
+            <div class="pt-0.5 text-xs text-[#5F7465] font-semibold flex items-center gap-1.5">
               <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
               <span>Đã làm: <strong>${h.month_completed_count || 0} / ${daysInMonth}</strong> ngày (${completedRate}%)</span>
-            </div>
-            <div class="flex items-center gap-2 pt-2">
-              <button onclick="editHabit(${h.id})" class="px-2.5 py-1 text-[11px] font-semibold text-[#786B60] hover:text-[#2B231D] bg-[#EFE7D8] rounded-lg transition cursor-pointer">
-                <i data-lucide="edit-3" class="w-3 h-3 inline mr-1"></i> Sửa tên
-              </button>
-              <button onclick="deleteHabit(${h.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition cursor-pointer" title="Xóa thói quen">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              </button>
             </div>
           </div>
         </div>
 
-        <!-- Full Month Calendar Grid (7 columns T2 to CN) -->
-        <div class="flex-1 min-w-0 bg-[#F7F2E8] p-3 sm:p-4 rounded-2xl border border-[#DECDB5] shadow-2xs">
+        <!-- Compact Month Calendar: Neat mini-widget on the right -->
+        <div class="w-full md:w-[260px] lg:w-[280px] shrink-0 bg-[#F7F2E8] p-2.5 sm:p-3 rounded-2xl border border-[#DECDB5] shadow-2xs">
           <!-- Calendar Header -->
-          <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-[#DECDB5]/60 text-xs font-extrabold text-[#2B231D]">
-            <span class="flex items-center gap-1.5 text-[#626037]">
-              <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5F7465]"></i> Lịch ${data.month_label}
+          <div class="flex items-center justify-between mb-1.5 pb-1 border-b border-[#DECDB5]/60 text-[11px] font-bold text-[#626037]">
+            <span class="flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3 h-3 text-[#5F7465]"></i> Lịch ${data.month_label}
             </span>
           </div>
 
           <!-- 7-Column Header (T2 -> CN) -->
-          <div class="grid grid-cols-7 gap-1 sm:gap-1.5 text-center mb-1 text-[10px] font-extrabold text-[#786B60] uppercase tracking-wider">
+          <div class="grid grid-cols-7 gap-1 text-center mb-1 text-[9px] font-bold text-[#786B60] uppercase tracking-wider">
             <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
           </div>
 
           <!-- Calendar Days Grid -->
-          <div class="grid grid-cols-7 gap-1 sm:gap-1.5">
+          <div class="grid grid-cols-7 gap-1">
             ${paddingCells}
             ${daysCells}
           </div>
@@ -1820,7 +1800,7 @@ function renderNotes() {
   }
 
   container.innerHTML = lifeState.notes.map(n => `
-    <div class="p-5 rounded-3xl bg-[#FFFDF9] border ${n.is_pinned ? 'border-[#D39526] ring-1 ring-[#D39526]/50' : 'border-[#DECDB5]'} hover:border-[#5F7465] transition shadow-xs flex flex-col justify-between space-y-4 group">
+    <div class="p-5 rounded-3xl bg-[#FFFDF9] border ${n.is_pinned ? 'border-[#D39526]' : 'border-[#DECDB5]'} hover:border-[#5F7465] transition shadow-xs flex flex-col justify-between space-y-4 group">
       <div class="space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">${escapeHtml(n.category)}</span>
@@ -1840,13 +1820,9 @@ function renderNotes() {
         <p class="text-xs text-[#786B60] whitespace-pre-line line-clamp-6 leading-relaxed">${escapeHtml(n.content)}</p>
       </div>
 
-      <div class="pt-3 border-t border-[#DECDB5]/50 flex items-center justify-between text-[10px] text-[#A49688]">
-        <span>Cập nhật: ${formatDisplayDate(n.updated_at || n.created_at)}</span>
-        <div class="flex items-center gap-2">
-          <button onclick="copyNoteContent(${n.id})" class="font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Sao chép</button>
-          <span>•</span>
-          <button onclick="openNoteModal(${n.id})" class="font-bold text-[#5F7465] hover:underline cursor-pointer">Chỉnh sửa</button>
-        </div>
+      <div class="pt-2.5 border-t border-[#DECDB5]/40 flex items-center justify-between text-[11px] text-[#A49688]">
+        <span>${formatDisplayDate(n.updated_at || n.created_at)}</span>
+        <button onclick="openNoteModal(${n.id})" class="font-semibold text-[#5F7465] hover:text-[#233329] hover:underline cursor-pointer">Mở ghi chú →</button>
       </div>
     </div>
   `).join('');

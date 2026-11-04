@@ -1,3 +1,27 @@
+
+window.switchMobileKanbanCol = function(colName) {
+  const cols = ['unclassified', 'categorized', 'other'];
+  cols.forEach(c => {
+    const colEl = document.getElementById(`kanbanCol_${c}`);
+    const btnEl = document.getElementById(`mColBtn_${c}`);
+    if (colEl) {
+      if (c === colName) {
+        colEl.classList.remove('hidden');
+        colEl.classList.add('flex');
+      } else {
+        colEl.classList.add('hidden');
+        colEl.classList.remove('flex');
+      }
+    }
+    if (btnEl) {
+      if (c === colName) {
+        btnEl.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition bg-[#233329] text-[#FFFDF9] shadow-xs cursor-pointer';
+      } else {
+        btnEl.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition text-[#786B60] hover:text-[#2B231D] cursor-pointer';
+      }
+    }
+  });
+};
 /**
  * Finance - Client-side Application Logic v2.0
  * Features:
@@ -235,6 +259,8 @@ async function loadTransactionColumns() {
     // 2. Column: Unclassified (Chưa phân loại < 65%)
     const unclassCountEl = document.getElementById('colCountUnclassified');
     if (unclassCountEl) unclassCountEl.textContent = `${stats.unclassified_count || 0} cần chọn`;
+    const mColBadge = document.getElementById('mColBadge_unclassified');
+    if (mColBadge) mColBadge.textContent = stats.unclassified_count || 0;
     const unclassAmountEl = document.getElementById('colAmountUnclassified');
     if (unclassAmountEl) unclassAmountEl.textContent = formatCurrency(stats.unclassified_amount || 0);
     renderColumnList('colListUnclassified', data.unclassified || [], 'unclassified');
@@ -318,7 +344,7 @@ function renderColumnList(containerId, items, columnType) {
         <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, '${columnType}')" id="cardCatBtn-${t.id}" class="w-full flex items-center justify-between bg-[#FDF6E2] hover:bg-[#FBEFC8] border-2 border-[#D39526] text-[#4A3205] font-extrabold rounded-xl px-3 py-2 text-xs transition shadow-2xs cursor-pointer focus:ring-2 focus:ring-[#D39526]">
           <span class="flex items-center gap-1.5 truncate">
             <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526] shrink-0"></i>
-            <span class="truncate">👉 Ấn để chọn</span>
+            <span class="truncate">Chọn phân loại</span>
           </span>
           <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#7A5408] shrink-0"></i>
         </button>
@@ -1180,7 +1206,7 @@ async function loadTransactions() {
             </span>
           </td>
           <td class="py-2.5 px-4 text-center whitespace-nowrap">
-            <button onclick="deleteTransaction(${t.id})" title="Xóa giao dịch" class="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition">
+            <button onclick="deleteTransaction(${t.id})" title="Xóa giao dịch" class="opacity-70 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition cursor-pointer">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </td>

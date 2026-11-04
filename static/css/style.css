@@ -223,6 +223,45 @@ html, body {
   padding-right: env(safe-area-inset-right, 0px);
 }
 
-#mainScrollArea {
-  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+@media (max-width: 768px) {
+  #mainScrollArea {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (min-width: 769px) {
+  #mainScrollArea {
+    padding-bottom: 2rem;
+  }
+}
+
+/* Minimalist Hairline Borders & Clean Elevation */
+.border-hairline {
+  border-color: rgba(120, 107, 96, 0.16) !important;
+}
+
+.border-hairline-subtle {
+  border-color: rgba(120, 107, 96, 0.09) !important;
+}
+
+/* Modal Responsive Dialog */
+.modal-dialog-content {
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Kanban Column Responsive Height */
+.kanban-column-body {
+  max-height: calc(100vh - 22rem);
+  min-height: 380px;
+}
+
+@media (max-width: 767px) {
+  .kanban-column-body {
+    max-height: 520px;
+    min-height: 280px;
+  }
 }
