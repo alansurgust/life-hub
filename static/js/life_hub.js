@@ -440,11 +440,13 @@ function reloadActiveTabData(silent = false) {
     loadTodoStats();
   } else if (lifeState.currentTab === 'habits') {
     loadHabits();
-  } else if (lifeState.currentTab === 'journal') {
-    loadJournal(lifeState.currentJournalDate);
-    loadJournalHistory();
-  } else if (lifeState.currentTab === 'notes') {
-    loadNotes();
+  } else if (lifeState.currentTab === 'notebook' || lifeState.currentTab === 'journal' || lifeState.currentTab === 'notes') {
+    if ((lifeState.notebookSubTab || 'journal') === 'journal') {
+      loadJournal(lifeState.currentJournalDate);
+      loadJournalHistory();
+    } else {
+      loadNotes();
+    }
   }
 
   setTimeout(() => {
@@ -2734,7 +2736,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial sync immediately after UI boot (500ms)
   setTimeout(() => { autoCloudSync(true, true); }, 500);
 
-  // Fast periodic auto-sync every 10s on PC so mobile changes appear within 10 seconds!
+  // Fast periodic auto-sync every 4s on PC/mobile so cross-device changes appear within 4 seconds!
   setInterval(() => {
     if (document.visibilityState === 'visible') {
       if (isLocalEnvironment()) {
@@ -2743,7 +2745,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reloadActiveTabData(true);
       }
     }
-  }, 10000);
+  }, 4000);
 
   // Auto-sync immediately when app window gets focused
   window.addEventListener('focus', () => {

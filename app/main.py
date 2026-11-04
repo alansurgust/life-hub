@@ -1818,8 +1818,10 @@ def export_sync_data():
         c.execute("SELECT * FROM notes")
         notes = [dict(r) for r in c.fetchall()]
 
-        c.execute("SELECT table_name, record_uid, deleted_at FROM deleted_records")
-        deleted_records = [dict(r) for r in c.fetchall()]
+        # Clean up and exclude any stale tombstones for habits that are actively logged
+        active_habit_log_uids = {f"{r['habit_name']}||{r['date']}" for r in habit_logs if r.get('habit_name') and r.get('date')}
+        all_del = [dict(r) for r in c.execute("SELECT table_name, record_uid, deleted_at FROM deleted_records").fetchall()]
+        deleted_records = [r for r in all_del if not (r['table_name'] == 'habit_logs' and r['record_uid'] in active_habit_log_uids)]
 
         return {
             "timestamp": datetime.datetime.now().isoformat(),
@@ -1846,14 +1848,48 @@ def import_sync_data(payload: dict):
         local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
         valid_local_habit_ids = set(local_habit_name_to_id.values())
 
+        # Remote habit map already prepared above
+
+        # Identify all active habit logs (both incoming and local) so positive check-ins ALWAYS win
+        active_incoming_habit_logs = set()
+        for hl in payload.get("habit_logs", []):
+            h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
+            dt = hl.get("date")
+            if h_name and dt and hl.get("status", 1) == 1:
+                active_incoming_habit_logs.add(f"{h_name}||{dt}")
+
+        c.execute("SELECT h.name, hl.date FROM habit_logs hl JOIN habits h ON hl.habit_id = h.id WHERE hl.status = 1")
+        active_local_habit_logs = {f"{row['name']}||{row['date']}" for row in c.fetchall()}
+        all_active_habit_logs = active_incoming_habit_logs | active_local_habit_logs
+
+        # Active incoming todos timestamp map
+        incoming_todos_map = {
+            f"{t.get('title')}||{t.get('due_date')}": t.get("updated_at") or t.get("created_at") or ""
+            for t in payload.get("todos", []) if t.get("title") and t.get("due_date")
+        }
+
         # 0. Sync and apply tombstones (deleted records)
         for dr in payload.get("deleted_records", []):
             t_name = dr.get("table_name")
             uid = dr.get("record_uid")
+            deleted_at = dr.get("deleted_at") or datetime.datetime.now().isoformat()
             if not t_name or not uid:
                 continue
+
+            # If this is a habit_log tombstone but the habit is actively checked, eradicate tombstone!
+            if t_name == "habit_logs" and uid in all_active_habit_logs:
+                c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (uid,))
+                continue
+
+            # If this is a todo tombstone but incoming todo was updated after deletion, skip tombstone
+            if t_name == "todos":
+                inc_up = incoming_todos_map.get(uid)
+                if inc_up and str(inc_up) >= str(deleted_at):
+                    c.execute("DELETE FROM deleted_records WHERE table_name = 'todos' AND record_uid = ?", (uid,))
+                    continue
+
             c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid, deleted_at) VALUES (?, ?, ?)",
-                      (t_name, uid, dr.get("deleted_at") or datetime.datetime.now().isoformat()))
+                      (t_name, uid, deleted_at))
             if t_name == "todos":
                 parts = uid.split("||", 1)
                 if len(parts) == 2:
@@ -1879,7 +1915,7 @@ def import_sync_data(payload: dict):
                     except Exception:
                         pass
 
-        # Load active deleted records
+        # Load active deleted records (excluding active habit logs)
         c.execute("SELECT table_name, record_uid FROM deleted_records")
         del_records = {(row["table_name"], row["record_uid"]) for row in c.fetchall()}
 
@@ -1991,7 +2027,7 @@ def import_sync_data(payload: dict):
         local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
         valid_local_habit_ids = set(local_habit_name_to_id.values())
 
-        # 4. Habit logs merge (safe merge respecting tombstones without wiping local records)
+        # 4. Habit logs merge (safe merge respecting positive checks and wiping tombstones)
         for hl in payload.get("habit_logs", []):
             h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
             local_h_id = local_habit_name_to_id.get(h_name)
@@ -2000,8 +2036,9 @@ def import_sync_data(payload: dict):
 
             if local_h_id and h_name:
                 log_uid = f"{h_name}||{hl.get('date')}"
-                if ("habit_logs", log_uid) in del_records:
-                    continue
+                # Eradicate tombstone since user explicitly checked this habit
+                c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (log_uid,))
+                del_records.discard(("habit_logs", log_uid))
                 c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
                           (local_h_id, hl.get("date"), hl.get("status", 1)))
                 if c.rowcount > 0:
