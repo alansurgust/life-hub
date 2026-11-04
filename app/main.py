@@ -104,6 +104,42 @@ class RealtimeSyncManager:
 
 sync_manager = RealtimeSyncManager()
 
+@app.on_event("startup")
+async def startup_cloud_listener():
+    # Store running event loop for threadsafe broadcast
+    try:
+        sync_manager.loop = asyncio.get_running_loop()
+    except Exception:
+        pass
+
+    # If running locally on PC (not on Render Cloud), maintain a background connection to Cloud WebSocket
+    if not os.environ.get("RENDER"):
+        async def _cloud_ws_worker():
+            import websockets
+            cloud_ws_url = "wss://life-hub-cv9l.onrender.com/ws/sync"
+            retry_delay = 2
+            while True:
+                try:
+                    logger.info(f"[Cloud Listener] Connecting to Cloud WebSocket: {cloud_ws_url}")
+                    async with websockets.connect(cloud_ws_url, ping_interval=20, ping_timeout=20) as ws:
+                        logger.info("[Cloud Listener] Connected to Cloud WebSocket successfully!")
+                        retry_delay = 2
+                        async for raw_msg in ws:
+                            try:
+                                msg = json.loads(raw_msg)
+                                if msg.get("event") == "data_changed":
+                                    logger.info("[Cloud Listener] Cloud data changed! Pulling to local SQLite...")
+                                    await asyncio.to_thread(pull_from_cloud, {"cloud_url": "https://life-hub-cv9l.onrender.com"})
+                                    await sync_manager._broadcast_async({"event": "data_changed", "source": "cloud_sync"})
+                            except Exception as ex:
+                                logger.debug(f"[Cloud Listener] Message handle error: {ex}")
+                except Exception as conn_err:
+                    logger.debug(f"[Cloud Listener] Reconnecting in {retry_delay}s... ({conn_err})")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay = min(retry_delay * 1.5, 30)
+
+        asyncio.create_task(_cloud_ws_worker())
+
 @app.websocket("/ws/sync")
 async def websocket_sync_endpoint(websocket: WebSocket):
     await sync_manager.connect(websocket)
@@ -2356,7 +2392,7 @@ def pull_from_cloud(payload: dict = None):
             conn.close()
 
     if not cloud_url:
-        raise HTTPException(status_code=400, detail="Vui lòng cung cấp Cloud Run / Render URL")
+        cloud_url = "https://life-hub-cv9l.onrender.com"
 
     import httpx
     try:
@@ -2366,6 +2402,7 @@ def pull_from_cloud(payload: dict = None):
 
         cloud_data = r_pull.json()
         import_sync_data(cloud_data)
+        sync_manager.broadcast({"event": "data_changed", "source": "cloud_pull", "timestamp": datetime.datetime.now().isoformat()})
 
         conn = get_db_connection()
         try:

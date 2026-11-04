@@ -2854,10 +2854,12 @@ function initRealtimeSync() {
           console.log('⚡ [Realtime Sync] Event received:', msg);
           const isLocal = isLocalEnvironment();
           if (isLocal) {
-            // Mobile changed data -> Desktop ONLY PULLS! (Never pushes stale state)
-            pullFromCloudSilently();
+            if (msg.source === 'cloud_sync' || msg.source === 'cloud_pull') {
+              reloadActiveTabData(true);
+            } else {
+              pullFromCloudSilently();
+            }
           } else {
-            // Desktop pushed data -> Mobile reloads active tab immediately!
             reloadActiveTabData(true);
           }
         }
@@ -2877,6 +2879,31 @@ function initRealtimeSync() {
     };
   } catch (err) {
     console.debug('WebSocket connection failed:', err);
+  }
+}
+
+
+let isPullingFromCloud = false;
+async function pullFromCloudSilently() {
+  if (isPullingFromCloud) return;
+  isPullingFromCloud = true;
+  try {
+    const res = await fetch('/api/sync/pull', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const badge = document.getElementById('syncLastTimeBadge');
+      if (badge && data.last_synced) badge.textContent = `Đã đồng bộ: ${data.last_synced}`;
+      reloadActiveTabData(true);
+      console.log('⚡ [Realtime Sync] Desktop pulled latest data from cloud successfully');
+    }
+  } catch (err) {
+    console.debug('Silent cloud pull error:', err);
+  } finally {
+    isPullingFromCloud = false;
   }
 }
 
