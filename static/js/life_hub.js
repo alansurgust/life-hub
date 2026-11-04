@@ -668,8 +668,13 @@ function renderTodoCharts(stats) {
   // 1. Velocity Chart (Bar Chart for last 7 days - Sprout up sequentially left-to-right)
   const ctxVel = document.getElementById('todoVelocityChart');
   if (ctxVel) {
-    if (todoCharts.velocity) todoCharts.velocity.destroy();
-    todoCharts.velocity = new Chart(ctxVel.getContext('2d'), {
+    if (todoCharts.velocity) {
+      todoCharts.velocity.data.labels = stats.chart.labels;
+      todoCharts.velocity.data.datasets[0].data = stats.chart.completed;
+      todoCharts.velocity.data.datasets[1].data = stats.chart.created;
+      todoCharts.velocity.update('none');
+    } else {
+      todoCharts.velocity = new Chart(ctxVel.getContext('2d'), {
       type: 'bar',
       data: {
         labels: stats.chart.labels,
@@ -723,15 +728,20 @@ function renderTodoCharts(stats) {
         }
       }
     });
+    }
   }
 
   // 2. Category breakdown Donut Chart (Sequential sweep starting from 12 o'clock)
   const ctxCat = document.getElementById('todoCategoryChart');
   if (ctxCat && stats.categories && stats.categories.length > 0) {
-    if (todoCharts.category) todoCharts.category.destroy();
     const colors = ['#5F7465', '#D39526', '#B14720', '#626037', '#663B1B', '#8E8275'];
-
-    todoCharts.category = new Chart(ctxCat.getContext('2d'), {
+    if (todoCharts.category) {
+      todoCharts.category.data.labels = stats.categories.map(c => c.category);
+      todoCharts.category.data.datasets[0].data = stats.categories.map(c => c.count);
+      todoCharts.category.data.datasets[0].backgroundColor = colors.slice(0, stats.categories.length);
+      todoCharts.category.update('none');
+    } else {
+      todoCharts.category = new Chart(ctxCat.getContext('2d'), {
       type: 'doughnut',
       data: {
         labels: stats.categories.map(c => c.category),
@@ -762,6 +772,7 @@ function renderTodoCharts(stats) {
         }
       }
     });
+    }
   }
 }
 
@@ -1417,8 +1428,12 @@ function renderHabitAreaChart(chartData) {
   }
 
   const ctx = canvas.getContext('2d');
+  const completed = chartData.completed || [];
   if (habitCharts.area) {
-    habitCharts.area.destroy();
+    habitCharts.area.data.labels = chartData.labels;
+    habitCharts.area.data.datasets[0].data = completed;
+    habitCharts.area.update('none');
+    return;
   }
 
   // Smooth vertical gradient for the Area Chart fill
@@ -2331,7 +2346,7 @@ function updateSyncStatusUI(status) {
   }
 }
 
-async function autoCloudSync(silent = true) {
+async function autoCloudSync(silent = true, isBackgroundPoll = false) {
   const isLocal = isLocalEnvironment();
   if (!isLocal || isSyncing) return;
 
@@ -2358,8 +2373,11 @@ async function autoCloudSync(silent = true) {
       if (!silent) {
         showToast(data.message || 'Đồng bộ 2 chiều thành công!', 'success');
       }
-      // Silently refresh current view so any mobile changes appear immediately
-      reloadActiveTabData(true);
+      // Silently refresh view ONLY if this was a background poll that actually received new items from phone,
+      // avoiding canvas chart recreation or scroll jumps right after local user clicks!
+      if (isBackgroundPoll && data.pulled_changes) {
+        reloadActiveTabData(true);
+      }
     } else {
       updateSyncStatusUI('error');
     }
@@ -2381,19 +2399,19 @@ window.scheduleAutoSync = function(delayMs = 300) {
   updateSyncStatusUI('syncing');
   if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
   autoSyncTimeout = setTimeout(() => {
-    autoCloudSync(true);
+    autoCloudSync(true, false); // Local mutation push -> do NOT reload active tab!
   }, delayMs);
 };
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initial sync immediately after UI boot (500ms)
-  setTimeout(() => { autoCloudSync(true); }, 500);
+  setTimeout(() => { autoCloudSync(true, true); }, 500);
 
   // Fast periodic auto-sync every 10s on PC so mobile changes appear within 10 seconds!
   setInterval(() => {
     if (document.visibilityState === 'visible') {
       if (isLocalEnvironment()) {
-        autoCloudSync(true);
+        autoCloudSync(true, true);
       } else {
         reloadActiveTabData(true);
       }
@@ -2402,7 +2420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Auto-sync immediately when app window gets focused
   window.addEventListener('focus', () => {
-    autoCloudSync(true);
+    autoCloudSync(true, true);
   });
 
   // Reload active tab when user returns to app/tab (crucial on mobile phones)

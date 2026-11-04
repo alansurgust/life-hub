@@ -5852,9 +5852,9 @@
       "category": "Sức khỏe",
       "pomodoro_est": 1,
       "pomodoro_done": 0,
-      "completed_at": "2026-11-04 01:43:57",
+      "completed_at": "2026-11-04 02:03:18",
       "created_at": "2026-11-03 12:41:49",
-      "updated_at": "2026-11-04 01:43:57"
+      "updated_at": "2026-11-04 02:03:18"
     },
     {
       "id": 32,
@@ -5881,7 +5881,7 @@
       "streak": 3,
       "best_streak": 3,
       "created_at": "2026-11-02 13:30:29",
-      "updated_at": "2026-11-02 13:30:29"
+      "updated_at": "2026-11-04T09:01:14.676885"
     },
     {
       "id": 7,
@@ -5892,7 +5892,7 @@
       "streak": 2,
       "best_streak": 2,
       "created_at": "2026-11-02 13:38:22",
-      "updated_at": "2026-11-02 13:38:22"
+      "updated_at": "2026-11-04T09:01:14.676923"
     },
     {
       "id": 8,
@@ -5903,7 +5903,7 @@
       "streak": 0,
       "best_streak": 0,
       "created_at": "2026-11-02 13:38:45",
-      "updated_at": "2026-11-02 13:38:45"
+      "updated_at": "2026-11-04T09:01:14.676933"
     },
     {
       "id": 9,
@@ -5914,7 +5914,7 @@
       "streak": 1,
       "best_streak": 1,
       "created_at": "2026-11-02 13:39:01",
-      "updated_at": "2026-11-02 13:39:01"
+      "updated_at": "2026-11-04T09:01:14.676941"
     },
     {
       "id": 10,
@@ -5925,7 +5925,7 @@
       "streak": 2,
       "best_streak": 2,
       "created_at": "2026-11-02 13:42:10",
-      "updated_at": "2026-11-02 13:42:10"
+      "updated_at": "2026-11-04T09:01:14.676948"
     },
     {
       "id": 11,
@@ -5936,72 +5936,72 @@
       "streak": 1,
       "best_streak": 1,
       "created_at": "2026-11-02 15:18:22",
-      "updated_at": "2026-11-02 15:18:22"
+      "updated_at": "2026-11-04T09:01:14.676955"
     }
   ],
   "habit_logs": [
     {
-      "id": 5997,
+      "id": 6013,
       "habit_id": 10,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "2 liters water"
     },
     {
-      "id": 5998,
+      "id": 6014,
       "habit_id": 6,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "wake up before 6am"
     },
     {
-      "id": 5999,
+      "id": 6015,
       "habit_id": 7,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "sleep before 22h45 (previous night)"
     },
     {
-      "id": 6000,
+      "id": 6016,
       "habit_id": 11,
       "date": "2026-11-02",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "15m reading book"
     },
     {
-      "id": 6001,
+      "id": 6017,
       "habit_id": 6,
       "date": "2026-11-03",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "wake up before 6am"
     },
     {
-      "id": 6002,
+      "id": 6018,
       "habit_id": 7,
       "date": "2026-11-03",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "sleep before 22h45 (previous night)"
     },
     {
-      "id": 6003,
+      "id": 6019,
       "habit_id": 9,
       "date": "2026-11-03",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "no fap"
     },
     {
-      "id": 6004,
+      "id": 6020,
       "habit_id": 10,
       "date": "2026-11-03",
       "status": 1,
-      "created_at": "2026-11-04 01:53:02",
+      "created_at": "2026-11-04 01:53:22",
       "habit_name": "2 liters water"
     }
   ],
@@ -6015,7 +6015,7 @@
       "gratitude": "Biết ơn sức khỏe tốt, tinh thần tập trung và sự tiến bộ rõ rệt trong việc tự động hóa công việc.",
       "improvement": "Cần duy trì việc uống nước đều đặn hơn trong lúc ngồi làm việc lâu.",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-02 13:12:24"
+      "updated_at": "2026-11-04 02:01:12"
     },
     {
       "id": 2,
@@ -6026,7 +6026,7 @@
       "gratitude": "Biết ơn sức khỏe tốt, tinh thần tập trung và sự tiến bộ rõ rệt trong việc tự động hóa công việc.",
       "improvement": "Cần duy trì việc uống nước đều đặn hơn trong lúc ngồi làm việc lâu.",
       "created_at": "2026-11-03 03:35:21",
-      "updated_at": "2026-11-03 03:35:21"
+      "updated_at": "2026-11-04 02:01:12"
     }
   ],
   "notes": [
@@ -6038,7 +6038,7 @@
       "is_pinned": 1,
       "color": "#FFFDF9",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-02 13:12:24"
+      "updated_at": "2026-11-04 02:01:12"
     },
     {
       "id": 2,
@@ -6048,7 +6048,7 @@
       "is_pinned": 1,
       "color": "#FFFDF9",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-02 13:12:24"
+      "updated_at": "2026-11-04 02:01:12"
     },
     {
       "id": 3,
@@ -6058,7 +6058,7 @@
       "is_pinned": 0,
       "color": "#FFFDF9",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-02 13:12:24"
+      "updated_at": "2026-11-04 02:01:12"
     },
     {
       "id": 5,
@@ -6068,8 +6068,19 @@
       "is_pinned": 0,
       "color": "#FFFDF9",
       "created_at": "2026-11-03 03:35:21",
-      "updated_at": "2026-11-03 03:35:21"
+      "updated_at": "2026-11-04 02:01:12"
     }
   ],
-  "deleted_records": []
+  "deleted_records": [
+    {
+      "table_name": "todos",
+      "record_uid": "Verify PC Edit Not Reset||2026-11-04",
+      "deleted_at": "2026-11-04 01:54:36"
+    },
+    {
+      "table_name": "todos",
+      "record_uid": "Created From Phone||2026-11-04",
+      "deleted_at": "2026-11-04 01:54:57"
+    }
+  ]
 }

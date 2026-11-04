@@ -1387,7 +1387,11 @@ def get_todo_stats():
         """, (d_str, d_str))
         completed_series.append(c.fetchone()[0])
 
-        c.execute("SELECT COUNT(*) FROM todos WHERE date(created_at) = ?", (d_str,))
+        c.execute("""
+            SELECT COUNT(*) FROM todos 
+            WHERE (date(created_at) = ? AND (due_date >= ? OR due_date IS NULL))
+               OR (date(created_at) > ? AND due_date = ?)
+        """, (d_str, d_str, d_str, d_str))
         created_series.append(c.fetchone()[0])
 
     c.execute("SELECT category, COUNT(*) as count FROM todos GROUP BY category ORDER BY count DESC")
@@ -1801,6 +1805,7 @@ def export_sync_data():
 @app.post("/api/sync/import-data")
 def import_sync_data(payload: dict):
     conn = get_db_connection()
+    changes_count = 0
     try:
         c = conn.cursor()
 
@@ -1846,27 +1851,33 @@ def import_sync_data(payload: dict):
         c.execute("SELECT table_name, record_uid FROM deleted_records")
         del_records = {(row["table_name"], row["record_uid"]) for row in c.fetchall()}
 
-        # 1. Transactions merge (with Last-Write-Wins updated_at check)
+        # 1. Transactions merge (with Last-Write-Wins updated_at check and created_at preservation)
         for t in payload.get("transactions", []):
             trans_uid = f"{t.get('date')}||{t.get('amount')}||{t.get('type')}||{t.get('description')}"
             if ("transactions", trans_uid) in del_records:
                 continue
             c.execute("""
-                SELECT id, category, is_manual_category, updated_at FROM transactions 
+                SELECT id, category, is_manual_category, updated_at, created_at FROM transactions 
                 WHERE date = ? AND amount = ? AND type = ? AND description = ?
             """, (t.get("date"), t.get("amount"), t.get("type"), t.get("description")))
             row = c.fetchone()
             if not row:
                 c.execute("""
-                    INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence, updated_at, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     t.get("date"), t.get("month"), t.get("week"), t.get("type"), t.get("amount"),
                     t.get("category"), t.get("description"), t.get("raw_description"), t.get("ref_no"),
                     t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0),
-                    t.get("updated_at") or t.get("created_at") or datetime.datetime.now().isoformat()
+                    t.get("updated_at") or t.get("created_at") or datetime.datetime.now().isoformat(),
+                    t.get("created_at") or datetime.datetime.now().isoformat()
                 ))
+                changes_count += 1
             else:
+                inc_created = t.get("created_at")
+                if inc_created and row["created_at"] and inc_created < row["created_at"]:
+                    c.execute("UPDATE transactions SET created_at = ? WHERE id = ?", (inc_created, row["id"]))
+                    changes_count += 1
                 rem_up = str(t.get("updated_at") or "")
                 loc_up = str(row["updated_at"] or "")
                 if rem_up and loc_up and rem_up < loc_up:
@@ -1874,27 +1885,35 @@ def import_sync_data(payload: dict):
                 if t.get("is_manual_category") == 1 and (row["category"] != t.get("category") or row["is_manual_category"] == 0):
                     c.execute("UPDATE transactions SET category = ?, is_manual_category = 1, updated_at = ? WHERE id = ?",
                               (t.get("category"), rem_up or datetime.datetime.now().isoformat(), row["id"]))
+                    changes_count += 1
 
-        # 2. Todos merge (with Last-Write-Wins updated_at check)
+        # 2. Todos merge (with Last-Write-Wins updated_at check and created_at preservation)
         for item in payload.get("todos", []):
             todo_uid = f"{item.get('title')}||{item.get('due_date')}"
             if ("todos", todo_uid) in del_records:
                 continue
 
-            c.execute("SELECT id, status, updated_at FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
+            c.execute("SELECT id, status, updated_at, created_at FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
             row = c.fetchone()
             if not row:
                 c.execute("""
-                    INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at, updated_at, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     item.get("title"), item.get("description", ""), item.get("due_date"),
                     item.get("priority", "normal"), item.get("status", "pending"),
                     item.get("category", "Công việc"), item.get("pomodoro_est", 1),
                     item.get("pomodoro_done", 0), item.get("completed_at"),
-                    item.get("updated_at") or item.get("completed_at") or item.get("created_at") or datetime.datetime.now().isoformat()
+                    item.get("updated_at") or item.get("completed_at") or item.get("created_at") or datetime.datetime.now().isoformat(),
+                    item.get("created_at") or datetime.datetime.now().isoformat()
                 ))
+                changes_count += 1
             else:
+                inc_created = item.get("created_at")
+                if inc_created and row["created_at"] and inc_created < row["created_at"]:
+                    c.execute("UPDATE todos SET created_at = ? WHERE id = ?", (inc_created, row["id"]))
+                    changes_count += 1
+
                 rem_up = str(item.get("updated_at") or item.get("completed_at") or "")
                 loc_up = str(row["updated_at"] or "")
                 if rem_up and loc_up and rem_up < loc_up:
@@ -1905,6 +1924,7 @@ def import_sync_data(payload: dict):
                 if remote_status != row["status"]:
                     c.execute("UPDATE todos SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?",
                               (remote_status, item.get("completed_at"), rem_up or datetime.datetime.now().isoformat(), row["id"]))
+                    changes_count += 1
 
         # Remote habit id -> name lookup map
         remote_habit_id_to_name = {
@@ -1952,6 +1972,8 @@ def import_sync_data(payload: dict):
                     continue
                 c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
                           (local_h_id, hl.get("date"), hl.get("status", 1)))
+                if c.rowcount > 0:
+                    changes_count += 1
 
         # 5. Journal entries merge (with Last-Write-Wins updated_at check)
         for j in payload.get("journal_entries", []):
@@ -1994,7 +2016,7 @@ def import_sync_data(payload: dict):
                            rem_up or datetime.datetime.now().isoformat(), title))
 
         conn.commit()
-        return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công"}
+        return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công", "changes_count": changes_count}
     finally:
         conn.close()
 
@@ -2124,11 +2146,13 @@ def trigger_cloud_sync(payload: dict = None):
             raise HTTPException(status_code=502, detail=f"Lỗi đẩy dữ liệu lên Cloud: {r_push.text}")
 
         # 3. Pull latest cloud data into local database (incorporates any mobile additions/changes)
+        pulled_changes = False
         try:
             r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=60.0)
             if r_pull.status_code == 200:
                 cloud_data = r_pull.json()
-                import_sync_data(cloud_data)
+                import_res = import_sync_data(cloud_data)
+                pulled_changes = import_res.get("changes_count", 0) > 0
         except Exception as pull_err:
             logger.warning(f"Pull step warning: {pull_err}")
 
@@ -2146,7 +2170,8 @@ def trigger_cloud_sync(payload: dict = None):
         return {
             "success": True,
             "message": "Đồng bộ 2 chiều thành công!",
-            "last_synced": now_str
+            "last_synced": now_str,
+            "pulled_changes": pulled_changes
         }
     except HTTPException:
         raise
