@@ -1443,7 +1443,6 @@ function renderHabitAreaChart(chartData) {
   gradient.addColorStop(1, 'rgba(95, 116, 101, 0.01)');  // Bottom: transparent
 
   const total = chartData.total_habits || 5;
-  const completed = chartData.completed || [];
   const avg = completed.length > 0 ? (completed.reduce((a, b) => a + b, 0) / completed.length).toFixed(1) : 0;
 
   const titleElem = document.getElementById('habitAreaChartTitle');
