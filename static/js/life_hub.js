@@ -193,7 +193,14 @@ function switchLifeTab(tabName) {
     }
 
     if (tabName === 'habits') {
-      // Habits tab loaded cleanly
+      setTimeout(() => {
+        if (currentTransitionId !== tabSwitchTransitionId) return;
+        if (lifeState.lastHabitData && lifeState.lastHabitData.chart) {
+          renderHabitAreaChart(lifeState.lastHabitData.chart);
+        } else {
+          loadHabits();
+        }
+      }, 80);
     } else if (tabName === 'todos') {
       // Trigger To-Do charts animations (bar sprouting left-to-right & doughnut sweeping from 12 o'clock)
       setTimeout(() => {
@@ -1332,7 +1339,13 @@ function renderHabits(data) {
   if (todayDoneElem) todayDoneElem.textContent = `${doneToday} / ${habits.length}`;
   if (consistencyElem) consistencyElem.textContent = `${consistencyRate}%`;
 
-
+  // Render Area Chart (Biểu đồ miền xu hướng cả tháng)
+  if (data.chart) {
+    const sec = document.getElementById('section-habits');
+    if (sec && !sec.classList.contains('hidden')) {
+      renderHabitAreaChart(data.chart);
+    }
+  }
 
   const badge = document.getElementById('sidebarHabitsBadge');
   if (badge) badge.textContent = habits.length;

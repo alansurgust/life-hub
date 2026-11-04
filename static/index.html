@@ -1183,6 +1183,29 @@
         </div>
       </div>
 
+            <!-- Biểu Đồ Miền (Area Chart): Thống kê số thói quen đã hoàn thành theo ngày trong tháng -->
+      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-3xl border border-[#DECDB5] shadow-2xs space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DECDB5]/50 pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB]">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight" id="habitAreaChartTitle">Biểu Đồ Miền: Xu Hướng Hoàn Thành Thói Quen</h3>
+            </div>
+            <p class="text-xs text-[#786B60] mt-1" id="habitAreaChartSubtitle">Số lượng thói quen bạn đã check-in mỗi ngày xuyên suốt cả tháng</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] px-3 py-1 rounded-full border border-[#D7E4DB] flex items-center gap-1.5" id="habitAreaChartBadge">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> <span id="habitAvgBadgeText">Đang tải dữ liệu...</span>
+            </span>
+          </div>
+        </div>
+        <div class="relative h-48 sm:h-56 md:h-60 mt-1">
+          <canvas id="habitAreaChart"></canvas>
+        </div>
+      </div>
+
       <!-- Habit Board Header -->
       <div class="flex items-center justify-between">
         <div>
