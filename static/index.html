@@ -301,11 +301,11 @@
               </button>
             </div>
 
-            <!-- Live Auto-Sync Status Indicator (Realtime automatic saving & sync) -->
-            <div id="liveSyncStatus" class="flex items-center gap-1.5 text-[11px] text-[#786B60] font-medium px-2 sm:px-2.5 py-1 rounded-xl bg-[#EFE7D8]/60 border border-[#DECDB5]/60 shrink-0 select-none" title="Dữ liệu được tự động lưu & đồng bộ tức thì giữa điện thoại và máy tính">
-              <span id="syncPulseDot" class="w-2 h-2 rounded-full bg-emerald-500 transition-colors"></span>
-              <span id="syncStatusText" class="hidden sm:inline font-semibold text-[#626037]">Đã đồng bộ</span>
-            </div>
+            <!-- Live Realtime Sync Status: FIXED ICON ONLY (No jumping text, strictly 36x36) -->
+            <button onclick="triggerCloudSyncNow()" id="liveSyncStatus" class="w-9 h-9 rounded-xl flex items-center justify-center bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 select-none relative transition cursor-pointer" title="Đồng bộ thời gian thực: Đã kết nối & sẵn sàng">
+              <i data-lucide="cloud" id="liveSyncCloudIcon" class="w-4 h-4 text-[#5F7465] transition-transform"></i>
+              <span id="syncPulseDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 transition-colors ring-1 ring-white"></span>
+            </button>
 
             <!-- Link Mobile Button in Header (hidden on mobile, already on phone) -->
             <button onclick="openMobileConnectModal()" title="Kết nối iPhone / iPad" class="hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-[#5F7465]/10 hover:bg-[#5F7465]/20 text-[#5F7465] border border-[#5F7465]/30 transition cursor-pointer shadow-2xs">

@@ -2653,18 +2653,22 @@ let isSyncing = false;
 
 function updateSyncStatusUI(status) {
   const dot = document.getElementById('syncPulseDot');
-  const text = document.getElementById('syncStatusText');
+  const icon = document.getElementById('liveSyncCloudIcon');
+  const container = document.getElementById('liveSyncStatus');
   if (!dot) return;
 
   if (status === 'syncing') {
-    dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse';
-    if (text) text.textContent = 'Đang lưu & đồng bộ...';
+    dot.className = 'absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500 animate-ping ring-1 ring-white';
+    if (icon) icon.className = 'w-4 h-4 text-amber-600 animate-pulse';
+    if (container) container.title = 'Đang đồng bộ dữ liệu thời gian thực...';
   } else if (status === 'synced') {
-    dot.className = 'w-2 h-2 rounded-full bg-emerald-500 transition-colors';
-    if (text) text.textContent = 'Đã đồng bộ';
+    dot.className = 'absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 transition-colors ring-1 ring-white';
+    if (icon) icon.className = 'w-4 h-4 text-[#5F7465] transition-colors';
+    if (container) container.title = 'Đồng bộ thời gian thực: Đã cập nhật';
   } else if (status === 'error') {
-    dot.className = 'w-2 h-2 rounded-full bg-rose-500';
-    if (text) text.textContent = 'Lỗi kết nối';
+    dot.className = 'absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white';
+    if (icon) icon.className = 'w-4 h-4 text-rose-500';
+    if (container) container.title = 'Lỗi kết nối đồng bộ';
   }
 }
 
@@ -2715,13 +2719,93 @@ async function autoCloudSync(silent = true, isBackgroundPoll = false) {
   }
 }
 
-window.scheduleAutoSync = function(delayMs = 300) {
+// ================= REALTIME WEBSOCKET SYNC CLIENT =================
+let realtimeWs = null;
+let wsReconnectTimeout = null;
+let wsReconnectDelay = 1500;
+
+function getRealtimeWsUrl() {
   const isLocal = isLocalEnvironment();
-  if (!isLocal) return;
+  if (isLocal) {
+    const cloudSetting = (lifeState.cloudRunUrl || 'https://life-hub-cv9l.onrender.com').trim().replace(/\/+$/, '');
+    const wsProto = cloudSetting.startsWith('https:') ? 'wss://' : 'ws://';
+    const hostPart = cloudSetting.replace(/^https?:\/\//, '');
+    return `${wsProto}${hostPart}/ws/sync`;
+  } else {
+    const wsProto = location.protocol === 'https:' ? 'wss://' : 'ws://';
+    return `${wsProto}${location.host}/ws/sync`;
+  }
+}
+
+function initRealtimeSync() {
+  if (realtimeWs && (realtimeWs.readyState === WebSocket.OPEN || realtimeWs.readyState === WebSocket.CONNECTING)) {
+    return;
+  }
+
+  const wsUrl = getRealtimeWsUrl();
+  try {
+    realtimeWs = new WebSocket(wsUrl);
+
+    realtimeWs.onopen = () => {
+      console.log('⚡ [Realtime Sync] Connected to:', wsUrl);
+      wsReconnectDelay = 1500;
+      updateSyncStatusUI('synced');
+    };
+
+    realtimeWs.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.event === 'data_changed') {
+          console.log('⚡ [Realtime Sync] Event received:', msg);
+          const isLocal = isLocalEnvironment();
+          if (isLocal) {
+            // Mobile changed data -> Desktop pulls immediately!
+            autoCloudSync(true, true);
+          } else {
+            // Desktop pushed data -> Mobile reloads active tab immediately!
+            reloadActiveTabData(true);
+          }
+        }
+      } catch (e) {
+        console.debug('WS parse error:', e);
+      }
+    };
+
+    realtimeWs.onclose = () => {
+      if (wsReconnectTimeout) clearTimeout(wsReconnectTimeout);
+      wsReconnectTimeout = setTimeout(initRealtimeSync, wsReconnectDelay);
+      wsReconnectDelay = Math.min(wsReconnectDelay * 1.5, 10000);
+    };
+
+    realtimeWs.onerror = () => {
+      try { realtimeWs.close(); } catch (e) {}
+    };
+  } catch (err) {
+    console.debug('WebSocket connection failed:', err);
+  }
+}
+
+window.scheduleAutoSync = function(delayMs = 80) {
+  const isLocal = isLocalEnvironment();
+  if (!isLocal) {
+    // On Mobile: notify Cloud that user performed an action
+    try {
+      if (realtimeWs && realtimeWs.readyState === WebSocket.OPEN) {
+        realtimeWs.send(JSON.stringify({ action: "notify", event: "data_changed", source: "mobile" }));
+      } else {
+        fetch('/api/sync/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ event: 'data_changed', source: 'mobile' })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+    return;
+  }
   updateSyncStatusUI('syncing');
   if (autoSyncTimeout) clearTimeout(autoSyncTimeout);
   autoSyncTimeout = setTimeout(() => {
-    autoCloudSync(true, false); // Local mutation push -> do NOT reload active tab!
+    autoCloudSync(true, false); // Local mutation push
   }, delayMs);
 };
 
@@ -2736,16 +2820,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial sync immediately after UI boot (500ms)
   setTimeout(() => { autoCloudSync(true, true); }, 500);
 
-  // Fast periodic auto-sync every 4s on PC/mobile so cross-device changes appear within 4 seconds!
-  setInterval(() => {
-    if (document.visibilityState === 'visible') {
-      if (isLocalEnvironment()) {
-        autoCloudSync(true, true);
-      } else {
-        reloadActiveTabData(true);
-      }
-    }
-  }, 4000);
+  // Event-Driven Realtime Sync: Connected via WebSockets (No periodic intervals!)
+  setTimeout(() => {
+    initRealtimeSync();
+  }, 200);
 
   // Auto-sync immediately when app window gets focused
   window.addEventListener('focus', () => {

@@ -7,7 +7,8 @@ import logging
 import datetime
 import calendar
 from typing import Optional, List
-from fastapi import FastAPI, UploadFile, File, Form, Query, HTTPException, Depends
+import asyncio
+from fastapi import FastAPI, UploadFile, File, Form, Query, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
@@ -49,6 +50,75 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ================= REALTIME WEBSOCKET SYNC MANAGER =================
+class RealtimeSyncManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+        self.loop = None
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+        try:
+            self.loop = asyncio.get_running_loop()
+        except Exception:
+            pass
+        logger.info(f"[WS-Sync] Client connected. Total active: {len(self.active_connections)}")
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+            logger.info(f"[WS-Sync] Client disconnected. Total active: {len(self.active_connections)}")
+
+    async def _broadcast_async(self, message: dict):
+        for connection in list(self.active_connections):
+            try:
+                await connection.send_json(message)
+            except Exception:
+                self.disconnect(connection)
+
+    def broadcast(self, message: dict):
+        if not self.active_connections:
+            return
+        try:
+            if self.loop and self.loop.is_running():
+                asyncio.run_coroutine_threadsafe(self._broadcast_async(message), self.loop)
+            else:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    asyncio.create_task(self._broadcast_async(message))
+        except Exception as e:
+            logger.debug(f"[WS-Sync] Broadcast error: {e}")
+
+sync_manager = RealtimeSyncManager()
+
+@app.websocket("/ws/sync")
+async def websocket_sync_endpoint(websocket: WebSocket):
+    await sync_manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            if data == "ping":
+                await websocket.send_text("pong")
+            else:
+                try:
+                    payload = json.loads(data)
+                    if payload.get("action") == "notify":
+                        sync_manager.broadcast(payload)
+                except Exception:
+                    pass
+    except WebSocketDisconnect:
+        sync_manager.disconnect(websocket)
+    except Exception:
+        sync_manager.disconnect(websocket)
+
+@app.post("/api/sync/notify")
+def notify_sync_event(payload: Optional[dict] = None):
+    msg = payload or {"event": "data_changed", "timestamp": datetime.datetime.now().isoformat()}
+    sync_manager.broadcast(msg)
+    return {"success": True, "clients_notified": len(sync_manager.active_connections)}
+
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
 
@@ -1276,6 +1346,7 @@ def toggle_todo(todo_id: int):
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
     updated = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "todo_id": todo_id, "timestamp": datetime.datetime.now().isoformat()})
     return updated
 
 @app.patch("/api/todos/{todo_id}/status")
@@ -1297,6 +1368,7 @@ def update_todo_status(todo_id: int, item: TodoStatusUpdate):
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
     updated = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "todo_id": todo_id, "timestamp": datetime.datetime.now().isoformat()})
     return updated
 
 @app.post("/api/todos/{todo_id}/pomodoro-done")
@@ -1599,6 +1671,7 @@ def toggle_habit_log(habit_id: int, date: Optional[str] = None):
     c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (streak, best_streak, habit_id))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "habits", "habit_id": habit_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True, "habit_id": habit_id, "streak": streak, "best_streak": best_streak}
 
 @app.put("/api/habits/{habit_id}")
@@ -2085,6 +2158,7 @@ def import_sync_data(payload: dict):
                            rem_up or datetime.datetime.now().isoformat(), title))
 
         conn.commit()
+        sync_manager.broadcast({"event": "data_changed", "source": "import_sync", "changes_count": changes_count, "timestamp": datetime.datetime.now().isoformat()})
         return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công", "changes_count": changes_count}
     finally:
         conn.close()
