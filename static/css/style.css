@@ -227,13 +227,16 @@ html, body {
 
 @media (max-width: 768px) {
   #mainScrollArea {
-    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(4.2rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
 @media (min-width: 769px) {
   #mainScrollArea {
-    padding-bottom: 3.5rem !important;
+    padding-bottom: 0 !important;
+  }
+  .app-bottom-nav {
+    display: none !important;
   }
 }
 

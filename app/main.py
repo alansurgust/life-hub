@@ -1384,6 +1384,8 @@ def get_todo_stats():
 
     daily_labels = []
     completed_series = []
+    backlog_series = []
+    new_series = []
     created_series = []
     day_names = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
 
@@ -1393,19 +1395,33 @@ def get_todo_stats():
         day_label = f"{day_names[d.weekday()]} ({d.strftime('%d/%m')})"
         daily_labels.append(day_label)
 
+        # 1. Đã hoàn thành trong ngày
         c.execute("""
             SELECT COUNT(*) FROM todos 
             WHERE status = 'completed' AND (date(completed_at) = ? OR (due_date = ? AND completed_at IS NOT NULL))
         """, (d_str, d_str))
         completed_series.append(c.fetchone()[0])
 
-        # 2. Cột màu be: Gộp tổng việc mới trong ngày và việc tồn đọng từ hôm trước chưa hoàn thành
+        # 2. Tồn đọng cũ (tạo trước ngày d hoặc hạn trước ngày d, chưa hoàn thành trước ngày d) -> Cột màu be đậm ở dưới
         c.execute("""
             SELECT COUNT(*) FROM todos 
-            WHERE (date(created_at) <= ? OR (due_date IS NOT NULL AND due_date <= ?))
+            WHERE (date(created_at) < ? OR (created_at IS NULL AND due_date IS NOT NULL AND due_date < ?))
               AND (completed_at IS NULL OR date(completed_at) >= ?)
         """, (d_str, d_str, d_str))
-        created_series.append(c.fetchone()[0])
+        backlog_count = c.fetchone()[0]
+        backlog_series.append(backlog_count)
+
+        # 3. Mới trong ngày d -> Cột màu be nhạt ở trên cùng một thanh
+        c.execute("""
+            SELECT COUNT(*) FROM todos 
+            WHERE (date(created_at) = ? OR (created_at IS NULL AND due_date = ?))
+              AND (completed_at IS NULL OR date(completed_at) >= ?)
+        """, (d_str, d_str, d_str))
+        new_count = c.fetchone()[0]
+        new_series.append(new_count)
+
+        # Gộp tổng cần làm
+        created_series.append(backlog_count + new_count)
 
     c.execute("SELECT category, COUNT(*) as count FROM todos GROUP BY category ORDER BY count DESC")
     categories_breakdown = [{"category": row["category"], "count": row["count"]} for row in c.fetchall()]
@@ -1423,6 +1439,8 @@ def get_todo_stats():
         "chart": {
             "labels": daily_labels,
             "completed": completed_series,
+            "backlog": backlog_series,
+            "new_tasks": new_series,
             "created": created_series
         },
         "categories": categories_breakdown

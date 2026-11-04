@@ -332,7 +332,7 @@
       </header>
 
       <!-- ================= MAIN CONTENT LAYOUT ================= -->
-      <main class="max-w-[1560px] mx-auto px-3.5 sm:px-8 lg:px-10 py-5 sm:py-6 flex-1 w-full max-w-full space-y-6 overflow-x-hidden">
+      <main class="max-w-[1560px] mx-auto px-3.5 sm:px-8 lg:px-10 py-5 sm:py-6 w-full max-w-full space-y-6">
 
         <!-- ================= SECTION 0: DASHBOARD / OVERVIEW ================= -->
         <section id="section-dashboard" class="space-y-6">
@@ -1183,29 +1183,6 @@
         </div>
       </div>
 
-      <!-- Biểu Đồ Miền (Area Chart): Thống kê số thói quen đã hoàn thành theo ngày trong tháng -->
-      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-3xl border border-[#DECDB5] shadow-2xs space-y-3">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DECDB5]/50 pb-3">
-          <div>
-            <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB]">
-                <i data-lucide="activity" class="w-4 h-4"></i>
-              </div>
-              <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight" id="habitAreaChartTitle">Biểu Đồ Miền: Xu Hướng Hoàn Thành Thói Quen (Tháng 11/2026)</h3>
-            </div>
-            <p class="text-xs text-[#786B60] mt-1" id="habitAreaChartSubtitle">Số lượng thói quen bạn đã check-in mỗi ngày xuyên suốt cả tháng</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] px-3 py-1 rounded-full border border-[#D7E4DB] flex items-center gap-1.5" id="habitAreaChartBadge">
-              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> <span id="habitAvgBadgeText">Đang duy trì nhịp độ tốt</span>
-            </span>
-          </div>
-        </div>
-        <div class="relative h-44 sm:h-52 md:h-56 mt-1">
-          <canvas id="habitAreaChart"></canvas>
-        </div>
-      </div>
-
       <!-- Habit Board Header -->
       <div class="flex items-center justify-between">
         <div>
@@ -1261,17 +1238,17 @@
           </div>
 
           <!-- Gratitude Prompt -->
-          <div class="bg-[#FFFDF9] p-4 rounded-2xl border border-[#DECDB5] space-y-1.5 focus-within:border-[#5F7465] transition shadow-2xs">
-            <label class="block text-xs font-semibold text-[#663B1B] flex items-center gap-1.5">
-              <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526]"></i> <span>Điều tôi biết ơn hôm nay (Gratitude)</span>
+          <div class="bg-[#FDF6E2] p-4 rounded-2xl border border-[#DECDB5]/80 space-y-1">
+            <label class="block text-xs font-extrabold text-[#7A5408] flex items-center gap-1.5">
+              <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526] fill-[#D39526]"></i> Điều tôi cảm thấy biết ơn hôm nay (Gratitude)
             </label>
             <textarea id="journalGratitudeInput" rows="2" placeholder="Ghi lại 1-3 điều khiến bạn cảm thấy may mắn, biết ơn trong ngày hôm nay..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
           </div>
 
           <!-- Improvement / Reflection Prompt -->
-          <div class="bg-[#FFFDF9] p-4 rounded-2xl border border-[#DECDB5] space-y-1.5 focus-within:border-[#5F7465] transition shadow-2xs">
-            <label class="block text-xs font-semibold text-[#233329] flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> <span>Bài học & Điều cần làm tốt hơn (Reflection)</span>
+          <div class="bg-[#F0F5F2] p-4 rounded-2xl border border-[#D7E4DB] space-y-1">
+            <label class="block text-xs font-extrabold text-[#233329] flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> Bài học & Điều cần làm tốt hơn (Reflection)
             </label>
             <textarea id="journalImprovementInput" rows="2" placeholder="Điều gì bạn có thể cải thiện hoặc bài học rút ra sau hôm nay?..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
           </div>

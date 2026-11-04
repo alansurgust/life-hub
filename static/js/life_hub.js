@@ -44,8 +44,18 @@ let habitCharts = {
   area: null
 };
 
-// Instant client greeting based on local device time (Vietnam 4 periods)
+// Instant client greeting localized to Vietnam time (UTC+7) across 4 periods
 function getClientGreeting() {
+  try {
+    const vnFormatter = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Ho_Chi_Minh', hour: 'numeric', hour12: false });
+    const h = parseInt(vnFormatter.format(new Date()), 10);
+    if (!isNaN(h)) {
+      if (h >= 5 && h < 11) return 'Chào buổi sáng!';
+      if (h >= 11 && h < 14) return 'Chào buổi trưa!';
+      if (h >= 14 && h < 18) return 'Chào buổi chiều!';
+      return 'Chào buổi tối!';
+    }
+  } catch (e) {}
   const h = new Date().getHours();
   if (h >= 5 && h < 11) return 'Chào buổi sáng!';
   if (h >= 11 && h < 14) return 'Chào buổi trưa!';
@@ -182,16 +192,8 @@ function switchLifeTab(tabName) {
       }, enterDuration);
     }
 
-    // Trigger Habit Area Chart Left-to-Right animation when switching to habits tab
     if (tabName === 'habits') {
-      setTimeout(() => {
-        if (currentTransitionId !== tabSwitchTransitionId) return;
-        if (lifeState.lastHabitData && lifeState.lastHabitData.chart) {
-          renderHabitAreaChart(lifeState.lastHabitData.chart);
-        } else {
-          loadHabits();
-        }
-      }, 60);
+      // Habits tab loaded cleanly
     } else if (tabName === 'todos') {
       // Trigger To-Do charts animations (bar sprouting left-to-right & doughnut sweeping from 12 o'clock)
       setTimeout(() => {
@@ -304,7 +306,7 @@ function renderDashboard(data) {
   const headerDate = document.getElementById('dashHeaderDate');
   const heroQuote = document.getElementById('dashHeroQuote');
 
-  if (heroGreeting) heroGreeting.textContent = getClientGreeting();
+  if (heroGreeting) heroGreeting.textContent = data.greeting || getClientGreeting();
   if (heroDate) heroDate.textContent = data.today_formatted || '';
   if (headerDate) headerDate.textContent = data.today_formatted || 'Hôm nay';
 
@@ -681,70 +683,106 @@ function renderTodoCharts(stats) {
     return; // Will be animated cleanly once unhidden
   }
 
-  // 1. Velocity Chart (Bar Chart for last 7 days - Sprout up sequentially left-to-right)
+  // 1. Velocity Chart (Grouped & Stacked Bar Chart for last 7 days)
   const ctxVel = document.getElementById('todoVelocityChart');
   if (ctxVel) {
+    const backlogData = stats.chart.backlog || [];
+    const newData = stats.chart.new_tasks || stats.chart.created || [];
+    const completedData = stats.chart.completed || [];
+
     if (todoCharts.velocity) {
       todoCharts.velocity.data.labels = stats.chart.labels;
-      todoCharts.velocity.data.datasets[0].data = stats.chart.completed;
-      todoCharts.velocity.data.datasets[1].data = stats.chart.created;
-      todoCharts.velocity.data.datasets[1].label = 'Cần làm (Mới & Tồn)';
+      todoCharts.velocity.data.datasets[0].data = completedData;
+      todoCharts.velocity.data.datasets[1].data = backlogData;
+      todoCharts.velocity.data.datasets[2].data = newData;
       todoCharts.velocity.update('none');
     } else {
       todoCharts.velocity = new Chart(ctxVel.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: stats.chart.labels,
-        datasets: [
-          {
-            label: 'Hoàn thành',
-            data: stats.chart.completed,
-            backgroundColor: '#5F7465',
-            borderRadius: 6,
-            barPercentage: 0.6
+        type: 'bar',
+        data: {
+          labels: stats.chart.labels,
+          datasets: [
+            {
+              label: 'Hoàn thành',
+              data: completedData,
+              backgroundColor: '#5F7465', // Vintage Sage Green
+              borderRadius: 6,
+              borderSkipped: false,
+              barPercentage: 0.65,
+              categoryPercentage: 0.65,
+              stack: 'completed'
+            },
+            {
+              label: 'Tồn đọng cũ',
+              data: backlogData,
+              backgroundColor: '#B39D7F', // Vintage be đậm ở bên dưới
+              borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 },
+              borderSkipped: false,
+              barPercentage: 0.65,
+              categoryPercentage: 0.65,
+              stack: 'workload'
+            },
+            {
+              label: 'Mới trong ngày',
+              data: newData,
+              backgroundColor: '#DECDB5', // Vintage be sáng ở bên trên, cùng một cột
+              borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+              borderSkipped: false,
+              barPercentage: 0.65,
+              categoryPercentage: 0.65,
+              stack: 'workload'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
           },
-          {
-            label: 'Cần làm (Mới & Tồn)',
-            data: stats.chart.created,
-            backgroundColor: '#DECDB5',
-            borderRadius: 6,
-            barPercentage: 0.6
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animations: {
-          y: {
-            type: 'number',
-            easing: 'easeOutBack', // Bouncy sprout up effect
-            duration: 520,
-            from: (ctx) => {
-              if (ctx.type === 'data') {
-                const y = ctx.chart.scales.y;
-                return y ? y.getPixelForValue(0) : 0;
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: { family: 'inherit', size: 11, weight: '600' },
+                color: '#786B60',
+                boxWidth: 12
               }
             },
-            delay(ctx) {
-              if (ctx.type !== 'data') return 0;
-              // Staggered: Left to right day-by-day (85ms per day + 35ms between the 2 bars)
-              return ctx.index * 85 + ctx.datasetIndex * 35;
+            tooltip: {
+              backgroundColor: '#233329',
+              titleFont: { family: 'inherit', size: 12, weight: 'bold' },
+              bodyFont: { family: 'inherit', size: 12 },
+              padding: 10,
+              cornerRadius: 12,
+              callbacks: {
+                footer: function(items) {
+                  let totalWorkload = 0;
+                  items.forEach(it => {
+                    if (it.datasetIndex === 1 || it.datasetIndex === 2) {
+                      totalWorkload += (it.parsed.y || 0);
+                    }
+                  });
+                  return totalWorkload > 0 ? `Tổng việc cần làm: ${totalWorkload}` : '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { display: false },
+              ticks: { font: { family: 'inherit', size: 10 }, color: '#786B60' }
+            },
+            y: {
+              stacked: true,
+              grid: { color: 'rgba(222, 205, 181, 0.3)' },
+              ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10 }, color: '#786B60' }
             }
           }
-        },
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: { font: { family: 'inherit', size: 11, weight: '600' }, color: '#786B60', boxWidth: 12 }
-          }
-        },
-        scales: {
-          x: { grid: { display: false }, ticks: { font: { family: 'inherit', size: 10 }, color: '#786B60' } },
-          y: { grid: { color: 'rgba(222, 205, 181, 0.3)' }, ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10 }, color: '#786B60' } }
         }
-      }
-    });
+      });
     }
   }
 
@@ -1294,13 +1332,7 @@ function renderHabits(data) {
   if (todayDoneElem) todayDoneElem.textContent = `${doneToday} / ${habits.length}`;
   if (consistencyElem) consistencyElem.textContent = `${consistencyRate}%`;
 
-  // Render Area Chart (Biểu đồ miền xu hướng cả tháng)
-  if (data.chart) {
-    const sec = document.getElementById('section-habits');
-    if (sec && !sec.classList.contains('hidden')) {
-      renderHabitAreaChart(data.chart);
-    }
-  }
+
 
   const badge = document.getElementById('sidebarHabitsBadge');
   if (badge) badge.textContent = habits.length;
