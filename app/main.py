@@ -90,6 +90,13 @@ class RealtimeSyncManager:
                 self.disconnect(connection)
 
     def broadcast(self, message: dict):
+        if message.get("event") == "data_changed":
+            try:
+                from app.cloud_persistence import schedule_gist_backup
+                schedule_gist_backup(export_sync_data, delay_sec=2.0)
+            except Exception as ex:
+                logger.debug(f"[WS-Sync] Gist backup error: {ex}")
+
         if not self.active_connections:
             return
         try:
@@ -111,6 +118,17 @@ async def startup_cloud_listener():
         sync_manager.loop = asyncio.get_running_loop()
     except Exception:
         pass
+
+    # If running on Render Cloud, restore latest state from Gist on boot!
+    if os.environ.get("RENDER"):
+        try:
+            from app.cloud_persistence import load_data_from_gist
+            gist_data = await asyncio.to_thread(load_data_from_gist)
+            if gist_data:
+                import_sync_data(gist_data)
+                logger.info("⚡ [Cloud Boot] Restored complete database from GitHub Gist!")
+        except Exception as e:
+            logger.warning(f"Failed to load from Gist on startup: {e}")
 
     # If running locally on PC (not on Render Cloud), maintain a background connection to Cloud WebSocket
     if not os.environ.get("RENDER"):

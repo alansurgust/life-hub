@@ -1,4 +1,123 @@
 {
+  "statements": [
+    {
+      "id": 15,
+      "filename": "SaoKeTK_06082026_02112026.xlsx",
+      "bank_name": "Techcombank",
+      "statement_month": "2026-08 ~ 2026-10",
+      "uploaded_at": "2026-11-02 03:42:58",
+      "total_in": 53249427.0,
+      "total_out": 54137655.0,
+      "transaction_count": 319
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Ăn uống",
+      "type": "expense",
+      "color": "#C3651F",
+      "icon": "utensils"
+    },
+    {
+      "id": 2,
+      "name": "Mua sắm",
+      "type": "expense",
+      "color": "#B14720",
+      "icon": "shopping-bag"
+    },
+    {
+      "id": 3,
+      "name": "Di chuyển",
+      "type": "expense",
+      "color": "#5F7465",
+      "icon": "car"
+    },
+    {
+      "id": 4,
+      "name": "Hóa đơn & Tiện ích",
+      "type": "expense",
+      "color": "#D39526",
+      "icon": "zap"
+    },
+    {
+      "id": 5,
+      "name": "Nhà ở & Sinh hoạt",
+      "type": "expense",
+      "color": "#663B1B",
+      "icon": "home"
+    },
+    {
+      "id": 6,
+      "name": "Sức khỏe & Y tế",
+      "type": "expense",
+      "color": "#7C3929",
+      "icon": "heart-pulse"
+    },
+    {
+      "id": 7,
+      "name": "Giáo dục & Học tập",
+      "type": "expense",
+      "color": "#626037",
+      "icon": "book-open"
+    },
+    {
+      "id": 8,
+      "name": "Giải trí & Du lịch",
+      "type": "expense",
+      "color": "#5F7465",
+      "icon": "film"
+    },
+    {
+      "id": 9,
+      "name": "Gia đình & Cá nhân",
+      "type": "expense",
+      "color": "#552F26",
+      "icon": "users"
+    },
+    {
+      "id": 10,
+      "name": "Đầu tư & Tiết kiệm",
+      "type": "expense",
+      "color": "#626037",
+      "icon": "trending-up"
+    },
+    {
+      "id": 11,
+      "name": "Khác",
+      "type": "expense",
+      "color": "#8E8275",
+      "icon": "circle-ellipsis"
+    },
+    {
+      "id": 12,
+      "name": "Lương & Thu nhập",
+      "type": "income",
+      "color": "#5F7465",
+      "icon": "wallet"
+    },
+    {
+      "id": 13,
+      "name": "Thưởng & Hoa hồng",
+      "type": "income",
+      "color": "#D39526",
+      "icon": "gift"
+    },
+    {
+      "id": 14,
+      "name": "Thu nhập khác",
+      "type": "income",
+      "color": "#626037",
+      "icon": "arrow-down-left"
+    },
+    {
+      "id": 25,
+      "name": "Chưa phân loại",
+      "type": "expense",
+      "color": "#D39526",
+      "icon": "help-circle"
+    }
+  ],
   "transactions": [
     {
       "id": 457,
@@ -5743,6 +5862,153 @@
       "updated_at": "2026-11-02 03:42:58"
     }
   ],
+  "habits": [
+    {
+      "id": 6,
+      "name": "wake up before 6am",
+      "icon": "sparkles",
+      "color": "#5F7465",
+      "target_days": 7,
+      "streak": 3,
+      "best_streak": 3,
+      "created_at": "2026-11-02 13:30:29",
+      "updated_at": "2026-11-04 14:59:40"
+    },
+    {
+      "id": 7,
+      "name": "sleep before 22h45 (previous night)",
+      "icon": "sparkles",
+      "color": "#5F7465",
+      "target_days": 7,
+      "streak": 3,
+      "best_streak": 3,
+      "created_at": "2026-11-02 13:38:22",
+      "updated_at": "2026-11-04 14:59:40"
+    },
+    {
+      "id": 8,
+      "name": "10.000 steps",
+      "icon": "sparkles",
+      "color": "#5F7465",
+      "target_days": 7,
+      "streak": 0,
+      "best_streak": 1,
+      "created_at": "2026-11-02 13:38:45",
+      "updated_at": "2026-11-04 14:59:40"
+    },
+    {
+      "id": 9,
+      "name": "no fap",
+      "icon": "sparkles",
+      "color": "#5F7465",
+      "target_days": 7,
+      "streak": 2,
+      "best_streak": 2,
+      "created_at": "2026-11-02 13:39:01",
+      "updated_at": "2026-11-04 14:59:40"
+    },
+    {
+      "id": 10,
+      "name": "2 liters water",
+      "icon": "sparkles",
+      "color": "#5F7465",
+      "target_days": 7,
+      "streak": 3,
+      "best_streak": 3,
+      "created_at": "2026-11-02 13:42:10",
+      "updated_at": "2026-11-04 14:59:40"
+    },
+    {
+      "id": 11,
+      "name": "15m reading book",
+      "icon": "sparkles",
+      "color": "#5F7465",
+      "target_days": 7,
+      "streak": 1,
+      "best_streak": 1,
+      "created_at": "2026-11-02 15:18:22",
+      "updated_at": "2026-11-04 14:59:40"
+    }
+  ],
+  "habit_logs": [
+    {
+      "id": 6013,
+      "habit_id": 10,
+      "date": "2026-11-02",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6014,
+      "habit_id": 6,
+      "date": "2026-11-02",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6015,
+      "habit_id": 7,
+      "date": "2026-11-02",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6016,
+      "habit_id": 11,
+      "date": "2026-11-02",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6017,
+      "habit_id": 6,
+      "date": "2026-11-03",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6018,
+      "habit_id": 7,
+      "date": "2026-11-03",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6019,
+      "habit_id": 9,
+      "date": "2026-11-03",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 6020,
+      "habit_id": 10,
+      "date": "2026-11-03",
+      "status": 1,
+      "created_at": "2026-11-04 01:53:22"
+    },
+    {
+      "id": 45957,
+      "habit_id": 6,
+      "date": "2026-11-04",
+      "status": 1,
+      "created_at": "2026-11-04 11:30:37"
+    },
+    {
+      "id": 45960,
+      "habit_id": 9,
+      "date": "2026-11-04",
+      "status": 1,
+      "created_at": "2026-11-04 11:31:50"
+    },
+    {
+      "id": 46260,
+      "habit_id": 10,
+      "date": "2026-11-04",
+      "status": 1,
+      "created_at": "2026-11-04 11:58:32"
+    }
+  ],
   "todos": [
     {
       "id": 6,
@@ -5796,9 +6062,9 @@
       "category": "Cá nhân",
       "pomodoro_est": 1,
       "pomodoro_done": 0,
-      "completed_at": "2026-11-03 05:39:12",
+      "completed_at": "2026-11-04 15:04:53",
       "created_at": "2026-11-02 14:46:19",
-      "updated_at": "2026-11-03 05:39:12"
+      "updated_at": "2026-11-04 15:04:53"
     },
     {
       "id": 10,
@@ -5812,7 +6078,7 @@
       "pomodoro_done": 0,
       "completed_at": null,
       "created_at": "2026-11-02 14:46:49",
-      "updated_at": "2026-11-02 14:46:49"
+      "updated_at": "2026-11-04 11:27:07"
     },
     {
       "id": 27,
@@ -5857,152 +6123,46 @@
       "updated_at": "2026-11-04 02:03:18"
     },
     {
-      "id": 32,
-      "title": "hoàn thành họa 1 4 trang đầu",
+      "id": 36,
+      "title": "ktđ buổi 6",
       "description": "",
-      "due_date": "2026-11-03",
+      "due_date": "2026-11-04",
       "priority": "normal",
-      "status": "pending",
+      "status": "completed",
       "category": "Học tập",
       "pomodoro_est": 1,
       "pomodoro_done": 0,
-      "completed_at": null,
-      "created_at": "2026-11-03 12:42:06",
-      "updated_at": "2026-11-03 12:42:06"
-    }
-  ],
-  "habits": [
-    {
-      "id": 6,
-      "name": "wake up before 6am",
-      "icon": "sparkles",
-      "color": "#5F7465",
-      "target_days": 7,
-      "streak": 3,
-      "best_streak": 3,
-      "created_at": "2026-11-02 13:30:29",
-      "updated_at": "2026-11-04T09:01:14.676885"
+      "completed_at": "2026-11-04 03:49:11",
+      "created_at": "2026-11-04 03:40:26",
+      "updated_at": "2026-11-04 03:49:11"
     },
     {
-      "id": 7,
-      "name": "sleep before 22h45 (previous night)",
-      "icon": "sparkles",
-      "color": "#5F7465",
-      "target_days": 7,
-      "streak": 2,
-      "best_streak": 2,
-      "created_at": "2026-11-02 13:38:22",
-      "updated_at": "2026-11-04T09:01:14.676923"
+      "id": 37,
+      "title": "ktđ buổi 4",
+      "description": "",
+      "due_date": "2026-11-04",
+      "priority": "normal",
+      "status": "completed",
+      "category": "Học tập",
+      "pomodoro_est": 1,
+      "pomodoro_done": 0,
+      "completed_at": "2026-11-04 15:03:05",
+      "created_at": "2026-11-04 03:40:36",
+      "updated_at": "2026-11-04 15:03:05"
     },
     {
-      "id": 8,
-      "name": "10.000 steps",
-      "icon": "sparkles",
-      "color": "#5F7465",
-      "target_days": 7,
-      "streak": 0,
-      "best_streak": 0,
-      "created_at": "2026-11-02 13:38:45",
-      "updated_at": "2026-11-04T09:01:14.676933"
-    },
-    {
-      "id": 9,
-      "name": "no fap",
-      "icon": "sparkles",
-      "color": "#5F7465",
-      "target_days": 7,
-      "streak": 1,
-      "best_streak": 1,
-      "created_at": "2026-11-02 13:39:01",
-      "updated_at": "2026-11-04T09:01:14.676941"
-    },
-    {
-      "id": 10,
-      "name": "2 liters water",
-      "icon": "sparkles",
-      "color": "#5F7465",
-      "target_days": 7,
-      "streak": 2,
-      "best_streak": 2,
-      "created_at": "2026-11-02 13:42:10",
-      "updated_at": "2026-11-04T09:01:14.676948"
-    },
-    {
-      "id": 11,
-      "name": "15m reading book",
-      "icon": "sparkles",
-      "color": "#5F7465",
-      "target_days": 7,
-      "streak": 1,
-      "best_streak": 1,
-      "created_at": "2026-11-02 15:18:22",
-      "updated_at": "2026-11-04T09:01:14.676955"
-    }
-  ],
-  "habit_logs": [
-    {
-      "id": 6013,
-      "habit_id": 10,
-      "date": "2026-11-02",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "2 liters water"
-    },
-    {
-      "id": 6014,
-      "habit_id": 6,
-      "date": "2026-11-02",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "wake up before 6am"
-    },
-    {
-      "id": 6015,
-      "habit_id": 7,
-      "date": "2026-11-02",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "sleep before 22h45 (previous night)"
-    },
-    {
-      "id": 6016,
-      "habit_id": 11,
-      "date": "2026-11-02",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "15m reading book"
-    },
-    {
-      "id": 6017,
-      "habit_id": 6,
-      "date": "2026-11-03",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "wake up before 6am"
-    },
-    {
-      "id": 6018,
-      "habit_id": 7,
-      "date": "2026-11-03",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "sleep before 22h45 (previous night)"
-    },
-    {
-      "id": 6019,
-      "habit_id": 9,
-      "date": "2026-11-03",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "no fap"
-    },
-    {
-      "id": 6020,
-      "habit_id": 10,
-      "date": "2026-11-03",
-      "status": 1,
-      "created_at": "2026-11-04 01:53:22",
-      "habit_name": "2 liters water"
+      "id": 39,
+      "title": "vẽ kĩ thuật",
+      "description": "",
+      "due_date": "2026-11-04",
+      "priority": "normal",
+      "status": "completed",
+      "category": "Học tập",
+      "pomodoro_est": 1,
+      "pomodoro_done": 0,
+      "completed_at": "2026-11-04 15:05:05",
+      "created_at": "2026-11-04 15:03:57",
+      "updated_at": "2026-11-04 15:05:05"
     }
   ],
   "journal_entries": [
@@ -6015,7 +6175,7 @@
       "gratitude": "Biết ơn sức khỏe tốt, tinh thần tập trung và sự tiến bộ rõ rệt trong việc tự động hóa công việc.",
       "improvement": "Cần duy trì việc uống nước đều đặn hơn trong lúc ngồi làm việc lâu.",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-04 02:01:12"
+      "updated_at": "2026-11-04 14:59:40"
     },
     {
       "id": 2,
@@ -6026,7 +6186,7 @@
       "gratitude": "Biết ơn sức khỏe tốt, tinh thần tập trung và sự tiến bộ rõ rệt trong việc tự động hóa công việc.",
       "improvement": "Cần duy trì việc uống nước đều đặn hơn trong lúc ngồi làm việc lâu.",
       "created_at": "2026-11-03 03:35:21",
-      "updated_at": "2026-11-04 02:01:12"
+      "updated_at": "2026-11-04 14:59:40"
     }
   ],
   "notes": [
@@ -6038,7 +6198,7 @@
       "is_pinned": 1,
       "color": "#FFFDF9",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-04 02:01:12"
+      "updated_at": "2026-11-04 14:59:40"
     },
     {
       "id": 2,
@@ -6048,7 +6208,7 @@
       "is_pinned": 1,
       "color": "#FFFDF9",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-04 02:01:12"
+      "updated_at": "2026-11-04 14:59:40"
     },
     {
       "id": 3,
@@ -6058,7 +6218,7 @@
       "is_pinned": 0,
       "color": "#FFFDF9",
       "created_at": "2026-11-02 13:12:24",
-      "updated_at": "2026-11-04 02:01:12"
+      "updated_at": "2026-11-04 14:59:40"
     },
     {
       "id": 5,
@@ -6068,19 +6228,8 @@
       "is_pinned": 0,
       "color": "#FFFDF9",
       "created_at": "2026-11-03 03:35:21",
-      "updated_at": "2026-11-04 02:01:12"
+      "updated_at": "2026-11-04 14:59:40"
     }
   ],
-  "deleted_records": [
-    {
-      "table_name": "todos",
-      "record_uid": "Verify PC Edit Not Reset||2026-11-04",
-      "deleted_at": "2026-11-04 01:54:36"
-    },
-    {
-      "table_name": "todos",
-      "record_uid": "Created From Phone||2026-11-04",
-      "deleted_at": "2026-11-04 01:54:57"
-    }
-  ]
+  "export_date": "2026-11-04"
 }
