@@ -135,22 +135,64 @@ function toggleHabitMonthView(habitId) {
   if (window.lucide) lucide.createIcons();
 }
 
+const habitToggleLock = new Set();
+const todoToggleLock = new Set();
+
 async function toggleHabitLogWithFeedback(event, habitId, date) {
-  if (event && event.currentTarget) {
-    event.currentTarget.classList.add('animate-check-bounce');
-  }
+  const lockKey = `${habitId}_${date}`;
+  if (habitToggleLock.has(lockKey)) return;
+  habitToggleLock.add(lockKey);
+
+  const btn = event ? event.currentTarget : null;
   triggerHaptic([20, 30, 40]);
   playTickSound();
-  await toggleHabitLog(habitId, date);
+
+  // Optimistic UI feedback: Flip state on screen immediately (< 10ms)
+  let prevClass = '';
+  if (btn) {
+    btn.classList.add('animate-check-bounce');
+    prevClass = btn.className;
+    const isDone = btn.classList.contains('bg-[#5F7465]');
+    if (isDone) {
+      btn.classList.remove('bg-[#5F7465]', 'text-white');
+      btn.classList.add('border', 'border-[#5F7465]', 'bg-[#FFFDF9]', 'text-[#5F7465]');
+    } else {
+      btn.classList.remove('border', 'border-[#5F7465]', 'bg-[#FFFDF9]', 'text-[#5F7465]');
+      btn.classList.add('bg-[#5F7465]', 'text-white');
+    }
+  }
+
+  try {
+    await toggleHabitLog(habitId, date);
+  } catch (err) {
+    if (btn && prevClass) btn.className = prevClass;
+    showToast(err.message, 'error');
+  } finally {
+    setTimeout(() => {
+      habitToggleLock.delete(lockKey);
+    }, 280);
+  }
 }
 
 async function toggleTodoWithFeedback(event, id) {
+  if (todoToggleLock.has(id)) return;
+  todoToggleLock.add(id);
+
   if (event && event.currentTarget) {
     event.currentTarget.classList.add('animate-check-bounce');
   }
   triggerHaptic(30);
   playTickSound();
-  await toggleTodo(id);
+
+  try {
+    await toggleTodo(id);
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    setTimeout(() => {
+      todoToggleLock.delete(id);
+    }, 280);
+  }
 }
 
 // Vintage Skeleton Loading Placeholders
@@ -1280,16 +1322,42 @@ async function quickAddTodo(e) {
 }
 
 async function toggleTodo(id) {
+  const isLocal = isLocalEnvironment();
+  const todoItem = (lifeState.todos || []).find(t => t.id === id);
+
   try {
-    playTickSound();
     const res = await fetch(`/api/todos/${id}/toggle`, { method: 'PATCH' });
     if (!res.ok) throw new Error('Không thể cập nhật việc');
+    const updated = await res.json();
+
     loadTodos();
     loadTodoStats();
     loadDashboard();
-    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
+
+    if (isLocal && todoItem) {
+      // Instant direct delta sync to Cloud Render (< 200ms)
+      const cloudUrl = (lifeState.cloudRunUrl || 'https://life-hub-cv9l.onrender.com').trim().replace(/\/+$/, '');
+      if (cloudUrl) {
+        updateSyncStatusUI('syncing');
+        fetch(`${cloudUrl}/api/sync/todo-toggle`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: todoItem.title,
+            due_date: todoItem.due_date,
+            status: updated.status
+          })
+        }).then(() => {
+          updateSyncStatusUI('synced');
+        }).catch((err) => {
+          console.warn('Delta todo sync warning:', err);
+          updateSyncStatusUI('synced');
+        });
+      }
+    }
   } catch (err) {
     showToast(err.message, 'error');
+    throw err;
   }
 }
 
@@ -1896,15 +1964,42 @@ function renderHabitAreaChart(chartData) {
 }
 
 async function toggleHabitLog(habitId, date) {
+  const isLocal = isLocalEnvironment();
+  const habitObj = (lifeState.habits || []).find(h => h.id === habitId);
+  const habitName = habitObj ? habitObj.name : '';
+
   try {
-    playTickSound();
     const res = await fetch(`/api/habits/${habitId}/toggle?date=${date}`, { method: 'POST' });
     if (!res.ok) throw new Error('Không thể cập nhật thói quen');
+    const resData = await res.json();
+
     loadHabits();
     loadDashboard();
-    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
+
+    if (isLocal && habitName) {
+      // Instant direct delta sync to Cloud Render (< 200ms)
+      const cloudUrl = (lifeState.cloudRunUrl || 'https://life-hub-cv9l.onrender.com').trim().replace(/\/+$/, '');
+      if (cloudUrl) {
+        updateSyncStatusUI('syncing');
+        fetch(`${cloudUrl}/api/sync/habit-toggle`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            habit_name: habitName,
+            date: date,
+            status: resData.is_done ? 1 : 0
+          })
+        }).then(() => {
+          updateSyncStatusUI('synced');
+        }).catch((err) => {
+          console.warn('Delta sync warning:', err);
+          updateSyncStatusUI('synced');
+        });
+      }
+    }
   } catch (err) {
     showToast(err.message, 'error');
+    throw err;
   }
 }
 
@@ -2759,8 +2854,8 @@ function initRealtimeSync() {
           console.log('⚡ [Realtime Sync] Event received:', msg);
           const isLocal = isLocalEnvironment();
           if (isLocal) {
-            // Mobile changed data -> Desktop pulls immediately!
-            autoCloudSync(true, true);
+            // Mobile changed data -> Desktop ONLY PULLS! (Never pushes stale state)
+            pullFromCloudSilently();
           } else {
             // Desktop pushed data -> Mobile reloads active tab immediately!
             reloadActiveTabData(true);

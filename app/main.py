@@ -8,6 +8,7 @@ import datetime
 import calendar
 from typing import Optional, List
 import asyncio
+from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File, Form, Query, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -52,6 +53,16 @@ app.add_middleware(
 )
 
 # ================= REALTIME WEBSOCKET SYNC MANAGER =================
+class HabitToggleDelta(BaseModel):
+    habit_name: str
+    date: str
+    status: Optional[int] = None # 1 = done, 0 = undone, None = toggle
+
+class TodoToggleDelta(BaseModel):
+    title: str
+    due_date: str
+    status: Optional[str] = None # "completed" | "pending"
+
 class RealtimeSyncManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
@@ -118,6 +129,100 @@ def notify_sync_event(payload: Optional[dict] = None):
     msg = payload or {"event": "data_changed", "timestamp": datetime.datetime.now().isoformat()}
     sync_manager.broadcast(msg)
     return {"success": True, "clients_notified": len(sync_manager.active_connections)}
+
+@app.post("/api/sync/habit-toggle")
+def sync_habit_toggle_delta(payload: HabitToggleDelta):
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT id FROM habits WHERE name = ?", (payload.habit_name,))
+        row = c.fetchone()
+        if not row:
+            c.execute("INSERT INTO habits (name, icon, color, target_days) VALUES (?, 'sparkles', '#5F7465', 7)", (payload.habit_name,))
+            habit_id = c.lastrowid
+        else:
+            habit_id = row["id"]
+
+        log_uid = f"{payload.habit_name}||{payload.date}"
+        c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (habit_id, payload.date))
+        existing = c.fetchone()
+
+        if payload.status is not None:
+            new_done = (payload.status == 1)
+        else:
+            new_done = (not existing)
+
+        if new_done:
+            c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (log_uid,))
+            c.execute("INSERT OR REPLACE INTO habit_logs (habit_id, date, status, created_at) VALUES (?, ?, 1, CURRENT_TIMESTAMP)", (habit_id, payload.date))
+        else:
+            c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (habit_id, payload.date))
+            c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid, deleted_at) VALUES ('habit_logs', ?, CURRENT_TIMESTAMP)", (log_uid,))
+
+        # Recalculate streak
+        c.execute("SELECT date FROM habit_logs WHERE habit_id = ? ORDER BY date DESC", (habit_id,))
+        all_dates = {r["date"] for r in c.fetchall()}
+        streak = 0
+        check_day = get_vn_today()
+        if check_day.isoformat() not in all_dates:
+            check_day = check_day - datetime.timedelta(days=1)
+        while check_day.isoformat() in all_dates:
+            streak += 1
+            check_day = check_day - datetime.timedelta(days=1)
+
+        c.execute("SELECT best_streak FROM habits WHERE id = ?", (habit_id,))
+        b_row = c.fetchone()
+        best_streak = max(b_row["best_streak"] if b_row else 0, streak)
+        c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (streak, best_streak, habit_id))
+        conn.commit()
+
+        # Broadcast instantly via WebSocket to all listening clients
+        sync_manager.broadcast({
+            "event": "data_changed",
+            "tab": "habits",
+            "habit_name": payload.habit_name,
+            "date": payload.date,
+            "is_done": new_done,
+            "status": 1 if new_done else 0,
+            "timestamp": datetime.datetime.now().isoformat()
+        })
+
+        return {"success": True, "habit_name": payload.habit_name, "is_done": new_done, "status": 1 if new_done else 0}
+    finally:
+        conn.close()
+
+@app.post("/api/sync/todo-toggle")
+def sync_todo_toggle_delta(payload: TodoToggleDelta):
+    conn = get_db_connection()
+    c = conn.cursor()
+    try:
+        c.execute("SELECT id, status FROM todos WHERE title = ? AND due_date = ?", (payload.title, payload.due_date))
+        row = c.fetchone()
+        if not row:
+            return {"success": False, "message": "Todo not found"}
+
+        if payload.status:
+            new_status = payload.status
+        else:
+            new_status = "pending" if row["status"] == "completed" else "completed"
+
+        completed_at = datetime.datetime.now().isoformat() if new_status == "completed" else None
+        c.execute("UPDATE todos SET status = ?, completed_at = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (new_status, completed_at, row["id"]))
+        conn.commit()
+
+        sync_manager.broadcast({
+            "event": "data_changed",
+            "tab": "todos",
+            "title": payload.title,
+            "due_date": payload.due_date,
+            "status": new_status,
+            "timestamp": datetime.datetime.now().isoformat()
+        })
+
+        return {"success": True, "title": payload.title, "status": new_status}
+    finally:
+        conn.close()
+
 
 
 STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
@@ -1647,10 +1752,12 @@ def toggle_habit_log(habit_id: int, date: Optional[str] = None):
     existing = c.fetchone()
     if existing:
         c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (habit_id, target_date))
-        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('habit_logs', ?)", (log_uid,))
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid, deleted_at) VALUES ('habit_logs', ?, CURRENT_TIMESTAMP)", (log_uid,))
+        is_done = False
     else:
         c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (log_uid,))
-        c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, 1)", (habit_id, target_date))
+        c.execute("INSERT OR REPLACE INTO habit_logs (habit_id, date, status, created_at) VALUES (?, ?, 1, CURRENT_TIMESTAMP)", (habit_id, target_date))
+        is_done = True
 
     c.execute("SELECT date FROM habit_logs WHERE habit_id = ? ORDER BY date DESC", (habit_id,))
     all_dates = {row["date"] for row in c.fetchall()}
@@ -1671,8 +1778,17 @@ def toggle_habit_log(habit_id: int, date: Optional[str] = None):
     c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (streak, best_streak, habit_id))
     conn.commit()
     conn.close()
-    sync_manager.broadcast({"event": "data_changed", "tab": "habits", "habit_id": habit_id, "timestamp": datetime.datetime.now().isoformat()})
-    return {"success": True, "habit_id": habit_id, "streak": streak, "best_streak": best_streak}
+    sync_manager.broadcast({
+        "event": "data_changed",
+        "tab": "habits",
+        "habit_id": habit_id,
+        "habit_name": h_name,
+        "date": target_date,
+        "is_done": is_done,
+        "status": 1 if is_done else 0,
+        "timestamp": datetime.datetime.now().isoformat()
+    })
+    return {"success": True, "habit_id": habit_id, "is_done": is_done, "streak": streak, "best_streak": best_streak}
 
 @app.put("/api/habits/{habit_id}")
 def update_habit(habit_id: int, item: HabitUpdate):
@@ -1949,9 +2065,20 @@ def import_sync_data(payload: dict):
             if not t_name or not uid:
                 continue
 
-            # If this is a habit_log tombstone but the habit is actively checked, eradicate tombstone!
-            if t_name == "habit_logs" and uid in all_active_habit_logs:
-                c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (uid,))
+            # If this is a habit_log tombstone:
+            if t_name == "habit_logs":
+                # If incoming payload explicitly has this habit log active, then positive check in payload wins
+                if uid in active_incoming_habit_logs:
+                    c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (uid,))
+                    continue
+                # Otherwise, sender explicitly unchecked it -> delete it locally!
+                parts = uid.split("||", 1)
+                if len(parts) == 2:
+                    h_id = local_habit_name_to_id.get(parts[0])
+                    if h_id:
+                        c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (h_id, parts[1]))
+                c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid, deleted_at) VALUES (?, ?, ?)",
+                          (t_name, uid, deleted_at))
                 continue
 
             # If this is a todo tombstone but incoming todo was updated after deletion, skip tombstone
