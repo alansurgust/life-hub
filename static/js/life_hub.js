@@ -114,10 +114,8 @@ function switchLifeTab(tabName) {
   } else if (tabName === 'todos') {
     loadTodos();
     loadTodoStats();
-    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } else if (tabName === 'habits') {
     loadHabits();
-    if (window.scheduleAutoSync) window.scheduleAutoSync();
   } else if (tabName === 'journal') {
     loadJournal(lifeState.currentJournalDate);
     loadJournalHistory();

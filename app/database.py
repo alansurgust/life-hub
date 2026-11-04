@@ -84,7 +84,8 @@ def init_db():
         balance REAL,
         ai_confidence REAL DEFAULT 0.8,
         is_manual_category INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
@@ -165,7 +166,8 @@ def init_db():
         pomodoro_est INTEGER DEFAULT 1,
         pomodoro_done INTEGER DEFAULT 0,
         completed_at DATETIME,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_todos_status_due ON todos(status, due_date)")
@@ -181,7 +183,8 @@ def init_db():
         target_days INTEGER DEFAULT 7,
         streak INTEGER DEFAULT 0,
         best_streak INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
@@ -238,6 +241,22 @@ def init_db():
     )
     """)
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_del_rec ON deleted_records(table_name, record_uid)")
+
+    # Safe schema migration for updated_at in all tables
+    for tbl in ["todos", "habits", "transactions"]:
+        try:
+            cursor.execute(f"ALTER TABLE {tbl} ADD COLUMN updated_at DATETIME")
+        except Exception:
+            pass
+
+    try:
+        cursor.execute("UPDATE todos SET updated_at = COALESCE(completed_at, created_at, CURRENT_TIMESTAMP) WHERE updated_at IS NULL")
+        cursor.execute("UPDATE habits SET updated_at = COALESCE(created_at, CURRENT_TIMESTAMP) WHERE updated_at IS NULL")
+        cursor.execute("UPDATE transactions SET updated_at = COALESCE(created_at, CURRENT_TIMESTAMP) WHERE updated_at IS NULL")
+        cursor.execute("UPDATE notes SET updated_at = COALESCE(created_at, CURRENT_TIMESTAMP) WHERE updated_at IS NULL")
+        cursor.execute("UPDATE journal_entries SET updated_at = COALESCE(created_at, CURRENT_TIMESTAMP) WHERE updated_at IS NULL")
+    except Exception:
+        pass
 
     # Seed initial sample data if tables are empty
     _seed_initial_life_hub_data(cursor)

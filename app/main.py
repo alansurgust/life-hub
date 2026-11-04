@@ -300,8 +300,8 @@ def create_transaction(item: TransactionCreate):
     c.execute("""
         INSERT INTO transactions (
             date, month, week, type, amount, category, 
-            description, raw_description, ref_no, is_manual_category, ai_confidence
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1.0)
+            description, raw_description, ref_no, is_manual_category, ai_confidence, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1.0, CURRENT_TIMESTAMP)
     """, (
         date_iso, month_iso, week_iso, item.type, item.amount, item.category,
         item.description, item.raw_description or item.description, item.ref_no or ""
@@ -338,7 +338,7 @@ def update_transaction(trans_id: int, item: TransactionUpdate):
 
     c.execute("""
         UPDATE transactions
-        SET date = ?, month = ?, week = ?, amount = ?, type = ?, category = ?, description = ?, is_manual_category = ?, ai_confidence = 1.0
+        SET date = ?, month = ?, week = ?, amount = ?, type = ?, category = ?, description = ?, is_manual_category = ?, ai_confidence = 1.0, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
     """, (date_iso, month_iso, week_iso, new_amount, new_type, new_category, new_desc, is_manual, trans_id))
     conn.commit()
@@ -366,7 +366,7 @@ def update_transaction_category(trans_id: int, payload: CategoryUpdate):
 
     c.execute("""
         UPDATE transactions
-        SET category = ?, is_manual_category = 1, ai_confidence = 1.0
+        SET category = ?, is_manual_category = 1, ai_confidence = 1.0, updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
     """, (new_category, trans_id))
     conn.commit()
@@ -1203,8 +1203,8 @@ def create_todo(item: TodoCreate):
     uid = f"{item.title}||{item.due_date}"
     c.execute("DELETE FROM deleted_records WHERE table_name = 'todos' AND record_uid = ?", (uid,))
     c.execute("""
-        INSERT INTO todos (title, description, due_date, priority, category, pomodoro_est, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'pending')
+        INSERT INTO todos (title, description, due_date, priority, category, pomodoro_est, status, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
     """, (item.title, item.description or "", item.due_date, item.priority or "normal", item.category or "Công việc", item.pomodoro_est or 1))
     new_id = c.lastrowid
     conn.commit()
@@ -1234,6 +1234,7 @@ def update_todo(todo_id: int, item: TodoUpdate):
             updates.append("completed_at = NULL")
 
     if updates:
+        updates.append("updated_at = CURRENT_TIMESTAMP")
         params.append(todo_id)
         c.execute(f"UPDATE todos SET {', '.join(updates)} WHERE id = ?", params)
         conn.commit()
@@ -1255,9 +1256,9 @@ def toggle_todo(todo_id: int):
 
     new_status = "pending" if todo["status"] == "completed" else "completed"
     if new_status == "completed":
-        c.execute("UPDATE todos SET status = 'completed', completed_at = CURRENT_TIMESTAMP WHERE id = ?", (todo_id,))
+        c.execute("UPDATE todos SET status = 'completed', completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (todo_id,))
     else:
-        c.execute("UPDATE todos SET status = 'pending', completed_at = NULL WHERE id = ?", (todo_id,))
+        c.execute("UPDATE todos SET status = 'pending', completed_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (todo_id,))
 
     conn.commit()
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
@@ -1277,9 +1278,9 @@ def update_todo_status(todo_id: int, item: TodoStatusUpdate):
         raise HTTPException(status_code=404, detail="Không tìm thấy việc cần làm")
 
     if item.status == "completed":
-        c.execute("UPDATE todos SET status = ?, completed_at = CURRENT_TIMESTAMP WHERE id = ?", (item.status, todo_id))
+        c.execute("UPDATE todos SET status = ?, completed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (item.status, todo_id))
     else:
-        c.execute("UPDATE todos SET status = ?, completed_at = NULL WHERE id = ?", (item.status, todo_id))
+        c.execute("UPDATE todos SET status = ?, completed_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (item.status, todo_id))
     conn.commit()
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
     updated = dict(c.fetchone())
@@ -1295,7 +1296,7 @@ def increment_todo_pomodoro(todo_id: int):
         conn.close()
         raise HTTPException(status_code=404, detail="Không tìm thấy việc cần làm")
 
-    c.execute("UPDATE todos SET pomodoro_done = COALESCE(pomodoro_done, 0) + 1 WHERE id = ?", (todo_id,))
+    c.execute("UPDATE todos SET pomodoro_done = COALESCE(pomodoro_done, 0) + 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (todo_id,))
     conn.commit()
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
     updated = dict(c.fetchone())
@@ -1513,8 +1514,8 @@ def create_habit(item: HabitCreate):
     c = conn.cursor()
     c.execute("DELETE FROM deleted_records WHERE table_name = 'habits' AND record_uid = ?", (item.name,))
     c.execute("""
-        INSERT INTO habits (name, icon, color, target_days, streak, best_streak)
-        VALUES (?, ?, ?, ?, 0, 0)
+        INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at)
+        VALUES (?, ?, ?, ?, 0, 0, CURRENT_TIMESTAMP)
     """, (item.name, item.icon or "sparkles", item.color or "#5F7465", item.target_days or 7))
     new_id = c.lastrowid
     conn.commit()
@@ -1529,11 +1530,18 @@ def toggle_habit_log(habit_id: int, date: Optional[str] = None):
     conn = get_db_connection()
     c = conn.cursor()
 
+    c.execute("SELECT name FROM habits WHERE id = ?", (habit_id,))
+    h_row = c.fetchone()
+    h_name = h_row["name"] if h_row else str(habit_id)
+    log_uid = f"{h_name}||{target_date}"
+
     c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (habit_id, target_date))
     existing = c.fetchone()
     if existing:
         c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (habit_id, target_date))
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('habit_logs', ?)", (log_uid,))
     else:
+        c.execute("DELETE FROM deleted_records WHERE table_name = 'habit_logs' AND record_uid = ?", (log_uid,))
         c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, 1)", (habit_id, target_date))
 
     c.execute("SELECT date FROM habit_logs WHERE habit_id = ? ORDER BY date DESC", (habit_id,))
@@ -1552,7 +1560,7 @@ def toggle_habit_log(habit_id: int, date: Optional[str] = None):
     row = c.fetchone()
     best_streak = max(row["best_streak"] if row else 0, streak)
 
-    c.execute("UPDATE habits SET streak = ?, best_streak = ? WHERE id = ?", (streak, best_streak, habit_id))
+    c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (streak, best_streak, habit_id))
     conn.commit()
     conn.close()
     return {"success": True, "habit_id": habit_id, "streak": streak, "best_streak": best_streak}
@@ -1575,6 +1583,7 @@ def update_habit(habit_id: int, item: HabitUpdate):
             params.append(v)
 
     if updates:
+        updates.append("updated_at = CURRENT_TIMESTAMP")
         params.append(habit_id)
         c.execute(f"UPDATE habits SET {', '.join(updates)} WHERE id = ?", params)
         conn.commit()
@@ -1680,8 +1689,8 @@ def create_note(item: NoteCreate):
     c = conn.cursor()
     c.execute("DELETE FROM deleted_records WHERE table_name = 'notes' AND record_uid = ?", (item.title,))
     c.execute("""
-        INSERT INTO notes (title, content, category, is_pinned, color)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO notes (title, content, category, is_pinned, color, updated_at)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
     """, (item.title, item.content or "", item.category or "Ý tưởng", item.is_pinned or 0, item.color or "#FFFDF9"))
     new_id = c.lastrowid
     conn.commit()
@@ -1795,6 +1804,11 @@ def import_sync_data(payload: dict):
     try:
         c = conn.cursor()
 
+        # Build local habit name -> local habit id map early for tombstone handling
+        c.execute("SELECT id, name FROM habits")
+        local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
+        valid_local_habit_ids = set(local_habit_name_to_id.values())
+
         # 0. Sync and apply tombstones (deleted records)
         for dr in payload.get("deleted_records", []):
             t_name = dr.get("table_name")
@@ -1813,6 +1827,12 @@ def import_sync_data(payload: dict):
                 c.execute("DELETE FROM notes WHERE title = ?", (uid,))
             elif t_name == "habits":
                 c.execute("DELETE FROM habits WHERE name = ?", (uid,))
+            elif t_name == "habit_logs":
+                parts = uid.split("||", 1)
+                if len(parts) == 2:
+                    h_id = local_habit_name_to_id.get(parts[0])
+                    if h_id:
+                        c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (h_id, parts[1]))
             elif t_name == "transactions":
                 parts = uid.split("||", 3)
                 if len(parts) == 4:
@@ -1826,52 +1846,65 @@ def import_sync_data(payload: dict):
         c.execute("SELECT table_name, record_uid FROM deleted_records")
         del_records = {(row["table_name"], row["record_uid"]) for row in c.fetchall()}
 
-        # 1. Transactions merge
+        # 1. Transactions merge (with Last-Write-Wins updated_at check)
         for t in payload.get("transactions", []):
             trans_uid = f"{t.get('date')}||{t.get('amount')}||{t.get('type')}||{t.get('description')}"
             if ("transactions", trans_uid) in del_records:
                 continue
             c.execute("""
-                SELECT id, category, is_manual_category FROM transactions 
+                SELECT id, category, is_manual_category, updated_at FROM transactions 
                 WHERE date = ? AND amount = ? AND type = ? AND description = ?
             """, (t.get("date"), t.get("amount"), t.get("type"), t.get("description")))
             row = c.fetchone()
             if not row:
                 c.execute("""
-                    INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO transactions (date, month, week, type, amount, category, description, raw_description, ref_no, balance, is_manual_category, ai_confidence, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     t.get("date"), t.get("month"), t.get("week"), t.get("type"), t.get("amount"),
                     t.get("category"), t.get("description"), t.get("raw_description"), t.get("ref_no"),
-                    t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0)
+                    t.get("balance"), t.get("is_manual_category", 1), t.get("ai_confidence", 1.0),
+                    t.get("updated_at") or t.get("created_at") or datetime.datetime.now().isoformat()
                 ))
             else:
+                rem_up = str(t.get("updated_at") or "")
+                loc_up = str(row["updated_at"] or "")
+                if rem_up and loc_up and rem_up < loc_up:
+                    continue
                 if t.get("is_manual_category") == 1 and (row["category"] != t.get("category") or row["is_manual_category"] == 0):
-                    c.execute("UPDATE transactions SET category = ?, is_manual_category = 1 WHERE id = ?", (t.get("category"), row["id"]))
+                    c.execute("UPDATE transactions SET category = ?, is_manual_category = 1, updated_at = ? WHERE id = ?",
+                              (t.get("category"), rem_up or datetime.datetime.now().isoformat(), row["id"]))
 
-        # 2. Todos merge
+        # 2. Todos merge (with Last-Write-Wins updated_at check)
         for item in payload.get("todos", []):
             todo_uid = f"{item.get('title')}||{item.get('due_date')}"
             if ("todos", todo_uid) in del_records:
                 continue
 
-            c.execute("SELECT id, status FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
+            c.execute("SELECT id, status, updated_at FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
             row = c.fetchone()
             if not row:
                 c.execute("""
-                    INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO todos (title, description, due_date, priority, status, category, pomodoro_est, pomodoro_done, completed_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     item.get("title"), item.get("description", ""), item.get("due_date"),
                     item.get("priority", "normal"), item.get("status", "pending"),
                     item.get("category", "Công việc"), item.get("pomodoro_est", 1),
-                    item.get("pomodoro_done", 0), item.get("completed_at")
+                    item.get("pomodoro_done", 0), item.get("completed_at"),
+                    item.get("updated_at") or item.get("completed_at") or item.get("created_at") or datetime.datetime.now().isoformat()
                 ))
             else:
+                rem_up = str(item.get("updated_at") or item.get("completed_at") or "")
+                loc_up = str(row["updated_at"] or "")
+                if rem_up and loc_up and rem_up < loc_up:
+                    # Local was modified more recently on this device; do NOT overwrite!
+                    continue
+
                 remote_status = item.get("status", "pending")
                 if remote_status != row["status"]:
-                    c.execute("UPDATE todos SET status = ?, completed_at = ? WHERE id = ?",
-                              (remote_status, item.get("completed_at"), row["id"]))
+                    c.execute("UPDATE todos SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?",
+                              (remote_status, item.get("completed_at"), rem_up or datetime.datetime.now().isoformat(), row["id"]))
 
         # Remote habit id -> name lookup map
         remote_habit_id_to_name = {
@@ -1880,82 +1913,85 @@ def import_sync_data(payload: dict):
             if h.get("id") and h.get("name")
         }
 
-        # 3. Habits merge
+        # 3. Habits merge (with Last-Write-Wins updated_at check)
         for h in payload.get("habits", []):
             name = h.get("name")
             if not name or ("habits", name) in del_records:
                 continue
-            c.execute("SELECT id, streak, best_streak FROM habits WHERE name = ?", (name,))
+            c.execute("SELECT id, streak, best_streak, updated_at FROM habits WHERE name = ?", (name,))
             row = c.fetchone()
             if not row:
-                c.execute("INSERT INTO habits (name, icon, color, streak, best_streak) VALUES (?, ?, ?, ?, ?)",
-                          (name, h.get("icon", "flame"), h.get("color", "#5F7465"), h.get("streak", 0), h.get("best_streak", 0)))
+                c.execute("INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                          (name, h.get("icon", "flame"), h.get("color", "#5F7465"), h.get("target_days", 7), h.get("streak", 0), h.get("best_streak", 0),
+                           h.get("updated_at") or datetime.datetime.now().isoformat()))
             else:
+                rem_up = str(h.get("updated_at") or "")
+                loc_up = str(row["updated_at"] or "")
+                if rem_up and loc_up and rem_up < loc_up:
+                    continue
                 new_streak = max(row["streak"], h.get("streak", 0))
                 new_best = max(row["best_streak"], h.get("best_streak", 0))
-                c.execute("UPDATE habits SET streak = ?, best_streak = ? WHERE id = ?", (new_streak, new_best, row["id"]))
+                c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = ? WHERE id = ?",
+                          (new_streak, new_best, rem_up or datetime.datetime.now().isoformat(), row["id"]))
 
-        # Build local habit name -> local habit id map
+        # Refresh local habit map after inserting any new habits
         c.execute("SELECT id, name FROM habits")
         local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
         valid_local_habit_ids = set(local_habit_name_to_id.values())
 
-        # 4. Habit logs reconciliation (reconciles active 35-day window to prevent unticked habit resurrection)
-        active_local_h_ids = list(local_habit_name_to_id.values())
-        if active_local_h_ids and "habit_logs" in payload:
-            thirty_five_days_ago = (datetime.date.today() - datetime.timedelta(days=35)).isoformat()
-            placeholders = ",".join(["?"] * len(active_local_h_ids))
-            c.execute(f"""
-                DELETE FROM habit_logs 
-                WHERE habit_id IN ({placeholders}) AND date >= ?
-            """, (*active_local_h_ids, thirty_five_days_ago))
+        # 4. Habit logs merge (safe merge respecting tombstones without wiping local records)
+        for hl in payload.get("habit_logs", []):
+            h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
+            local_h_id = local_habit_name_to_id.get(h_name)
+            if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
+                local_h_id = hl.get("habit_id")
 
-            for hl in payload.get("habit_logs", []):
-                h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
-                local_h_id = local_habit_name_to_id.get(h_name)
-                if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
-                    local_h_id = hl.get("habit_id")
+            if local_h_id and h_name:
+                log_uid = f"{h_name}||{hl.get('date')}"
+                if ("habit_logs", log_uid) in del_records:
+                    continue
+                c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
+                          (local_h_id, hl.get("date"), hl.get("status", 1)))
 
-                if local_h_id:
-                    c.execute("INSERT OR IGNORE INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)",
-                              (local_h_id, hl.get("date"), hl.get("status", 1)))
-        else:
-            for hl in payload.get("habit_logs", []):
-                h_name = hl.get("habit_name") or remote_habit_id_to_name.get(hl.get("habit_id"))
-                local_h_id = local_habit_name_to_id.get(h_name)
-                if not local_h_id and hl.get("habit_id") in valid_local_habit_ids:
-                    local_h_id = hl.get("habit_id")
-
-                if local_h_id:
-                    c.execute("SELECT id FROM habit_logs WHERE habit_id = ? AND date = ?", (local_h_id, hl.get("date")))
-                    if not c.fetchone():
-                        c.execute("INSERT INTO habit_logs (habit_id, date, status) VALUES (?, ?, ?)", (local_h_id, hl.get("date"), hl.get("status", 1)))
-
-        # 5. Journal entries merge
+        # 5. Journal entries merge (with Last-Write-Wins updated_at check)
         for j in payload.get("journal_entries", []):
-            c.execute("SELECT id FROM journal_entries WHERE date = ?", (j.get("date"),))
-            if not c.fetchone():
-                c.execute("INSERT INTO journal_entries (date, title, mood, gratitude, improvement, content) VALUES (?, ?, ?, ?, ?, ?)",
-                          (j.get("date"), j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content")))
+            c.execute("SELECT id, updated_at FROM journal_entries WHERE date = ?", (j.get("date"),))
+            row = c.fetchone()
+            if not row:
+                c.execute("INSERT INTO journal_entries (date, title, mood, gratitude, improvement, content, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                          (j.get("date"), j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"),
+                           j.get("updated_at") or datetime.datetime.now().isoformat()))
             else:
+                rem_up = str(j.get("updated_at") or "")
+                loc_up = str(row["updated_at"] or "")
+                if rem_up and loc_up and rem_up < loc_up:
+                    continue
                 c.execute("""
                     UPDATE journal_entries SET title = COALESCE(?, title), mood = COALESCE(?, mood),
-                    gratitude = COALESCE(?, gratitude), improvement = COALESCE(?, improvement), content = COALESCE(?, content)
+                    gratitude = COALESCE(?, gratitude), improvement = COALESCE(?, improvement), content = COALESCE(?, content), updated_at = ?
                     WHERE date = ?
-                """, (j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"), j.get("date")))
+                """, (j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"),
+                      rem_up or datetime.datetime.now().isoformat(), j.get("date")))
 
-        # 6. Notes merge
+        # 6. Notes merge (with Last-Write-Wins updated_at check)
         for n in payload.get("notes", []):
             title = n.get("title")
             if not title or ("notes", title) in del_records:
                 continue
-            c.execute("SELECT id FROM notes WHERE title = ?", (title,))
-            if not c.fetchone():
-                c.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)",
-                          (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465")))
+            c.execute("SELECT id, updated_at FROM notes WHERE title = ?", (title,))
+            row = c.fetchone()
+            if not row:
+                c.execute("INSERT INTO notes (title, content, category, is_pinned, color, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+                          (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"),
+                           n.get("updated_at") or datetime.datetime.now().isoformat()))
             else:
-                c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ? WHERE title = ?",
-                          (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"), n.get("title")))
+                rem_up = str(n.get("updated_at") or "")
+                loc_up = str(row["updated_at"] or "")
+                if rem_up and loc_up and rem_up < loc_up:
+                    continue
+                c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ?, updated_at = ? WHERE title = ?",
+                          (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"),
+                           rem_up or datetime.datetime.now().isoformat(), title))
 
         conn.commit()
         return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công"}
@@ -2051,13 +2087,8 @@ def pull_from_cloud(payload: dict = None):
 
         return {
             "success": True,
-            "message": "Đã tải dữ liệu từ Cloud về máy thành công!",
-            "last_synced": now_str,
-            "counts": {
-                "transactions": len(cloud_data.get("transactions", [])),
-                "todos": len(cloud_data.get("todos", [])),
-                "habits": len(cloud_data.get("habits", []))
-            }
+            "message": "Đã lấy dữ liệu từ Cloud thành công!",
+            "last_synced": now_str
         }
     except HTTPException:
         raise
@@ -2084,7 +2115,15 @@ def trigger_cloud_sync(payload: dict = None):
 
     import httpx
     try:
-        # 1. Pull latest cloud data into local database first (gets mobile changes)
+        # 1. Export local data (contains user's latest mutations on this machine)
+        local_data = export_sync_data()
+
+        # 2. Push local data to Cloud Run FIRST so any fresh local edits arrive at Cloud immediately
+        r_push = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=60.0)
+        if r_push.status_code != 200:
+            raise HTTPException(status_code=502, detail=f"Lỗi đẩy dữ liệu lên Cloud: {r_push.text}")
+
+        # 3. Pull latest cloud data into local database (incorporates any mobile additions/changes)
         try:
             r_pull = httpx.get(f"{cloud_url}/api/sync/export-data", timeout=60.0)
             if r_pull.status_code == 200:
@@ -2092,14 +2131,6 @@ def trigger_cloud_sync(payload: dict = None):
                 import_sync_data(cloud_data)
         except Exception as pull_err:
             logger.warning(f"Pull step warning: {pull_err}")
-
-        # 2. Export local data (now contains merged mobile changes + local changes + tombstones)
-        local_data = export_sync_data()
-
-        # 3. Push merged state to Cloud Run
-        r_push = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=60.0)
-        if r_push.status_code != 200:
-            raise HTTPException(status_code=502, detail=f"Lỗi đẩy dữ liệu lên Cloud: {r_push.text}")
 
         # Update last_cloud_sync in settings
         conn = get_db_connection()
