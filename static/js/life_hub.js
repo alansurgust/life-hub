@@ -44,6 +44,21 @@ let habitCharts = {
   area: null
 };
 
+// Instant client greeting based on local device time (Vietnam 4 periods)
+function getClientGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 11) return 'Chào buổi sáng!';
+  if (h >= 11 && h < 14) return 'Chào buổi trưa!';
+  if (h >= 14 && h < 18) return 'Chào buổi chiều!';
+  return 'Chào buổi tối!';
+}
+
+// Immediate application upon script load
+try {
+  const heroElem = document.getElementById('dashHeroGreeting');
+  if (heroElem) heroElem.textContent = getClientGreeting();
+} catch (e) {}
+
 // =========================================================================
 // TAB SWITCHING LOGIC WITH SMOOTH FADE UP/OUT & FLOAT UP/IN ANIMATIONS
 // =========================================================================
@@ -289,7 +304,7 @@ function renderDashboard(data) {
   const headerDate = document.getElementById('dashHeaderDate');
   const heroQuote = document.getElementById('dashHeroQuote');
 
-  if (heroGreeting) heroGreeting.textContent = data.greeting || 'Chào bạn!';
+  if (heroGreeting) heroGreeting.textContent = getClientGreeting();
   if (heroDate) heroDate.textContent = data.today_formatted || '';
   if (headerDate) headerDate.textContent = data.today_formatted || 'Hôm nay';
 
@@ -1237,6 +1252,7 @@ function renderHabits(data) {
   const habits = data.habits || [];
   const daysInMonth = data.days_in_month || 30;
   const firstWeekday = data.first_weekday || 0;
+  const todayStr = data.today_str || new Date().toISOString().split('T')[0];
 
   // Update Month Dropdown Header & Menu
   const mLabel = document.getElementById('habitMonthDropdownLabel');
@@ -1293,7 +1309,7 @@ function renderHabits(data) {
     // Generate empty padding cells for 1st day offset
     let paddingCells = '';
     for (let p = 0; p < firstWeekday; p++) {
-      paddingCells += '<div class="h-6 sm:h-7"></div>';
+      paddingCells += '<div class="h-6"></div>';
     }
 
     // Generate Calendar day cells
@@ -1305,7 +1321,7 @@ function renderHabits(data) {
       if (isToday) {
         // TODAY: Compact checkable cell
         return `
-          <div onclick="toggleHabitLog(${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border border-[#5F7465] bg-[#FFFDF9] text-[#5F7465] hover:border-[#233329]'} cursor-pointer select-none h-6 sm:h-7 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
+          <div onclick="toggleHabitLog(${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border border-[#5F7465] bg-[#FFFDF9] text-[#5F7465] hover:border-[#233329]'} cursor-pointer select-none h-6 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
             <span>${ws.day}</span>
             ${isDone ? '<i data-lucide="check" class="w-2.5 h-2.5 ml-0.5 stroke-[3]"></i>' : '<i data-lucide="plus" class="w-2.5 h-2.5 ml-0.5 opacity-70"></i>'}
           </div>
@@ -1313,21 +1329,21 @@ function renderHabits(data) {
       } else if (isPast) {
         if (isDone) {
           return `
-            <div class="flex items-center justify-center rounded-lg bg-[#5F7465] text-white shadow-2xs select-none transition h-6 sm:h-7 text-[10px] font-bold" title="Ngày ${ws.day}: Đã hoàn thành">
+            <div class="flex items-center justify-center rounded-lg bg-[#5F7465] text-white shadow-2xs select-none transition h-6 text-[10px] font-bold" title="Ngày ${ws.day}: Đã hoàn thành">
               <span>${ws.day}</span>
             </div>
           `;
         } else {
           return `
-            <div class="flex items-center justify-center rounded-lg bg-[#F7F2E8]/60 text-[#A49688] select-none h-6 sm:h-7 text-[10px] font-medium" title="Ngày ${ws.day}: Chưa hoàn thành">
+            <div class="flex items-center justify-center rounded-lg bg-[#F7F2E8]/60 text-[#A49688] select-none h-6 text-[10px] font-medium" title="Ngày ${ws.day}: Chưa hoàn thành">
               <span>${ws.day}</span>
             </div>
           `;
         }
       } else {
-        // FUTURE DAYS: Dotted neutral placeholder
+        // FUTURE DAYS: Neutral placeholder
         return `
-          <div class="flex items-center justify-center rounded-lg bg-transparent text-[#DECDB5]/60 select-none h-6 sm:h-7 text-[10px]">
+          <div class="flex items-center justify-center rounded-lg bg-transparent text-[#DECDB5]/60 select-none h-6 text-[10px]">
             <span>${ws.day}</span>
           </div>
         `;
@@ -1337,13 +1353,13 @@ function renderHabits(data) {
     const completedRate = Math.round(((h.month_completed_count || 0) / daysInMonth) * 100);
 
     return `
-      <div class="p-4 sm:p-5 rounded-3xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
-        <!-- Habit Metadata & Controls: Expansive room for habit name without truncation -->
+      <div class="p-4 sm:p-5 rounded-3xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col md:flex-row md:items-stretch justify-between gap-4 sm:gap-6">
+        <!-- Habit Metadata & Controls: Symmetrical, sleek layout without bottom empty void -->
         <div class="flex items-start gap-3.5 sm:gap-4 flex-1 min-w-0">
-          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] shrink-0">
-            <i data-lucide="${h.icon || 'sparkles'}" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] shrink-0 mt-0.5">
+            <i data-lucide="${h.icon || 'sparkles'}" class="w-5 h-5"></i>
           </div>
-          <div class="space-y-1.5 flex-1 min-w-0">
+          <div class="space-y-2 flex-1 min-w-0">
             <div class="flex items-start justify-between gap-2">
               <h4 onclick="editHabit(${h.id})" class="font-bold text-base sm:text-lg text-[#2B231D] hover:text-[#5F7465] cursor-pointer transition break-words leading-snug" title="Nhấp để sửa tên thói quen">${escapeHtml(h.name)}</h4>
               <div class="flex items-center gap-1 shrink-0 pt-0.5">
@@ -1356,38 +1372,60 @@ function renderHabits(data) {
               </div>
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap pt-0.5">
+            <!-- Streak & Record Badges -->
+            <div class="flex items-center gap-2 flex-wrap">
               <span class="inline-flex items-center gap-1 text-xs font-bold text-[#C3651F] bg-[#FDF6E2] px-2.5 py-0.5 rounded-full border border-[#DECDB5]">
                 <i data-lucide="flame" class="w-3.5 h-3.5 fill-[#C3651F]"></i> ${h.streak} ngày liên tiếp
               </span>
               <span class="text-xs text-[#786B60]">Kỷ lục: ${h.best_streak} ngày</span>
             </div>
 
-            <div class="pt-0.5 text-xs text-[#5F7465] font-semibold flex items-center gap-1.5">
-              <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
-              <span>Đã làm: <strong>${h.month_completed_count || 0} / ${daysInMonth}</strong> ngày (${completedRate}%)</span>
+            <!-- Progress Bar -->
+            <div class="space-y-1 pt-0.5 max-w-sm">
+              <div class="flex items-center justify-between text-xs font-semibold text-[#5F7465]">
+                <span class="flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> Tiến độ: <strong>${h.month_completed_count || 0} / ${daysInMonth}</strong> ngày</span>
+                <span>${completedRate}%</span>
+              </div>
+              <div class="h-1.5 w-full bg-[#EFE7D8] rounded-full overflow-hidden border border-[#DECDB5]/60">
+                <div class="h-full bg-[#5F7465] rounded-full transition-all duration-500" style="width: ${completedRate}%;"></div>
+              </div>
+            </div>
+
+            <!-- Quick Today Check-in Status -->
+            <div class="pt-0.5">
+              ${h.completed_today ? `
+                <button onclick="toggleHabitLog(${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] hover:bg-[#E5ECE7] px-2.5 py-1 rounded-xl border border-[#D7E4DB] transition cursor-pointer" title="Hôm nay đã xong (bấm để hủy check-in)">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Đã hoàn thành hôm nay
+                </button>
+              ` : `
+                <button onclick="toggleHabitLog(${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#786B60] hover:text-[#2B231D] bg-[#F7F2E8] hover:bg-[#EFE7D8] px-2.5 py-1 rounded-xl border border-[#DECDB5] transition cursor-pointer" title="Bấm để đánh dấu đã làm hôm nay">
+                  <i data-lucide="circle" class="w-3.5 h-3.5"></i> Chưa check-in hôm nay
+                </button>
+              `}
             </div>
           </div>
         </div>
 
         <!-- Compact Month Calendar: Neat mini-widget on the right -->
-        <div class="w-full md:w-[260px] lg:w-[280px] shrink-0 bg-[#F7F2E8] p-2.5 sm:p-3 rounded-2xl border border-[#DECDB5] shadow-2xs">
-          <!-- Calendar Header -->
-          <div class="flex items-center justify-between mb-1.5 pb-1 border-b border-[#DECDB5]/60 text-[11px] font-bold text-[#626037]">
-            <span class="flex items-center gap-1">
-              <i data-lucide="calendar" class="w-3 h-3 text-[#5F7465]"></i> Lịch ${data.month_label}
-            </span>
-          </div>
+        <div class="w-full md:w-[250px] lg:w-[260px] shrink-0 bg-[#F7F2E8] p-2 sm:p-2.5 rounded-2xl border border-[#DECDB5] shadow-2xs self-start md:self-stretch flex flex-col justify-between">
+          <div>
+            <!-- Calendar Header -->
+            <div class="flex items-center justify-between mb-1 pb-1 border-b border-[#DECDB5]/60 text-[10px] font-bold text-[#626037]">
+              <span class="flex items-center gap-1">
+                <i data-lucide="calendar" class="w-3 h-3 text-[#5F7465]"></i> Lịch ${data.month_label}
+              </span>
+            </div>
 
-          <!-- 7-Column Header (T2 -> CN) -->
-          <div class="grid grid-cols-7 gap-1 text-center mb-1 text-[9px] font-bold text-[#786B60] uppercase tracking-wider">
-            <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
-          </div>
+            <!-- 7-Column Header (T2 -> CN) -->
+            <div class="grid grid-cols-7 gap-1 text-center mb-1 text-[9px] font-bold text-[#786B60] uppercase tracking-wider">
+              <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+            </div>
 
-          <!-- Calendar Days Grid -->
-          <div class="grid grid-cols-7 gap-1">
-            ${paddingCells}
-            ${daysCells}
+            <!-- Calendar Days Grid -->
+            <div class="grid grid-cols-7 gap-1">
+              ${paddingCells}
+              ${daysCells}
+            </div>
           </div>
         </div>
       </div>
@@ -1404,24 +1442,10 @@ function renderHabitAreaChart(chartData) {
 
   const sec = document.getElementById('section-habits');
   if (sec && sec.classList.contains('hidden')) {
-    return; // Will be animated cleanly once unhidden
+    return; // Will be rendered when unhidden
   }
 
-  const ctx = canvas.getContext('2d');
   const completed = chartData.completed || [];
-  if (habitCharts.area) {
-    habitCharts.area.data.labels = chartData.labels;
-    habitCharts.area.data.datasets[0].data = completed;
-    habitCharts.area.update('none');
-    return;
-  }
-
-  // Smooth vertical gradient for the Area Chart fill
-  const gradient = ctx.createLinearGradient(0, 0, 0, 220);
-  gradient.addColorStop(0, 'rgba(95, 116, 101, 0.42)'); // Top: soft vintage sage
-  gradient.addColorStop(0.65, 'rgba(95, 116, 101, 0.12)');
-  gradient.addColorStop(1, 'rgba(95, 116, 101, 0.01)');  // Bottom: transparent
-
   const total = chartData.total_habits || 5;
   const avg = completed.length > 0 ? (completed.reduce((a, b) => a + b, 0) / completed.length).toFixed(1) : 0;
 
@@ -1435,9 +1459,20 @@ function renderHabitAreaChart(chartData) {
     badgeText.textContent = `Trung bình: ${avg}/${total} thói quen/ngày (${chartData.month_label})`;
   }
 
-  const count = chartData.labels.length || 30;
-  // Delay per point to create sequential wave animation from left to right across full month
-  const stepDelay = Math.max(16, Math.min(30, Math.floor(750 / count)));
+  // Destroy previous chart so canvas dimensions always measure correctly on mobile
+  if (habitCharts.area) {
+    try {
+      habitCharts.area.destroy();
+    } catch (e) {}
+    habitCharts.area = null;
+  }
+
+  const ctx = canvas.getContext('2d');
+  const gradHeight = canvas.clientHeight || 180;
+  const gradient = ctx.createLinearGradient(0, 0, 0, gradHeight);
+  gradient.addColorStop(0, 'rgba(95, 116, 101, 0.42)'); // Top: soft vintage sage
+  gradient.addColorStop(0.65, 'rgba(95, 116, 101, 0.12)');
+  gradient.addColorStop(1, 'rgba(95, 116, 101, 0.01)');  // Bottom: transparent
 
   habitCharts.area = new Chart(ctx, {
     type: 'line',
@@ -1447,16 +1482,16 @@ function renderHabitAreaChart(chartData) {
         {
           label: 'Số thói quen hoàn thành',
           data: completed,
-          fill: true, // AREA CHART
+          fill: true,
           backgroundColor: gradient,
-          borderColor: '#5F7465', // Vintage Sage Green
+          borderColor: '#5F7465',
           borderWidth: 2.5,
-          tension: 0.35, // Smooth curves
+          tension: 0.35,
           pointBackgroundColor: '#FFFDF9',
           pointBorderColor: '#5F7465',
           pointBorderWidth: 2,
-          pointRadius: 3.5,
-          pointHoverRadius: 6,
+          pointRadius: 3,
+          pointHoverRadius: 5.5,
           pointHoverBackgroundColor: '#5F7465',
           pointHoverBorderColor: '#FFFDF9',
           pointHoverBorderWidth: 2
@@ -1466,32 +1501,10 @@ function renderHabitAreaChart(chartData) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animations: {
-        y: {
-          type: 'number',
-          easing: 'easeOutQuart',
-          duration: 480,
-          from: (ctx) => {
-            if (ctx.type === 'data') {
-              const y = ctx.chart.scales.y;
-              return y ? y.getPixelForValue(0) : 0;
-            }
-          },
-          delay(ctx) {
-            if (ctx.type !== 'data') return 0;
-            return ctx.index * stepDelay;
-          }
-        },
-        radius: {
-          type: 'number',
-          easing: 'easeOutBack',
-          duration: 380,
-          from: 0,
-          delay(ctx) {
-            if (ctx.type !== 'data') return 0;
-            return ctx.index * stepDelay;
-          }
-        }
+      resizeDelay: 100,
+      animation: {
+        duration: 550,
+        easing: 'easeOutQuart'
       },
       plugins: {
         legend: {
@@ -1526,7 +1539,7 @@ function renderHabitAreaChart(chartData) {
             color: '#786B60',
             maxRotation: 0,
             autoSkip: true,
-            maxTicksLimit: 16
+            maxTicksLimit: 15
           }
         },
         y: {

@@ -59,10 +59,10 @@
   <script src="/static/vendor/lucide.min.js"></script>
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body class="bg-[#F7F2E8] text-[#2B231D] h-screen overflow-hidden antialiased font-sans selection:bg-[#5F7465] selection:text-[#FFFDF9]">
+<body class="bg-[#F7F2E8] text-[#2B231D] h-screen h-[100dvh] min-h-[100dvh] overflow-hidden antialiased font-sans selection:bg-[#5F7465] selection:text-[#FFFDF9]">
 
   <!-- ================= APP WRAPPER WITH LEFT SIDEBAR ================= -->
-  <div class="flex h-screen overflow-hidden bg-[#F7F2E8]">
+  <div class="flex h-screen h-[100dvh] overflow-hidden bg-[#F7F2E8]">
 
     <!-- ================= LEFT NAVIGATION SIDEBAR ================= -->
     <aside id="appSidebar" class="w-64 bg-[#F2ECE1] border-r border-[#DECDB5] flex flex-col justify-between shrink-0 select-none z-40 hidden md:flex">
@@ -187,7 +187,7 @@
     </aside>
 
     <!-- ================= RIGHT MAIN SCROLLABLE CONTENT ================= -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto pb-20 md:pb-6" id="mainScrollArea">
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto" id="mainScrollArea">
 
       <!-- TOP HEADER -->
       <header class="app-top-header bg-[#FFFDF9]/95 backdrop-blur-md border-b border-[#DECDB5] sticky top-0 z-30 shadow-xs max-w-full">
@@ -345,7 +345,7 @@
                   <span class="w-2 h-2 rounded-full bg-[#5F7465] animate-pulse"></span>
                   <span id="dashHeroDate">Thứ Hai, 02/11/2026</span>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-black text-[#2B231D] tracking-tight" id="dashHeroGreeting">Chào buổi tối!</h2>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#2B231D] tracking-tight" id="dashHeroGreeting">Chào bạn!</h2>
                 <p class="text-xs sm:text-sm text-[#786B60] mt-1 max-w-xl" id="dashHeroQuote">
                   "Sự kiên trì từng ngày tạo nên những kết quả phi thường."
                 </p>
@@ -1201,7 +1201,7 @@
             </span>
           </div>
         </div>
-        <div class="relative h-60 mt-1">
+        <div class="relative h-44 sm:h-52 md:h-56 mt-1">
           <canvas id="habitAreaChart"></canvas>
         </div>
       </div>

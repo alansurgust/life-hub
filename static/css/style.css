@@ -186,6 +186,8 @@
 
 /* Mobile Viewport Stabilization - Lock horizontal jitter & wobble */
 html, body {
+  height: 100%;
+  height: 100dvh;
   max-width: 100vw;
   overflow-x: hidden !important;
   touch-action: pan-y;
@@ -225,13 +227,13 @@ html, body {
 
 @media (max-width: 768px) {
   #mainScrollArea {
-    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
 @media (min-width: 769px) {
   #mainScrollArea {
-    padding-bottom: 2rem;
+    padding-bottom: 3.5rem !important;
   }
 }
 

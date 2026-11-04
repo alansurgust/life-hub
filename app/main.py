@@ -30,6 +30,15 @@ logger = logging.getLogger(__name__)
 # Initialize DB on start
 init_db()
 
+# Vietnam Standard Time (UTC+7) for all operations across both Desktop and Cloud
+VN_TZ = datetime.timezone(datetime.timedelta(hours=7))
+
+def get_vn_now():
+    return datetime.datetime.now(VN_TZ)
+
+def get_vn_today():
+    return get_vn_now().date()
+
 app = FastAPI(title="Finance - Quản Lý & Thống Kê Chi Tiêu AI", version="2.0.0")
 
 # Enable CORS for flexibility
@@ -1006,18 +1015,20 @@ def get_dashboard_summary():
     """Returns an integrated overview covering all 5 life modules."""
     conn = get_db_connection()
     c = conn.cursor()
-    today = datetime.date.today()
+    today = get_vn_today()
     today_str = today.isoformat()
 
     # Weekdays in Vietnamese
     weekday_names = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
     today_formatted = f"{weekday_names[today.weekday()]}, {today.strftime('%d/%m/%Y')}"
 
-    # Current hour greeting
-    hour = datetime.datetime.now().hour
-    if 5 <= hour < 12:
+    # Current hour greeting (Vietnam UTC+7)
+    hour = get_vn_now().hour
+    if 5 <= hour < 11:
         greeting = "Chào buổi sáng!"
-    elif 12 <= hour < 18:
+    elif 11 <= hour < 14:
+        greeting = "Chào buổi trưa!"
+    elif 14 <= hour < 18:
         greeting = "Chào buổi chiều!"
     else:
         greeting = "Chào buổi tối!"
@@ -1145,8 +1156,9 @@ def get_todos(
 ):
     conn = get_db_connection()
     c = conn.cursor()
-    today_str = datetime.date.today().isoformat()
-    week_end = (datetime.date.today() + datetime.timedelta(days=7)).isoformat()
+    today = get_vn_today()
+    today_str = today.isoformat()
+    week_end = (today + datetime.timedelta(days=7)).isoformat()
 
     query = "SELECT * FROM todos WHERE 1=1"
     params = []
@@ -1163,7 +1175,7 @@ def get_todos(
         )"""
         params.extend([today_str, today_str, today_str, today_str])
     elif filter_by == "week":
-        week_start = (datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())).isoformat()
+        week_start = (today - datetime.timedelta(days=today.weekday())).isoformat()
         query += """ AND (
             (due_date >= ? AND due_date <= ?)
             OR (due_date < ? AND status != 'completed')
@@ -1427,7 +1439,7 @@ def get_habits(month: Optional[str] = None):
     c.execute("SELECT * FROM habits ORDER BY id ASC")
     habits = [dict(row) for row in c.fetchall()]
 
-    today = datetime.date.today()
+    today = get_vn_today()
     today_str = today.isoformat()
 
     # Determine target month (YYYY-MM)
@@ -1510,7 +1522,8 @@ def get_habits(month: Optional[str] = None):
         "available_months": available_months,
         "first_weekday": first_weekday,
         "days_in_month": num_days,
-        "chart": chart_data
+        "chart": chart_data,
+        "today_str": today_str
     }
 
 @app.post("/api/habits")
@@ -1531,7 +1544,7 @@ def create_habit(item: HabitCreate):
 
 @app.post("/api/habits/{habit_id}/toggle")
 def toggle_habit_log(habit_id: int, date: Optional[str] = None):
-    target_date = date or datetime.date.today().isoformat()
+    target_date = date or get_vn_today().isoformat()
     conn = get_db_connection()
     c = conn.cursor()
 
@@ -1553,7 +1566,7 @@ def toggle_habit_log(habit_id: int, date: Optional[str] = None):
     all_dates = {row["date"] for row in c.fetchall()}
 
     streak = 0
-    check_day = datetime.date.today()
+    check_day = get_vn_today()
     if check_day.isoformat() not in all_dates:
         check_day = check_day - datetime.timedelta(days=1)
 
