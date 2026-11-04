@@ -152,6 +152,37 @@
   animation: vintageShimmer 1.8s infinite;
 }
 
+/* Dopamine Check Bounce & Tactile Interactions */
+@keyframes checkBounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.32) rotate(-6deg); }
+  70% { transform: scale(0.92) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.animate-check-bounce {
+  animation: checkBounce 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Enhanced Soft Elevation & Contrast for Ivory/White Cards */
+.bg-\[\#FFFDF9\],
+.bg-white,
+.card-vintage {
+  box-shadow: 0 1px 3px rgba(43, 35, 29, 0.05), 0 5px 16px rgba(43, 35, 29, 0.045);
+}
+
+/* Swipe Actions on Mobile */
+.swipe-item-container {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.swipe-item-content {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
 /* Tab Switching Transitions: Smooth Staggered Fade Up & Out / Float Up & In */
 @keyframes tabBoxFadeOutUp {
   0% {
@@ -214,20 +245,25 @@ html, body {
 
 @media (max-width: 768px) {
   .app-top-header {
-    /* Provide guaranteed comfortable clearance under status bar & Dynamic Island */
-    padding-top: max(env(safe-area-inset-top, 0px), 14px);
+    /* Guaranteed generous clearance under iPhone status bar, clock, notch & Dynamic Island */
+    padding-top: max(env(safe-area-inset-top, 0px), 54px) !important;
+    padding-bottom: 10px !important;
   }
 }
 
 .app-bottom-nav {
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 10px);
+  /* Elevated bottom navigation with comfortable thumb reach & clearance from home indicator */
+  padding-top: 8px !important;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 24px) !important;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+  min-height: 4.5rem !important;
+  box-shadow: 0 -4px 20px rgba(43, 35, 29, 0.08) !important;
 }
 
 @media (max-width: 768px) {
   #mainScrollArea {
-    padding-bottom: calc(4.2rem + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(5.8rem + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 

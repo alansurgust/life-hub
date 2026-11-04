@@ -871,12 +871,16 @@ async function renderCategoryPieChart() {
         maintainAspectRatio: false,
         rotation: 0, // Starts at 12 o'clock
         circumference: 360,
-        cutout: '72%',
+        cutout: '70%',
         animation: {
           animateRotate: true,
-          animateScale: false,
-          duration: 900,
+          animateScale: true,
+          duration: 400,
           easing: 'easeOutQuart'
+        },
+        interaction: {
+          mode: 'nearest',
+          intersect: false
         },
         plugins: {
           legend: { display: false },
@@ -951,6 +955,10 @@ async function renderWeeklyChart() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         animations: {
           y: {
             type: 'number',
@@ -1069,6 +1077,10 @@ async function renderMonthlyChart() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         animations: {
           y: {
             type: 'number',

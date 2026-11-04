@@ -115,19 +115,12 @@
             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarHabitsBadge">5</span>
           </button>
 
-          <button onclick="switchLifeTab('journal')" id="navTabJournal" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+          <button onclick="switchLifeTab('notebook')" id="navTabNotebook" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
             <div class="flex items-center gap-3">
               <i data-lucide="book-open" class="w-4 h-4"></i>
-              <span>Nhật ký & Cảm xúc</span>
+              <span>Sổ tay</span>
             </div>
-          </button>
-
-          <button onclick="switchLifeTab('notes')" id="navTabNotes" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
-            <div class="flex items-center gap-3">
-              <i data-lucide="sticky-note" class="w-4 h-4"></i>
-              <span>Ghi chú & Tri thức</span>
-            </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D] hidden" id="sidebarNotesBadge"></span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D] hidden" id="sidebarNotebookBadge"></span>
           </button>
         </nav>
       </div>
@@ -411,7 +404,7 @@
                     <i data-lucide="check-square" class="w-4 h-4 text-[#233329]"></i>
                     <div>
                       <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Việc Ưu Tiên Cần Làm</h3>
-                      <p class="text-[11px] text-[#786B60]">Nhiệm vụ chưa hoàn tất trong danh sách của bạn</p>
+                      
                     </div>
                   </div>
                   <button onclick="switchLifeTab('todos')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
@@ -444,7 +437,7 @@
                     <i data-lucide="flame" class="w-4 h-4 text-[#C3651F]"></i>
                     <div>
                       <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Thói Quen Cần Rèn Luyện Hôm Nay</h3>
-                      <p class="text-[11px] text-[#786B60]">Bấm vào vòng tròn để tích hoàn thành ngay lập tức</p>
+                      
                     </div>
                   </div>
                   <button onclick="switchLifeTab('habits')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
@@ -522,7 +515,7 @@
                     <i data-lucide="book-open" class="w-4 h-4 text-[#D39526]"></i>
                     <div>
                       <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Nhật Ký Hôm Nay</h3>
-                      <p class="text-[11px] text-[#786B60]">Lòng biết ơn & đúc kết bài học</p>
+                      
                     </div>
                   </div>
                   <button onclick="switchLifeTab('journal')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
@@ -543,7 +536,7 @@
                     <i data-lucide="sticky-note" class="w-4 h-4 text-[#626037]"></i>
                     <div>
                       <h3 class="font-bold text-[#2B231D] text-sm tracking-tight">Ghi Chú Nổi Bật</h3>
-                      <p class="text-[11px] text-[#786B60]">Second Brain & ý tưởng lưu trữ</p>
+                      
                     </div>
                   </div>
                   <button onclick="switchLifeTab('notes')" class="text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:underline flex items-center gap-1 cursor-pointer">
@@ -963,10 +956,7 @@
             </div>
           </div>
           <div class="text-2xl sm:text-[28px] font-black text-[#B14720] tabular-nums tracking-tight my-1" id="todoKpiUrgentCount">0</div>
-          <div class="mt-3 flex items-center gap-2 text-xs text-[#B14720] font-semibold">
-            <span class="w-2 h-2 rounded-full bg-[#B14720] shrink-0"></span>
-            <span>Mức độ ưu tiên khẩn cấp</span>
-          </div>
+          
         </div>
 
         <!-- Week Completed Velocity -->
@@ -978,10 +968,7 @@
             </div>
           </div>
           <div class="text-2xl sm:text-[28px] font-black text-[#2B231D] tabular-nums tracking-tight my-1" id="todoKpiWeekDone">0 việc</div>
-          <div class="mt-3 flex items-center gap-2 text-xs text-[#626037] font-semibold">
-            <span class="w-2 h-2 rounded-full bg-[#5F7465] shrink-0"></span>
-            <span>Nhịp độ hoàn thành công việc</span>
-          </div>
+          
         </div>
       </div>
 
@@ -992,7 +979,7 @@
           <div class="flex items-center justify-between mb-2">
             <div>
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
-              <p class="text-xs text-[#786B60]">Số việc hoàn thành so với việc cần làm (mới & tồn đọng) trong 7 ngày gần nhất</p>
+              
             </div>
           </div>
           <div class="relative h-64 mt-2">
@@ -1004,7 +991,7 @@
         <div class="lg:col-span-4 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
           <div class="mb-2">
             <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Phân Bổ Theo Nhóm</h3>
-            <p class="text-xs text-[#786B60]">Tỷ lệ công việc theo danh mục</p>
+            
           </div>
           <div class="relative h-64 flex items-center justify-center">
             <canvas id="todoCategoryChart"></canvas>
@@ -1103,9 +1090,7 @@
             </div>
           </div>
           <div class="text-2xl sm:text-[28px] font-black text-[#C3651F] tabular-nums tracking-tight my-1" id="habitKpiMaxStreak">0 ngày</div>
-          <div class="mt-3 flex items-center gap-2 text-xs text-[#786B60] font-semibold">
-            <span>Kỷ lục kiên trì liên tục</span>
-          </div>
+          
         </div>
 
         <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
@@ -1116,9 +1101,7 @@
             </div>
           </div>
           <div class="text-2xl sm:text-[28px] font-black text-[#5F7465] tabular-nums tracking-tight my-1" id="habitKpiTodayDone">0 / 0</div>
-          <div class="mt-3 flex items-center gap-2 text-xs text-[#5F7465] font-semibold">
-            <span>Thói quen đã hoàn thành hôm nay</span>
-          </div>
+          
         </div>
 
         <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-2xl border border-[#DECDB5] shadow-2xs card-hover flex flex-col justify-between">
@@ -1129,9 +1112,7 @@
             </div>
           </div>
           <div class="text-2xl sm:text-[28px] font-black text-[#2B231D] tabular-nums tracking-tight my-1" id="habitKpiConsistency">0%</div>
-          <div class="mt-3 flex items-center gap-2 text-xs text-[#626037] font-semibold">
-            <span>Tỷ lệ hoàn thành thói quen tuần</span>
-          </div>
+          
         </div>
       </div>
 
@@ -1143,7 +1124,7 @@
           </div>
           <div>
             <h3 class="font-extrabold text-sm text-[#2B231D] tracking-tight">Lịch Theo Dõi Cả Tháng & Tháng Cũ</h3>
-            <p class="text-[11px] text-[#786B60]">Chọn tháng để xem lịch chi tiết và biểu đồ nhịp độ từng tháng</p>
+            
           </div>
         </div>
 
@@ -1219,120 +1200,129 @@
       </div>
     </section>
 
-    <!-- ================= SECTION 4: JOURNAL & MOOD (AppFlowy) ================= -->
-    <section id="section-journal" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Main Notebook -->
-        <div class="lg:col-span-8 bg-[#FFFDF9] rounded-3xl border border-[#DECDB5] p-6 shadow-xs space-y-5">
-          <!-- Date & Mood Header -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#DECDB5]/60 pb-4">
-            <div class="flex items-center gap-2 flex-wrap">
-              <label class="text-xs font-bold text-[#786B60]">Ngày viết:</label>
-              <div class="flex items-center gap-1 bg-[#F7F2E8] p-1 rounded-xl border border-[#DECDB5]">
-                <button onclick="stepJournalDate(-1)" class="p-1 hover:bg-[#FFFDF9] rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Hôm trước">
-                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                </button>
-                <input type="date" id="journalDateInput" onchange="loadJournal(this.value)" class="bg-transparent border-none text-xs font-bold text-[#2B231D] outline-none cursor-pointer px-1">
-                <button onclick="stepJournalDate(1)" class="p-1 hover:bg-[#FFFDF9] rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Hôm sau">
-                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                </button>
-              </div>
-              <button onclick="jumpJournalToday()" class="px-2.5 py-1 text-xs font-bold rounded-xl bg-[#DECDB5]/60 hover:bg-[#DECDB5] text-[#2B231D] transition cursor-pointer">
-                Hôm nay
-              </button>
-              <span id="journalSaveStatus" class="text-[11px] text-[#5F7465] font-semibold hidden sm:inline ml-1"></span>
-            </div>
-
-            <!-- Mood Selectors -->
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-xs font-bold text-[#786B60] mr-1">Tâm trạng:</span>
-              <button onclick="setJournalMood('great')" id="moodBtn_great" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Rất tuyệt vời">😄 Rất tốt</button>
-              <button onclick="setJournalMood('good')" id="moodBtn_good" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Vui vẻ">😊 Vui</button>
-              <button onclick="setJournalMood('neutral')" id="moodBtn_neutral" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Bình thường">😐 Bình ổn</button>
-              <button onclick="setJournalMood('tired')" id="moodBtn_tired" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Mệt mỏi">🥱 Mệt</button>
-              <button onclick="setJournalMood('stressed')" id="moodBtn_stressed" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Căng thẳng">😰 Áp lực</button>
-            </div>
-          </div>
-
-          <!-- Title -->
-          <div>
-            <label class="block text-xs font-bold text-[#786B60] mb-1">Tiêu đề ngày hôm nay</label>
-            <input type="text" id="journalTitleInput" placeholder="VD: Một ngày làm việc tập trung và an yên..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-2xl px-4 py-2.5 text-sm font-bold text-[#2B231D] outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] transition">
-          </div>
-
-          <!-- Gratitude Prompt -->
-          <div class="bg-[#FDF6E2] p-4 rounded-2xl border border-[#DECDB5]/80 space-y-1">
-            <label class="block text-xs font-extrabold text-[#7A5408] flex items-center gap-1.5">
-              <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526] fill-[#D39526]"></i> Điều tôi cảm thấy biết ơn hôm nay (Gratitude)
-            </label>
-            <textarea id="journalGratitudeInput" rows="2" placeholder="Ghi lại 1-3 điều khiến bạn cảm thấy may mắn, biết ơn trong ngày hôm nay..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
-          </div>
-
-          <!-- Improvement / Reflection Prompt -->
-          <div class="bg-[#F0F5F2] p-4 rounded-2xl border border-[#D7E4DB] space-y-1">
-            <label class="block text-xs font-extrabold text-[#233329] flex items-center gap-1.5">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> Bài học & Điều cần làm tốt hơn (Reflection)
-            </label>
-            <textarea id="journalImprovementInput" rows="2" placeholder="Điều gì bạn có thể cải thiện hoặc bài học rút ra sau hôm nay?..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
-          </div>
-
-          <!-- Freeform Content -->
-          <div>
-            <label class="block text-xs font-bold text-[#786B60] mb-1">Nhật ký tự do & Cảm nghĩ</label>
-            <textarea id="journalContentInput" rows="7" placeholder="Viết tự do về những suy nghĩ, câu chuyện hay sự kiện diễn ra trong ngày..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-2xl p-4 text-xs font-medium text-[#2B231D] outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] transition leading-relaxed"></textarea>
-          </div>
-
-          <!-- Save Button & Shortcut Hint -->
-          <div class="flex items-center justify-between pt-2 border-t border-[#DECDB5]/50 flex-wrap gap-2">
-            <span class="text-[11px] text-[#A49688]">💡 Mẹo: Nhấn <kbd class="px-1.5 py-0.5 rounded bg-[#EFE7D8] text-[#2B231D] font-mono text-[10px] border border-[#DECDB5]">Ctrl + S</kbd> để lưu nhanh</span>
-            <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-sm transition cursor-pointer">
-              <i data-lucide="save" class="w-4 h-4"></i>
-              <span>Lưu Trang Nhật Ký</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- History Sidebar -->
-        <div class="lg:col-span-4 space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="font-extrabold text-sm text-[#2B231D]">Lịch Sử Nhật Ký</h4>
-            <span class="text-[11px] text-[#786B60]">10 ngày gần nhất</span>
-          </div>
-          <div id="journalHistoryList" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
-            <!-- Rendered via life_hub.js -->
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= SECTION 5: NOTES & SECOND BRAIN (AppFlowy & Vikunja) ================= -->
-    <section id="section-notes" class="space-y-6 hidden">
-      <!-- Search & Category Filters -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFDF9] p-4 rounded-3xl border border-[#DECDB5] shadow-xs">
-        <div class="flex items-center gap-2 flex-1 max-w-md bg-[#F7F2E8] px-3.5 py-2 rounded-2xl border border-[#DECDB5]">
-          <i data-lucide="search" class="w-4 h-4 text-[#786B60]"></i>
-          <input type="text" oninput="searchNotes(this.value)" placeholder="Tìm kiếm ghi chú theo từ khóa..." class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
-        </div>
-
-        <div class="flex items-center gap-2 flex-wrap">
-          <div class="flex items-center gap-1 bg-[#EFE7D8] p-1 rounded-xl border border-[#DECDB5]">
-            <button onclick="setNoteFilter('all')" id="noteFilterBtn_all" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer">Tất cả</button>
-            <button onclick="setNoteFilter('Ý tưởng')" id="noteFilterBtn_Ý tưởng" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Ý tưởng</button>
-            <button onclick="setNoteFilter('Công việc')" id="noteFilterBtn_Công việc" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Công việc</button>
-            <button onclick="setNoteFilter('Học tập')" id="noteFilterBtn_Học tập" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Học tập</button>
-            <button onclick="setNoteFilter('Tài chính')" id="noteFilterBtn_Tài chính" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Tài chính</button>
-          </div>
-
-          <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-xs transition cursor-pointer">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Tạo ghi chú</span>
+    <!-- ================= SECTION 4: NOTEBOOK (Unified Sổ tay: Nhật ký & Ghi chú) ================= -->
+    <section id="section-notebook" class="space-y-6 hidden">
+      <!-- Minimalist Segmented Pill Switcher (Nhật ký | Ghi chú) -->
+      <div class="flex items-center justify-center -mt-1 mb-2">
+        <div class="inline-flex p-1 bg-[#EFE7D8] rounded-2xl border border-[#DECDB5] gap-1 shadow-2xs">
+          <button onclick="switchNotebookSubTab('journal')" id="subtabBtnJournal" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFFDF9] text-[#233329] shadow-2xs border border-[#DECDB5]/80">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+            <span>Nhật ký</span>
+          </button>
+          <button onclick="switchNotebookSubTab('notes')" id="subtabBtnNotes" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#786B60] hover:text-[#2B231D]">
+            <i data-lucide="sticky-note" class="w-3.5 h-3.5"></i>
+            <span>Ghi chú</span>
           </button>
         </div>
       </div>
 
-      <!-- Notes Grid Container -->
-      <div id="notesGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Rendered via life_hub.js -->
+      <!-- VIEW 1: JOURNAL (Nhật ký) -->
+      <div id="notebookJournalView" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Main Journal Card -->
+          <div class="lg:col-span-8 bg-[#FFFDF9] rounded-2xl border border-[#DECDB5] p-5 sm:p-6 shadow-xs space-y-4">
+            <!-- Date & Mood Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#DECDB5]/60 pb-3">
+              <div class="flex items-center gap-2 flex-wrap">
+                <div class="flex items-center gap-1 bg-[#F7F2E8] p-1 rounded-xl border border-[#DECDB5]">
+                  <button onclick="stepJournalDate(-1)" class="p-1 hover:bg-[#FFFDF9] rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Hôm trước">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                  </button>
+                  <input type="date" id="journalDateInput" onchange="loadJournal(this.value)" class="bg-transparent border-none text-xs font-bold text-[#2B231D] outline-none cursor-pointer px-1">
+                  <button onclick="stepJournalDate(1)" class="p-1 hover:bg-[#FFFDF9] rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Hôm sau">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                <button onclick="jumpJournalToday()" class="px-2.5 py-1 text-xs font-bold rounded-xl bg-[#DECDB5]/60 hover:bg-[#DECDB5] text-[#2B231D] transition cursor-pointer">
+                  Hôm nay
+                </button>
+                <span id="journalSaveStatus" class="text-[11px] text-[#5F7465] font-semibold hidden sm:inline ml-1"></span>
+              </div>
+
+              <!-- Mood Selectors -->
+              <div class="flex items-center gap-1 flex-wrap">
+                <button onclick="setJournalMood('great')" id="moodBtn_great" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Rất tốt">😄 Rất tốt</button>
+                <button onclick="setJournalMood('good')" id="moodBtn_good" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Vui vẻ">😊 Vui</button>
+                <button onclick="setJournalMood('neutral')" id="moodBtn_neutral" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Bình thường">😐 Bình ổn</button>
+                <button onclick="setJournalMood('tired')" id="moodBtn_tired" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Mệt mỏi">🥱 Mệt</button>
+                <button onclick="setJournalMood('stressed')" id="moodBtn_stressed" class="px-2.5 py-1 text-xs font-semibold rounded-xl border border-[#DECDB5] bg-[#FFFDF9] hover:bg-[#F0F5F2] transition cursor-pointer" title="Áp lực">😰 Áp lực</button>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <div>
+              <input type="text" id="journalTitleInput" placeholder="Tiêu đề ngày hôm nay..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3.5 py-2 text-xs font-bold text-[#2B231D] outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] transition">
+            </div>
+
+            <!-- Gratitude Prompt -->
+            <div class="bg-[#FDF6E2] p-3.5 rounded-xl border border-[#DECDB5]/80 space-y-1">
+              <label class="block text-xs font-extrabold text-[#7A5408] flex items-center gap-1.5">
+                <i data-lucide="heart" class="w-3.5 h-3.5 text-[#D39526] fill-[#D39526]"></i> Lòng biết ơn
+              </label>
+              <textarea id="journalGratitudeInput" rows="2" placeholder="Điều bạn cảm thấy may mắn, biết ơn hôm nay..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
+            </div>
+
+            <!-- Improvement Prompt -->
+            <div class="bg-[#F0F5F2] p-3.5 rounded-xl border border-[#D7E4DB] space-y-1">
+              <label class="block text-xs font-extrabold text-[#233329] flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#5F7465]"></i> Bài học & Cải thiện
+              </label>
+              <textarea id="journalImprovementInput" rows="2" placeholder="Bài học hoặc điều cần cải thiện..." class="w-full bg-transparent border-none text-xs text-[#2B231D] outline-none resize-none placeholder-[#A49688] font-medium leading-relaxed"></textarea>
+            </div>
+
+            <!-- Freeform Content -->
+            <div>
+              <textarea id="journalContentInput" rows="6" placeholder="Ghi chép tự do suy nghĩ trong ngày..." class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl p-3.5 text-xs font-medium text-[#2B231D] outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] transition leading-relaxed"></textarea>
+            </div>
+
+            <!-- Save Button -->
+            <div class="flex items-center justify-end pt-1 border-t border-[#DECDB5]/50">
+              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-sm transition cursor-pointer">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                <span>Lưu nhật ký</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- History Sidebar -->
+          <div class="lg:col-span-4 space-y-3">
+            <h4 class="font-bold text-xs text-[#786B60] uppercase tracking-wider">Lịch Sử Nhật Ký</h4>
+            <div id="journalHistoryList" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+              <!-- Rendered via life_hub.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: NOTES (Ghi chú) -->
+      <div id="notebookNotesView" class="space-y-5 hidden">
+        <!-- Search & Category Filters -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFDF9] p-3.5 rounded-2xl border border-[#DECDB5] shadow-2xs">
+          <div class="flex items-center gap-2 flex-1 max-w-md bg-[#F7F2E8] px-3 py-1.5 rounded-xl border border-[#DECDB5]">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#786B60]"></i>
+            <input type="text" oninput="searchNotes(this.value)" placeholder="Tìm kiếm ghi chú..." class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-1 bg-[#EFE7D8] p-1 rounded-xl border border-[#DECDB5]">
+              <button onclick="setNoteFilter('all')" id="noteFilterBtn_all" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer">Tất cả</button>
+              <button onclick="setNoteFilter('Ý tưởng')" id="noteFilterBtn_Ý tưởng" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Ý tưởng</button>
+              <button onclick="setNoteFilter('Công việc')" id="noteFilterBtn_Công việc" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Công việc</button>
+              <button onclick="setNoteFilter('Học tập')" id="noteFilterBtn_Học tập" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Học tập</button>
+              <button onclick="setNoteFilter('Tài chính')" id="noteFilterBtn_Tài chính" class="px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer">Tài chính</button>
+            </div>
+
+            <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-xs transition cursor-pointer">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Tạo ghi chú</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Notes Grid Container -->
+        <div id="notesGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Rendered via life_hub.js -->
+        </div>
       </div>
     </section>
 
@@ -1714,7 +1704,7 @@
     <!-- Populated dynamically -->
   </div>
 
-  <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait) ================= -->
+  <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait - 5 Standard Tabs) ================= -->
   <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-1 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem]">
     <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
@@ -1732,13 +1722,9 @@
       <i data-lucide="flame" class="w-4 h-4"></i>
       <span>Thói quen</span>
     </button>
-    <button onclick="switchLifeTab('journal')" id="mobileNav_journal" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
       <i data-lucide="book-open" class="w-4 h-4"></i>
-      <span>Nhật ký</span>
-    </button>
-    <button onclick="switchLifeTab('notes')" id="mobileNav_notes" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
-      <i data-lucide="sticky-note" class="w-4 h-4"></i>
-      <span>Ghi chú</span>
+      <span>Sổ tay</span>
     </button>
   </nav>
 

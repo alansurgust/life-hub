@@ -11,6 +11,7 @@
 
 let lifeState = {
   currentTab: 'dashboard', // dashboard, finance, todos, habits, journal, notes
+  notebookSubTab: 'journal', // journal or notes for mobile 5-tab nav
   dashboardData: null,
   todos: [],
   todoFilter: 'all', // all, today, week, urgent, completed
@@ -73,17 +74,197 @@ try {
 // TAB SWITCHING LOGIC WITH SMOOTH FADE UP/OUT & FLOAT UP/IN ANIMATIONS
 // =========================================================================
 
+
+// Tactile & Haptic Feedback Helpers (iOS Safari & WebKit vibration)
+function triggerHaptic(duration = 25) {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate(duration);
+    }
+  } catch (e) {}
+}
+
+let todoTouchStartCoords = {};
+function handleTodoTouchStart(e, id) {
+  if (e.touches && e.touches[0]) {
+    todoTouchStartCoords[id] = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+      time: Date.now()
+    };
+  }
+}
+
+function handleTodoTouchEnd(e, id) {
+  const start = todoTouchStartCoords[id];
+  if (!start || !e.changedTouches || !e.changedTouches[0]) return;
+  const dx = e.changedTouches[0].clientX - start.x;
+  const dy = e.changedTouches[0].clientY - start.y;
+  const dt = Date.now() - start.time;
+  delete todoTouchStartCoords[id];
+
+  // If clean horizontal swipe: dx > 55, dy < 45, dt < 500
+  if (Math.abs(dx) > 55 && Math.abs(dy) < 45 && dt < 500) {
+    if (dx > 55) {
+      // Swipe right -> complete task
+      triggerHaptic([25, 35]);
+      playTickSound();
+      toggleTodo(id);
+    } else if (dx < -55) {
+      // Swipe left -> open edit modal
+      openTodoModal(id);
+    }
+  }
+}
+
+function toggleHabitMonthView(habitId) {
+  const el = document.getElementById(`habitMonthGrid_${habitId}`);
+  const chev = document.getElementById(`habitMonthChevron_${habitId}`);
+  const txt = document.getElementById(`habitMonthToggleText_${habitId}`);
+  if (!el) return;
+  const isHidden = el.classList.contains('hidden');
+  if (isHidden) {
+    el.classList.remove('hidden');
+    if (chev) chev.style.transform = 'rotate(180deg)';
+    if (txt) txt.textContent = 'Thu gọn';
+  } else {
+    el.classList.add('hidden');
+    if (chev) chev.style.transform = 'rotate(0deg)';
+    if (txt) txt.textContent = 'Lịch tháng';
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+async function toggleHabitLogWithFeedback(event, habitId, date) {
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('animate-check-bounce');
+  }
+  triggerHaptic([20, 30, 40]);
+  playTickSound();
+  await toggleHabitLog(habitId, date);
+}
+
+async function toggleTodoWithFeedback(event, id) {
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('animate-check-bounce');
+  }
+  triggerHaptic(30);
+  playTickSound();
+  await toggleTodo(id);
+}
+
+// Vintage Skeleton Loading Placeholders
+function renderHabitSkeletons() {
+  const container = document.getElementById('habitListContainer');
+  if (!container) return;
+  container.innerHTML = [1, 2, 3].map(() => `
+    <div class="p-4 sm:p-5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs flex flex-col md:flex-row gap-4 items-stretch justify-between">
+      <div class="flex items-start gap-3.5 flex-1 min-w-0">
+        <div class="w-10 h-10 rounded-2xl skeleton shrink-0"></div>
+        <div class="space-y-2 flex-1 min-w-0">
+          <div class="h-4 w-44 rounded-md skeleton"></div>
+          <div class="h-3 w-28 rounded-full skeleton"></div>
+          <div class="h-2 w-52 rounded-full skeleton"></div>
+        </div>
+      </div>
+      <div class="w-full md:w-[260px] h-14 rounded-xl skeleton shrink-0"></div>
+    </div>
+  `).join('');
+}
+
+function renderNotesSkeletons() {
+  const container = document.getElementById('notesGridContainer');
+  if (!container) return;
+  container.innerHTML = [1, 2, 3, 4].map(() => `
+    <div class="p-4 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs space-y-3">
+      <div class="flex items-center justify-between">
+        <div class="h-3.5 w-16 rounded-full skeleton"></div>
+        <div class="h-3.5 w-12 rounded-md skeleton"></div>
+      </div>
+      <div class="h-4 w-3/4 rounded-md skeleton"></div>
+      <div class="space-y-1.5">
+        <div class="h-3 w-full rounded skeleton"></div>
+        <div class="h-3 w-5/6 rounded skeleton"></div>
+      </div>
+      <div class="pt-2 border-t border-[#DECDB5]/40 flex justify-between">
+        <div class="h-2.5 w-20 rounded skeleton"></div>
+        <div class="h-2.5 w-14 rounded skeleton"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTodoSkeletons() {
+  const container = document.getElementById('todoListContainer');
+  if (!container) return;
+  container.innerHTML = [1, 2, 3, 4].map(() => `
+    <div class="p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs flex items-start gap-3">
+      <div class="w-5 h-5 rounded-full skeleton shrink-0 mt-0.5"></div>
+      <div class="space-y-2 flex-1">
+        <div class="h-4 w-2/3 rounded-md skeleton"></div>
+        <div class="h-3 w-1/3 rounded-full skeleton"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
 let tabSwitchTransitionId = 0;
 
+
+function switchNotebookSubTab(sub) {
+  lifeState.notebookSubTab = sub;
+  const jView = document.getElementById('notebookJournalView');
+  const nView = document.getElementById('notebookNotesView');
+  const jBtn = document.getElementById('subtabBtnJournal');
+  const nBtn = document.getElementById('subtabBtnNotes');
+
+  if (sub === 'journal') {
+    if (jView) jView.classList.remove('hidden');
+    if (nView) nView.classList.add('hidden');
+    if (jBtn) jBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFFDF9] text-[#233329] shadow-2xs border border-[#DECDB5]/80';
+    if (nBtn) nBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#786B60] hover:text-[#2B231D]';
+    loadJournal(lifeState.currentJournalDate);
+    loadJournalHistory();
+  } else {
+    if (jView) jView.classList.add('hidden');
+    if (nView) nView.classList.remove('hidden');
+    if (nBtn) nBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFFDF9] text-[#233329] shadow-2xs border border-[#DECDB5]/80';
+    if (jBtn) jBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#786B60] hover:text-[#2B231D]';
+    loadNotes();
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
 function switchLifeTab(tabName) {
+  // Support legacy routing for journal and notes
+  if (tabName === 'journal' || tabName === 'notes') {
+    lifeState.notebookSubTab = tabName;
+    tabName = 'notebook';
+  }
+
   const prevTab = lifeState.currentTab;
-  if (prevTab === tabName) return;
+
+  // Reset scroll to top immediately on container and window
+  const scrollArea = document.getElementById('mainScrollArea');
+  if (scrollArea) scrollArea.scrollTop = 0;
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+
+  if (prevTab === tabName) {
+    if (tabName === 'notebook') {
+      switchNotebookSubTab(lifeState.notebookSubTab || 'journal');
+    }
+    return;
+  }
 
   const currentTransitionId = ++tabSwitchTransitionId;
   lifeState.currentTab = tabName;
 
+  // 5 standard unified tabs everywhere: Desktop & Mobile
+  const tabs = ['dashboard', 'finance', 'todos', 'habits', 'notebook'];
+
   // Update sidebar active classes immediately
-  const tabs = ['dashboard', 'finance', 'todos', 'habits', 'journal', 'notes'];
   tabs.forEach(t => {
     const btn = document.getElementById(`navTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
     if (btn) {
@@ -93,8 +274,10 @@ function switchLifeTab(tabName) {
         btn.className = 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]';
       }
     }
+  });
 
-    // Also update mobile bottom navigation bar active button
+  // Update mobile bottom navigation bar active button
+  tabs.forEach(t => {
     const mBtn = document.getElementById(`mobileNav_${t}`);
     if (mBtn) {
       if (t === tabName) {
@@ -105,23 +288,22 @@ function switchLifeTab(tabName) {
     }
   });
 
-  // Update Top Header Title & Controls
+  // Minimalist, crisp single-word header titles
   const titles = {
-    dashboard: { title: 'Tổng quan cuộc sống', sub: '• Trung tâm điều hành tích hợp toàn diện (Dashboard)' },
-    finance: { title: 'Tài chính', sub: '• Quản lý thu chi & phân loại AI' },
-    todos: { title: 'Việc cần làm', sub: '• Quản lý công việc, ưu tiên & nhịp độ năng suất' },
-    habits: { title: 'Thói quen & Kỷ luật', sub: '• Theo dõi chuỗi ngày kiên trì (Streaks)' },
-    journal: { title: 'Nhật ký & Cảm xúc', sub: '• Ghi chép tâm trạng, lòng biết ơn & bài học' },
-    notes: { title: 'Ghi chú & Tri thức', sub: '• Kho ý tưởng, bài học & Second Brain cá nhân' }
+    dashboard: { title: 'Tổng quan', sub: '' },
+    finance: { title: 'Tài chính', sub: '' },
+    todos: { title: 'Việc cần làm', sub: '' },
+    habits: { title: 'Thói quen', sub: '' },
+    notebook: { title: 'Sổ tay', sub: '' }
   };
 
   const pTitle = document.getElementById('pageTitle');
   const pSub = document.getElementById('pageSubtitle');
   if (pTitle && titles[tabName]) pTitle.textContent = titles[tabName].title;
-  if (pSub && titles[tabName]) pSub.textContent = titles[tabName].sub;
+  if (pSub) pSub.textContent = '';
 
   // Toggle Header action button groups
-  const ctrlGroups = ['Dashboard', 'Finance', 'Todos', 'Habits', 'Journal', 'Notes'];
+  const ctrlGroups = ['Dashboard', 'Finance', 'Todos', 'Habits', 'Notebook'];
   ctrlGroups.forEach(g => {
     const ctrl = document.getElementById(`header${g}Controls`);
     if (ctrl) {
@@ -133,19 +315,18 @@ function switchLifeTab(tabName) {
     }
   });
 
-  // Pre-fetch active tab data
+  // Pre-fetch active tab data with immediate skeleton fallback
   if (tabName === 'dashboard') {
     loadDashboard();
   } else if (tabName === 'todos') {
+    if (!lifeState.todos || lifeState.todos.length === 0) renderTodoSkeletons();
     loadTodos();
     loadTodoStats();
   } else if (tabName === 'habits') {
+    if (!lifeState.habits || lifeState.habits.length === 0) renderHabitSkeletons();
     loadHabits();
-  } else if (tabName === 'journal') {
-    loadJournal(lifeState.currentJournalDate);
-    loadJournalHistory();
-  } else if (tabName === 'notes') {
-    loadNotes();
+  } else if (tabName === 'notebook') {
+    switchNotebookSubTab(lifeState.notebookSubTab || 'journal');
   }
 
   const oldSec = document.getElementById(`section-${prevTab}`);
@@ -160,6 +341,11 @@ function switchLifeTab(tabName) {
 
   const showNewSection = () => {
     if (currentTransitionId !== tabSwitchTransitionId) return;
+
+    // Reset scroll to top again on section mount
+    const sa = document.getElementById('mainScrollArea');
+    if (sa) sa.scrollTop = 0;
+    window.scrollTo(0, 0);
 
     // Hide all sections except target tab
     tabs.forEach(t => {
@@ -178,11 +364,10 @@ function switchLifeTab(tabName) {
       newBoxes.forEach((box, idx) => {
         box.classList.remove('tab-box-exit');
         box.classList.add('tab-box-enter');
-        box.style.animationDelay = `${idx * 40}ms`;
+        box.style.animationDelay = `${idx * 25}ms`;
       });
 
-      // Cleanup entrance animation classes when done
-      const enterDuration = 320 + newBoxes.length * 40 + 60;
+      const enterDuration = 260 + newBoxes.length * 25 + 30;
       setTimeout(() => {
         if (currentTransitionId !== tabSwitchTransitionId) return;
         newBoxes.forEach(box => {
@@ -200,9 +385,8 @@ function switchLifeTab(tabName) {
         } else {
           loadHabits();
         }
-      }, 80);
+      }, 60);
     } else if (tabName === 'todos') {
-      // Trigger To-Do charts animations (bar sprouting left-to-right & doughnut sweeping from 12 o'clock)
       setTimeout(() => {
         if (currentTransitionId !== tabSwitchTransitionId) return;
         if (lifeState.todoStats) {
@@ -210,27 +394,26 @@ function switchLifeTab(tabName) {
         } else {
           loadTodoStats();
         }
-      }, 60);
+      }, 50);
     } else if (tabName === 'finance') {
       setTimeout(() => {
         if (currentTransitionId !== tabSwitchTransitionId) return;
         if (typeof renderCategoryPieChart === 'function') renderCategoryPieChart();
         if (typeof renderActiveTrendChart === 'function') renderActiveTrendChart();
-      }, 60);
+      }, 50);
     }
 
     if (window.lucide) lucide.createIcons();
   };
 
   if (oldSec && !oldSec.classList.contains('hidden') && oldBoxes.length > 0) {
-    // Phase 1: Animate old tab boxes fading out & moving up
     oldBoxes.forEach((box, idx) => {
       box.classList.remove('tab-box-enter');
       box.classList.add('tab-box-exit');
-      box.style.animationDelay = `${idx * 25}ms`;
+      box.style.animationDelay = `${idx * 15}ms`;
     });
 
-    const exitDuration = 180 + oldBoxes.length * 25;
+    const exitDuration = 120 + oldBoxes.length * 15;
     setTimeout(() => {
       if (currentTransitionId !== tabSwitchTransitionId) return;
       oldBoxes.forEach(box => {
@@ -396,7 +579,11 @@ function renderDashboard(data) {
         low: { label: 'Thấp', class: 'bg-[#F0F5F2] text-[#5F7465] border-[#D7E4DB]' }
       };
 
-      todoContainer.innerHTML = data.todos.top_todos.map(t => {
+      const allTopTodos = data.todos.top_todos || [];
+      const displayTodos = allTopTodos.slice(0, 3);
+      const remainingTodosCount = allTopTodos.length - displayTodos.length;
+
+      todoContainer.innerHTML = displayTodos.map(t => {
         const pInfo = priorityMap[t.priority] || priorityMap.normal;
         const isOverdue = t.due_date && t.due_date < data.today_str;
         return `
@@ -426,7 +613,11 @@ function renderDashboard(data) {
             </div>
           </div>
         `;
-      }).join('');
+      }).join('') + (remainingTodosCount > 0 ? `
+        <button onclick="switchLifeTab('todos')" class="w-full text-center py-2 text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:bg-[#F7F2E8] rounded-xl transition cursor-pointer border border-dashed border-[#DECDB5]/80">
+          Xem thêm ${remainingTodosCount} việc còn lại →
+        </button>
+      ` : '');
     }
   }
 
@@ -443,7 +634,11 @@ function renderDashboard(data) {
     if (!data.habits.items || data.habits.items.length === 0) {
       habitContainer.innerHTML = '<p class="col-span-2 text-xs text-[#786B60] text-center py-4">Chưa có thói quen nào. Hãy vào mục Thói quen để tạo!</p>';
     } else {
-      habitContainer.innerHTML = data.habits.items.map(h => {
+      const allHabitItems = data.habits.items || [];
+      const displayHabits = allHabitItems.slice(0, 4);
+      const remainingHabitsCount = allHabitItems.length - displayHabits.length;
+
+      habitContainer.innerHTML = displayHabits.map(h => {
         const isDone = h.completed_today === 1;
         return `
           <div class="flex items-center justify-between p-3 rounded-xl border ${isDone ? 'bg-[#F0F5F2] border-[#D7E4DB]' : 'bg-[#F7F2E8]/60 border-[#DECDB5]/60 hover:bg-[#F7F2E8]'} transition">
@@ -462,7 +657,13 @@ function renderDashboard(data) {
             </div>
           </div>
         `;
-      }).join('');
+      }).join('') + (remainingHabitsCount > 0 ? `
+        <div class="col-span-full pt-1">
+          <button onclick="switchLifeTab('habits')" class="w-full text-center py-2 text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:bg-[#F7F2E8] rounded-xl transition cursor-pointer border border-dashed border-[#DECDB5]/80">
+            Xem tất cả ${allHabitItems.length} thói quen →
+          </button>
+        </div>
+      ` : '');
     }
   }
 
@@ -485,7 +686,11 @@ function renderDashboard(data) {
       if (!data.finance.recent_transactions || data.finance.recent_transactions.length === 0) {
         recentList.innerHTML = '<p class="text-xs text-[#786B60] text-center py-3">Chưa có giao dịch gần đây</p>';
       } else {
-        recentList.innerHTML = data.finance.recent_transactions.map(tx => {
+        const allRecentTx = data.finance.recent_transactions || [];
+        const displayTx = allRecentTx.slice(0, 3);
+        const remainingTxCount = allRecentTx.length - displayTx.length;
+
+        recentList.innerHTML = displayTx.map(tx => {
           const isIncome = tx.type === 'income';
           return `
             <div class="flex items-center justify-between p-2 rounded-xl bg-[#F7F2E8]/60 border border-[#DECDB5]/40 hover:bg-[#F7F2E8] transition text-xs">
@@ -503,7 +708,11 @@ function renderDashboard(data) {
               </span>
             </div>
           `;
-        }).join('');
+        }).join('') + (remainingTxCount > 0 ? `
+          <button onclick="switchLifeTab('finance')" class="w-full text-center py-1.5 text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:bg-[#F7F2E8] rounded-xl transition cursor-pointer border border-dashed border-[#DECDB5]/80">
+            Xem toàn bộ sổ giao dịch →
+          </button>
+        ` : '');
       }
     }
   }
@@ -516,7 +725,7 @@ function renderDashboard(data) {
         <div class="text-center py-4 px-3 bg-[#F7F2E8] rounded-xl border border-[#DECDB5]/60">
           <p class="text-xs font-bold text-[#2B231D]">Hôm nay chưa viết nhật ký</p>
           <p class="text-[11px] text-[#786B60] mt-0.5 mb-2">Dành 2 phút ghi lại lòng biết ơn và cảm nhận</p>
-          <button onclick="switchLifeTab('journal')" class="px-3 py-1.5 rounded-xl bg-[#5F7465] text-white text-xs font-bold hover:bg-[#4d5e52] transition cursor-pointer">
+          <button onclick="switchLifeTab('notebook')" class="px-3 py-1.5 rounded-xl bg-[#5F7465] text-white text-xs font-bold hover:bg-[#4d5e52] transition cursor-pointer">
             Viết nhật ký ngay
           </button>
         </div>
@@ -877,20 +1086,23 @@ function renderTodoList() {
     const isOverdue = !isDone && t.due_date && t.due_date < todayStr;
 
     return `
-      <div class="p-3.5 sm:p-4 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-2xs group space-y-2.5">
+      <div ontouchstart="handleTodoTouchStart(event, ${t.id})" ontouchend="handleTodoTouchEnd(event, ${t.id})" 
+           class="p-3 sm:p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-2xs group space-y-2">
         <!-- Top Row: Checkbox, Title (full width), Edit & Delete Actions -->
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex items-start gap-3 min-w-0 flex-1">
-            <button onclick="toggleTodo(${t.id})" class="mt-0.5 w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 ${isDone ? 'bg-[#5F7465] border-[#5F7465] text-white' : 'border-[#DECDB5] hover:border-[#5F7465] bg-transparent'} flex items-center justify-center transition shrink-0 cursor-pointer hover:scale-105 active:scale-95" title="${isDone ? 'Bỏ hoàn thành' : 'Đánh dấu hoàn thành'}">
-              ${isDone ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
+        <div class="flex items-start justify-between gap-2.5">
+          <div class="flex items-start gap-2.5 min-w-0 flex-1">
+            <button onclick="toggleTodoWithFeedback(event, ${t.id})" class="min-w-[36px] min-h-[36px] -ml-1 -mt-1 flex items-center justify-center transition shrink-0 cursor-pointer" title="${isDone ? 'Bỏ hoàn thành' : 'Đánh dấu hoàn thành'}">
+              <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 ${isDone ? 'bg-[#5F7465] border-[#5F7465] text-white' : 'border-[#DECDB5] hover:border-[#5F7465] bg-transparent'} flex items-center justify-center transition shrink-0 hover:scale-105 active:scale-95">
+                ${isDone ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
+              </span>
             </button>
             <div class="min-w-0 flex-1">
               <h4 class="font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-[#A49688]' : 'text-[#2B231D]'} break-words">${escapeHtml(t.title)}</h4>
-              ${t.description ? `<p class="text-xs text-[#786B60] mt-1 leading-relaxed break-words">${escapeHtml(t.description)}</p>` : ''}
+              ${t.description ? `<p class="text-[11px] sm:text-xs text-[#786B60] mt-0.5 line-clamp-2 leading-relaxed break-words">${escapeHtml(t.description)}</p>` : ''}
             </div>
           </div>
 
-          <!-- Quick Action Buttons: Accessible on mobile, no opacity-0 hiding -->
+          <!-- Quick Action Buttons: Accessible on mobile -->
           <div class="flex items-center gap-1 shrink-0">
             <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#5F7465] hover:bg-[#F0F5F2] transition cursor-pointer" title="Chỉnh sửa việc">
               <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
@@ -902,7 +1114,7 @@ function renderTodoList() {
         </div>
 
         <!-- Bottom Row: Clean Minimalist Typographic Line -->
-        <div class="flex items-center justify-between gap-2 flex-wrap pt-1 text-xs">
+        <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5 text-xs">
           <!-- Left: Clean Typographic Metadata -->
           <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-[#786B60]">
             <span class="font-semibold text-[#626037]">${escapeHtml(t.category)}</span>
@@ -923,7 +1135,6 @@ function renderTodoList() {
       </div>
     `;
   }).join('');
-
   if (window.lucide) lucide.createIcons();
 }
 
@@ -1351,25 +1562,24 @@ function renderHabits(data) {
   if (badge) badge.textContent = habits.length;
 
   container.innerHTML = habits.map(h => {
-    // Generate empty padding cells for 1st day offset
+    // 1. Generate empty padding cells for 1st day offset in full month
     let paddingCells = '';
     for (let p = 0; p < firstWeekday; p++) {
       paddingCells += '<div class="h-6"></div>';
     }
 
-    // Generate Calendar day cells
+    // 2. Generate Full Month Calendar Day Cells
     const daysCells = (h.month_days || []).map(ws => {
       const isDone = ws.completed;
       const isToday = ws.is_today;
       const isPast = ws.is_past;
 
       if (isToday) {
-        // TODAY: Compact checkable cell
         return `
-          <div onclick="toggleHabitLog(${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border border-[#5F7465] bg-[#FFFDF9] text-[#5F7465] hover:border-[#233329]'} cursor-pointer select-none h-6 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
+          <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border border-[#5F7465] bg-[#FFFDF9] text-[#5F7465] hover:border-[#233329]'} cursor-pointer select-none h-6 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
             <span>${ws.day}</span>
             ${isDone ? '<i data-lucide="check" class="w-2.5 h-2.5 ml-0.5 stroke-[3]"></i>' : '<i data-lucide="plus" class="w-2.5 h-2.5 ml-0.5 opacity-70"></i>'}
-          </div>
+          </button>
         `;
       } else if (isPast) {
         if (isDone) {
@@ -1386,7 +1596,6 @@ function renderHabits(data) {
           `;
         }
       } else {
-        // FUTURE DAYS: Neutral placeholder
         return `
           <div class="flex items-center justify-center rounded-lg bg-transparent text-[#DECDB5]/60 select-none h-6 text-[10px]">
             <span>${ws.day}</span>
@@ -1395,11 +1604,79 @@ function renderHabits(data) {
       }
     }).join('');
 
+    // 3. Generate 7-Day Rolling Mini-Grid (Monday to Sunday of active week, or rolling 7 days)
+    const monthDaysList = h.month_days || [];
+    let weekDays = [];
+    const todayIdx = monthDaysList.findIndex(d => d.is_today);
+    if (todayIdx !== -1) {
+      const todayObj = monthDaysList[todayIdx];
+      const wd = typeof todayObj.weekday === 'number' ? todayObj.weekday : 0;
+      const startIdx = todayIdx - wd;
+      if (startIdx >= 0 && startIdx + 7 <= monthDaysList.length) {
+        weekDays = monthDaysList.slice(startIdx, startIdx + 7);
+      } else if (startIdx < 0) {
+        weekDays = monthDaysList.slice(0, Math.min(7, monthDaysList.length));
+      } else {
+        weekDays = monthDaysList.slice(Math.max(0, monthDaysList.length - 7));
+      }
+    } else {
+      weekDays = monthDaysList.slice(0, Math.min(7, monthDaysList.length));
+    }
+
+    const weekdayNames = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    const miniWeekStrip = weekDays.map((ws, wIdx) => {
+      const isDone = ws.completed;
+      const isToday = ws.is_today;
+      const isPast = ws.is_past;
+      const wdName = weekdayNames[ws.weekday !== undefined ? ws.weekday : (wIdx % 7)];
+
+      if (isToday) {
+        return `
+          <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${ws.date}')" 
+               class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border-2 border-[#5F7465] bg-[#FFFDF9] text-[#5F7465]'} cursor-pointer transition select-none hover:scale-105 active:scale-95" 
+               title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'hoàn thành'}">
+            <span class="text-[8px] uppercase font-bold opacity-80">${wdName}</span>
+            <span class="text-xs font-black mt-0.5">${ws.day}</span>
+            <i data-lucide="${isDone ? 'check' : 'plus'}" class="w-3 h-3 mt-0.5 stroke-[2.5]"></i>
+          </button>
+        `;
+      } else if (isPast) {
+        if (isDone) {
+          return `
+            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#5F7465] text-white shadow-2xs select-none transition" 
+                 title="Ngày ${ws.day}: Đã làm">
+              <span class="text-[8px] uppercase font-bold opacity-80">${wdName}</span>
+              <span class="text-xs font-bold mt-0.5">${ws.day}</span>
+              <i data-lucide="check" class="w-3 h-3 mt-0.5 stroke-[2.5]"></i>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#F7F2E8] text-[#A49688] select-none border border-[#DECDB5]/60" 
+                 title="Ngày ${ws.day}: Chưa làm">
+              <span class="text-[8px] uppercase font-semibold">${wdName}</span>
+              <span class="text-xs font-semibold mt-0.5">${ws.day}</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#DECDB5] mt-1"></span>
+            </div>
+          `;
+        }
+      } else {
+        return `
+          <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-transparent text-[#DECDB5] select-none" 
+               title="Ngày ${ws.day}">
+            <span class="text-[8px] uppercase font-medium">${wdName}</span>
+            <span class="text-xs font-medium mt-0.5">${ws.day}</span>
+            <span class="w-1 h-1 rounded-full bg-[#DECDB5]/40 mt-1"></span>
+          </div>
+        `;
+      }
+    }).join('');
+
     const completedRate = Math.round(((h.month_completed_count || 0) / daysInMonth) * 100);
 
     return `
-      <div class="p-4 sm:p-5 rounded-3xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col md:flex-row md:items-stretch justify-between gap-4 sm:gap-6">
-        <!-- Habit Metadata & Controls: Symmetrical, sleek layout without bottom empty void -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
+        <!-- Habit Metadata & Details: Generous room for titles -->
         <div class="flex items-start gap-3.5 sm:gap-4 flex-1 min-w-0">
           <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] shrink-0 mt-0.5">
             <i data-lucide="${h.icon || 'sparkles'}" class="w-5 h-5"></i>
@@ -1436,37 +1713,48 @@ function renderHabits(data) {
               </div>
             </div>
 
-            <!-- Quick Today Check-in Status -->
+            <!-- Quick Today Check-in Button -->
             <div class="pt-0.5">
               ${h.completed_today ? `
-                <button onclick="toggleHabitLog(${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] hover:bg-[#E5ECE7] px-2.5 py-1 rounded-xl border border-[#D7E4DB] transition cursor-pointer" title="Hôm nay đã xong (bấm để hủy check-in)">
-                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Đã hoàn thành hôm nay
+                <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] px-2.5 py-1 rounded-xl border border-[#D7E4DB] transition cursor-pointer">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Đã làm ✓
                 </button>
               ` : `
-                <button onclick="toggleHabitLog(${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#786B60] hover:text-[#2B231D] bg-[#F7F2E8] hover:bg-[#EFE7D8] px-2.5 py-1 rounded-xl border border-[#DECDB5] transition cursor-pointer" title="Bấm để đánh dấu đã làm hôm nay">
-                  <i data-lucide="circle" class="w-3.5 h-3.5"></i> Chưa check-in hôm nay
+                <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#786B60] hover:text-[#2B231D] bg-[#F7F2E8] hover:bg-[#EFE7D8] px-2.5 py-1 rounded-xl border border-[#DECDB5] transition cursor-pointer">
+                  <i data-lucide="circle" class="w-3.5 h-3.5"></i> Check-in
                 </button>
               `}
             </div>
           </div>
         </div>
 
-        <!-- Compact Month Calendar: Neat mini-widget on the right -->
-        <div class="w-full md:w-[250px] lg:w-[260px] shrink-0 bg-[#F7F2E8] p-2 sm:p-2.5 rounded-2xl border border-[#DECDB5] shadow-2xs self-start md:self-stretch flex flex-col justify-between">
-          <div>
-            <!-- Calendar Header -->
-            <div class="flex items-center justify-between mb-1 pb-1 border-b border-[#DECDB5]/60 text-[10px] font-bold text-[#626037]">
-              <span class="flex items-center gap-1">
-                <i data-lucide="calendar" class="w-3 h-3 text-[#5F7465]"></i> Lịch ${data.month_label}
-              </span>
-            </div>
+        <!-- 7-Day Rolling Mini-Grid & Collapsible Monthly Calendar -->
+        <div class="w-full md:w-[280px] lg:w-[300px] shrink-0 flex flex-col justify-between gap-2 self-start">
+          <!-- Mini Grid Header -->
+          <div class="flex items-center justify-between pb-0.5">
+            <span class="text-[11px] font-bold text-[#626037] flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5F7465]"></i> 7 ngày gần nhất
+            </span>
+            <button onclick="toggleHabitMonthView(${h.id})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#5F7465] hover:text-[#233329] bg-[#EFE7D8] hover:bg-[#E2D6C0] px-2 py-0.5 rounded-lg border border-[#DECDB5] transition cursor-pointer">
+              <span id="habitMonthToggleText_${h.id}">Lịch tháng</span>
+              <i data-lucide="chevron-down" id="habitMonthChevron_${h.id}" class="w-3 h-3 transition-transform"></i>
+            </button>
+          </div>
 
-            <!-- 7-Column Header (T2 -> CN) -->
-            <div class="grid grid-cols-7 gap-1 text-center mb-1 text-[9px] font-bold text-[#786B60] uppercase tracking-wider">
+          <!-- 7-Day Mini-Grid (Compact 1-row) -->
+          <div class="grid grid-cols-7 gap-1 bg-[#F7F2E8] p-1.5 rounded-xl border border-[#DECDB5]">
+            ${miniWeekStrip}
+          </div>
+
+          <!-- Expandable Full Month Calendar Grid (Hidden by default) -->
+          <div id="habitMonthGrid_${h.id}" class="hidden bg-[#F7F2E8] p-2.5 rounded-xl border border-[#DECDB5] shadow-2xs space-y-1.5 mt-1">
+            <div class="flex items-center justify-between text-[10px] font-bold text-[#626037] pb-1 border-b border-[#DECDB5]/60">
+              <span>Toàn bộ tháng ${data.month_label}</span>
+              <span class="text-[#5F7465]">${h.month_completed_count || 0}/${daysInMonth} ngày</span>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-bold text-[#786B60] uppercase tracking-wider">
               <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
             </div>
-
-            <!-- Calendar Days Grid -->
             <div class="grid grid-cols-7 gap-1">
               ${paddingCells}
               ${daysCells}
@@ -1476,7 +1764,6 @@ function renderHabits(data) {
       </div>
     `;
   }).join('');
-
   if (window.lucide) lucide.createIcons();
 }
 
@@ -1858,8 +2145,8 @@ function renderNotes() {
   }
 
   container.innerHTML = lifeState.notes.map(n => `
-    <div class="p-5 rounded-3xl bg-[#FFFDF9] border ${n.is_pinned ? 'border-[#D39526]' : 'border-[#DECDB5]'} hover:border-[#5F7465] transition shadow-xs flex flex-col justify-between space-y-4 group">
-      <div class="space-y-2.5">
+    <div class="p-3.5 sm:p-4 rounded-2xl bg-[#FFFDF9] border ${n.is_pinned ? 'border-[#D39526]' : 'border-[#DECDB5]'} hover:border-[#5F7465] transition shadow-xs flex flex-col justify-between space-y-2.5 sm:space-y-3 group">
+      <div class="space-y-2">
         <div class="flex items-center justify-between">
           <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">${escapeHtml(n.category)}</span>
           <div class="flex items-center gap-1">
@@ -1869,22 +2156,21 @@ function renderNotes() {
             <button onclick="togglePinNote(${n.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#D39526] hover:bg-[#FDF6E2] transition cursor-pointer" title="${n.is_pinned ? 'Bỏ ghim' : 'Ghim lên đầu'}">
               <i data-lucide="pin" class="w-3.5 h-3.5 ${n.is_pinned ? 'fill-[#D39526] text-[#D39526]' : ''}"></i>
             </button>
-            <button onclick="deleteNote(${n.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition opacity-0 group-hover:opacity-100 cursor-pointer" title="Xóa ghi chú">
+            <button onclick="deleteNote(${n.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition md:opacity-0 md:group-hover:opacity-100 cursor-pointer" title="Xóa ghi chú">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
         </div>
-        <h4 class="font-black text-base text-[#2B231D] tracking-tight hover:text-[#5F7465] cursor-pointer" onclick="openNoteModal(${n.id})">${escapeHtml(n.title)}</h4>
-        <p class="text-xs text-[#786B60] whitespace-pre-line line-clamp-6 leading-relaxed">${escapeHtml(n.content)}</p>
+        <h4 class="font-bold text-sm sm:text-base text-[#2B231D] tracking-tight hover:text-[#5F7465] cursor-pointer" onclick="openNoteModal(${n.id})">${escapeHtml(n.title)}</h4>
+        <p class="text-xs text-[#786B60] whitespace-pre-line line-clamp-3 leading-relaxed">${escapeHtml(n.content)}</p>
       </div>
 
-      <div class="pt-2.5 border-t border-[#DECDB5]/40 flex items-center justify-between text-[11px] text-[#A49688]">
+      <div class="pt-2 border-t border-[#DECDB5]/40 flex items-center justify-between text-[11px] text-[#A49688]">
         <span>${formatDisplayDate(n.updated_at || n.created_at)}</span>
         <button onclick="openNoteModal(${n.id})" class="font-semibold text-[#5F7465] hover:text-[#233329] hover:underline cursor-pointer">Mở ghi chú →</button>
       </div>
     </div>
   `).join('');
-
   if (window.lucide) lucide.createIcons();
 }
 
@@ -2074,6 +2360,7 @@ function playPomodoroChime() {
 }
 
 function playTickSound() {
+  triggerHaptic(25);
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
@@ -2437,6 +2724,13 @@ window.scheduleAutoSync = function(delayMs = 300) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Handle direct tab deep-linking via hash or query param (e.g. ?tab=habits or #habits)
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '');
+  if (initialTab && ['dashboard', 'finance', 'todos', 'habits', 'journal', 'notes', 'notebook'].includes(initialTab)) {
+    setTimeout(() => { switchLifeTab(initialTab); }, 50);
+  }
+
   // Initial sync immediately after UI boot (500ms)
   setTimeout(() => { autoCloudSync(true, true); }, 500);
 
