@@ -1452,6 +1452,7 @@ def create_todo(item: TodoCreate):
     c.execute("SELECT * FROM todos WHERE id = ?", (new_id,))
     created = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "create", "timestamp": datetime.datetime.now().isoformat()})
     return created
 
 @app.put("/api/todos/{todo_id}")
@@ -1483,6 +1484,7 @@ def update_todo(todo_id: int, item: TodoUpdate):
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
     updated = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "update", "todo_id": todo_id, "timestamp": datetime.datetime.now().isoformat()})
     return updated
 
 @app.patch("/api/todos/{todo_id}/toggle")
@@ -1559,6 +1561,7 @@ def clear_completed_todos():
     deleted = len(rows)
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "clear", "deleted_count": deleted, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True, "deleted_count": deleted}
 
 @app.delete("/api/todos/{todo_id}")
@@ -1573,6 +1576,7 @@ def delete_todo(todo_id: int):
         c.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "delete", "todo_id": todo_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True, "message": "Đã xóa việc thành công"}
 
 @app.get("/api/todos/stats")
@@ -1789,6 +1793,7 @@ def create_habit(item: HabitCreate):
     c.execute("SELECT * FROM habits WHERE id = ?", (new_id,))
     habit = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "habits", "action": "create", "habit_id": new_id, "timestamp": datetime.datetime.now().isoformat()})
     return habit
 
 @app.post("/api/habits/{habit_id}/toggle")
@@ -1870,6 +1875,7 @@ def update_habit(habit_id: int, item: HabitUpdate):
     c.execute("SELECT * FROM habits WHERE id = ?", (habit_id,))
     updated = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "habits", "action": "update", "habit_id": habit_id, "timestamp": datetime.datetime.now().isoformat()})
     return updated
 
 @app.delete("/api/habits/{habit_id}")
@@ -1883,6 +1889,7 @@ def delete_habit(habit_id: int):
         c.execute("DELETE FROM habits WHERE id = ?", (habit_id,))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "habits", "action": "delete", "habit_id": habit_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True}
 
 # =========================================================================
@@ -1926,6 +1933,7 @@ def save_journal(entry: JournalEntryCreate):
     c.execute("SELECT * FROM journal_entries WHERE date = ?", (entry.date,))
     saved = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "journal", "action": "save", "date": entry.date, "timestamp": datetime.datetime.now().isoformat()})
     return saved
 
 @app.delete("/api/journal/{entry_id}")
@@ -1935,6 +1943,7 @@ def delete_journal(entry_id: int):
     c.execute("DELETE FROM journal_entries WHERE id = ?", (entry_id,))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "journal", "action": "delete", "entry_id": entry_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True}
 
 # =========================================================================
@@ -1976,6 +1985,7 @@ def create_note(item: NoteCreate):
     c.execute("SELECT * FROM notes WHERE id = ?", (new_id,))
     created = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "notes", "action": "create", "note_id": new_id, "timestamp": datetime.datetime.now().isoformat()})
     return created
 
 @app.put("/api/notes/{note_id}")
