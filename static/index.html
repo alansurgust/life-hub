@@ -58,7 +58,7 @@
   </script>
   <script src="/static/vendor/chart.min.js"></script>
   <script src="/static/vendor/lucide.min.js"></script>
-  <link rel="stylesheet" href="/static/css/style.css?v=7">
+  <link rel="stylesheet" href="/static/css/style.css?v=8">
 </head>
 <body class="bg-[#F7F2E8] text-[#2B231D] h-screen h-[100dvh] min-h-[100dvh] overflow-hidden antialiased font-sans selection:bg-[#5F7465] selection:text-[#FFFDF9]">
 
@@ -975,17 +975,9 @@
         <!-- Bar Chart: 7-day velocity -->
         <div class="lg:col-span-8 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
-            <div>
+            <div class="flex items-center gap-2">
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
-            </div>
-            <!-- Velocity Mode Toggle (Grouped vs Stacked) -->
-            <div class="flex items-center gap-1 bg-[#F2ECE1] p-1 rounded-xl border border-[#DECDB5] text-[11px] font-bold">
-              <button onclick="setTodoVelocityMode('grouped')" id="velModeBtn_grouped" class="px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer" title="Tách riêng 3 cột độc lập">
-                Tách riêng
-              </button>
-              <button onclick="setTodoVelocityMode('stacked')" id="velModeBtn_stacked" class="px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Xếp chồng công việc">
-                Xếp chồng
-              </button>
+              <span class="text-[10px] font-bold text-[#786B60] bg-[#EFE7D8] px-2 py-0.5 rounded-lg border border-[#DECDB5]">7 ngày qua • Xếp chồng</span>
             </div>
           </div>
           <div class="relative h-64 mt-2">

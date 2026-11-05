@@ -731,6 +731,7 @@ async function loadCategories() {
         modalCat.appendChild(opt);
       });
     }
+    if (typeof syncAllCustomSelects === 'function') syncAllCustomSelects();
   } catch (err) {
     console.error('Failed to load categories', err);
   }

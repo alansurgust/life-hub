@@ -167,7 +167,7 @@ function openAnimatedModal(modalId) {
   if (!modal) return;
   modal.classList.remove('hidden');
   requestAnimationFrame(() => {
-    modal.classList.add('modal-visible');
+    modal.classList.add('modal-visible'); syncAllCustomSelects();
   });
   if (window.lucide) lucide.createIcons({ root: modal });
 }
@@ -201,6 +201,24 @@ document.addEventListener('click', (e) => {
  * 5. Notes & Second Brain (AppFlowy & Vikunja)
  * 6. Global Pomodoro Focus Timer (Super Productivity)
  */
+
+// Vintage Brand Category Palette
+const VINTAGE_CATEGORY_PALETTE = {
+  'Công việc': { color: '#233329', bg: '#EAE6DC', border: '#DECDB5', chartColor: '#233329', dot: 'bg-[#233329]' },
+  'Học tập': { color: '#B37812', bg: '#FDF6E2', border: '#DECDB5', chartColor: '#D39526', dot: 'bg-[#D39526]' },
+  'Sức khỏe': { color: '#425848', bg: '#EDF4F0', border: '#C5D6CA', chartColor: '#5F7465', dot: 'bg-[#5F7465]' },
+  'Cá nhân': { color: '#9C3916', bg: '#FDF3EE', border: '#E8C5B8', chartColor: '#B14720', dot: 'bg-[#B14720]' },
+  'Tài chính': { color: '#A85314', bg: '#FAEDE4', border: '#E8CBB5', chartColor: '#C3651F', dot: 'bg-[#C3651F]' },
+  'Khác': { color: '#4F4E29', bg: '#F4F3E8', border: '#D8D6BC', chartColor: '#626037', dot: 'bg-[#626037]' }
+};
+
+function getCategoryBadgeHtml(catName) {
+  const meta = VINTAGE_CATEGORY_PALETTE[catName] || VINTAGE_CATEGORY_PALETTE['Khác'];
+  return `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[10px] font-bold border transition shadow-2xs" style="color: ${meta.color}; background-color: ${meta.bg}; border-color: ${meta.border};">
+    <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: ${meta.chartColor};"></span>
+    <span>${escapeHtml(catName || 'Công việc')}</span>
+  </span>`;
+}
 
 let lifeState = {
   currentTab: 'dashboard', // dashboard, finance, todos, habits, journal, notes
@@ -650,6 +668,8 @@ function switchLifeTab(tabName) {
     }
 
     if (window.lucide) lucide.createIcons();
+    initAllCustomSelects();
+    syncAllCustomSelects();
   };
 
   if (oldSec && !oldSec.classList.contains('hidden') && oldBoxes.length > 0) {
@@ -845,7 +865,7 @@ function renderDashboard(data) {
               <div class="min-w-0 flex-1 space-y-1">
                 <p class="text-xs sm:text-[13px] font-bold text-[#2B231D] leading-snug break-words">${escapeHtml(t.title)}</p>
                 <div class="flex items-center gap-1.5 text-[11px] text-[#786B60]">
-                  <span class="font-semibold text-[#626037]">${escapeHtml(t.category)}</span>
+                  ${getCategoryBadgeHtml(t.category)}
                   <span class="text-[#DECDB5]">•</span>
                   <span class="${isOverdue ? 'text-[#B14720] font-bold' : ''}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
                   ${t.priority === 'urgent' ? '<span class="text-[#B14720] font-bold ml-1">• Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[#D39526] font-bold ml-1">• Cao</span>' : '')}
@@ -1141,33 +1161,6 @@ function renderTodoStats(stats) {
   if (weekElem) weekElem.textContent = `${stats.week_completed} việc`;
 }
 
-function setTodoVelocityMode(mode) {
-  lifeState.todoVelocityMode = mode;
-  try {
-    localStorage.setItem('lifehub_todo_vel_mode', mode);
-  } catch (e) {}
-
-  const btnGrouped = document.getElementById('velModeBtn_grouped');
-  const btnStacked = document.getElementById('velModeBtn_stacked');
-  if (btnGrouped && btnStacked) {
-    if (mode === 'grouped') {
-      btnGrouped.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
-      btnStacked.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
-    } else {
-      btnGrouped.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
-      btnStacked.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
-    }
-  }
-
-  if (todoCharts.velocity) {
-    todoCharts.velocity.destroy();
-    todoCharts.velocity = null;
-  }
-  if (lifeState.todoStats) {
-    renderTodoCharts(lifeState.todoStats);
-  }
-}
-
 function renderTodoCharts(stats) {
   if (!stats || !stats.chart) return;
 
@@ -1176,39 +1169,13 @@ function renderTodoCharts(stats) {
     return; // Will be animated cleanly once unhidden
   }
 
-  // Velocity mode: 'grouped' (default - 3 distinct side-by-side columns) vs 'stacked'
-  const mode = lifeState.todoVelocityMode || localStorage.getItem('lifehub_todo_vel_mode') || 'grouped';
-  lifeState.todoVelocityMode = mode;
-  const isStacked = mode === 'stacked';
-
-  // Update button visual state
-  const btnGrouped = document.getElementById('velModeBtn_grouped');
-  const btnStacked = document.getElementById('velModeBtn_stacked');
-  if (btnGrouped && btnStacked) {
-    if (isStacked) {
-      btnGrouped.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
-      btnStacked.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
-    } else {
-      btnGrouped.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
-      btnStacked.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
-    }
-  }
-
-  // 1. Velocity Chart: High-contrast Vintage Palette (Sage Green vs Terracotta vs Gold)
+  // Velocity mode: Strictly Stacked as requested ("chỉ để bảng xếp chồng thôi")
+  // Soft, muted pastel vintage tones so it doesn't clash with the adjacent Category chart
   const ctxVel = document.getElementById('todoVelocityChart');
   if (ctxVel) {
     const backlogData = stats.chart.backlog || [];
     const newData = stats.chart.new_tasks || stats.chart.created || [];
     const completedData = stats.chart.completed || [];
-
-    // If chart exists, destroy if stacking mode mismatched to guarantee clean axis & bar geometry
-    if (todoCharts.velocity) {
-      const currentStacked = todoCharts.velocity.options.scales.x.stacked;
-      if (currentStacked !== isStacked) {
-        todoCharts.velocity.destroy();
-        todoCharts.velocity = null;
-      }
-    }
 
     if (todoCharts.velocity) {
       todoCharts.velocity.data.labels = stats.chart.labels;
@@ -1225,36 +1192,36 @@ function renderTodoCharts(stats) {
             {
               label: 'Hoàn thành',
               data: completedData,
-              backgroundColor: '#5F7465', // Vintage Sage Green (Tươi mát, biểu thị thành công)
+              backgroundColor: '#8FA896', // Muted Pastel Sage Green (nhẹ nhàng, thanh thoát)
               borderRadius: 6,
               borderSkipped: false,
-              barPercentage: isStacked ? 0.65 : 0.85,
-              categoryPercentage: isStacked ? 0.65 : 0.82,
-              stack: isStacked ? 'completed' : undefined
+              barPercentage: 0.65,
+              categoryPercentage: 0.65,
+              stack: 'completed'
             },
             {
               label: 'Tồn đọng cũ',
               data: backlogData,
-              backgroundColor: '#B14720', // Vintage Terracotta (Màu đất nung đậm, tương phản rõ rệt với xanh và vàng)
-              borderRadius: isStacked ? { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 } : 6,
+              backgroundColor: '#D89B88', // Muted Pastel Terracotta (đất nung phấn nhạt, không gắt)
+              borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 },
               borderSkipped: false,
-              borderWidth: isStacked ? 1.5 : 0,
+              borderWidth: 2,
               borderColor: '#FFFDF9',
-              barPercentage: isStacked ? 0.65 : 0.85,
-              categoryPercentage: isStacked ? 0.65 : 0.82,
-              stack: isStacked ? 'workload' : undefined
+              barPercentage: 0.65,
+              categoryPercentage: 0.65,
+              stack: 'workload'
             },
             {
               label: 'Mới trong ngày',
               data: newData,
-              backgroundColor: '#D39526', // Vintage Gold (Vàng hổ phách rực rỡ, biểu thị việc mới phát sinh)
-              borderRadius: isStacked ? { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 } : 6,
+              backgroundColor: '#E5C78A', // Muted Pastel Warm Wheat (vàng kem lúa mì dịu mắt)
+              borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
               borderSkipped: false,
-              borderWidth: isStacked ? 1.5 : 0,
+              borderWidth: 2,
               borderColor: '#FFFDF9',
-              barPercentage: isStacked ? 0.65 : 0.85,
-              categoryPercentage: isStacked ? 0.65 : 0.82,
-              stack: isStacked ? 'workload' : undefined
+              barPercentage: 0.65,
+              categoryPercentage: 0.65,
+              stack: 'workload'
             }
           ]
         },
@@ -1297,20 +1264,19 @@ function renderTodoCharts(stats) {
                     if (it.datasetIndex === 0) done += (it.parsed.y || 0);
                     if (it.datasetIndex === 1 || it.datasetIndex === 2) totalWorkload += (it.parsed.y || 0);
                   });
-                  return `──────────────────────
-📌 Cần giải quyết: ${totalWorkload} việc | ✓ Xong: ${done}`;
+                  return `──────────────────────\n📌 Cần giải quyết: ${totalWorkload} việc | ✓ Xong: ${done}`;
                 }
               }
             }
           },
           scales: {
             x: {
-              stacked: isStacked,
+              stacked: true,
               grid: { display: false },
               ticks: { font: { family: 'inherit', size: 10, weight: '600' }, color: '#786B60' }
             },
             y: {
-              stacked: isStacked,
+              stacked: true,
               grid: { color: 'rgba(222, 205, 181, 0.4)' },
               ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10 }, color: '#786B60' }
             }
@@ -1320,14 +1286,18 @@ function renderTodoCharts(stats) {
     }
   }
 
-  // 2. Category breakdown Donut Chart (Sequential sweep starting from 12 o'clock)
+  // 2. Category breakdown Donut Chart (Distinct Vintage Palette mapping)
   const ctxCat = document.getElementById('todoCategoryChart');
   if (ctxCat && stats.categories && stats.categories.length > 0) {
-    const colors = ['#5F7465', '#D39526', '#B14720', '#626037', '#663B1B', '#8E8275'];
+    const catColors = stats.categories.map(c => {
+      const meta = VINTAGE_CATEGORY_PALETTE[c.category] || VINTAGE_CATEGORY_PALETTE['Khác'];
+      return meta.chartColor;
+    });
+
     if (todoCharts.category) {
       todoCharts.category.data.labels = stats.categories.map(c => c.category);
       todoCharts.category.data.datasets[0].data = stats.categories.map(c => c.count);
-      todoCharts.category.data.datasets[0].backgroundColor = colors.slice(0, stats.categories.length);
+      todoCharts.category.data.datasets[0].backgroundColor = catColors;
       todoCharts.category.update('none');
     } else {
       todoCharts.category = new Chart(ctxCat.getContext('2d'), {
@@ -1336,7 +1306,7 @@ function renderTodoCharts(stats) {
         labels: stats.categories.map(c => c.category),
         datasets: [{
           data: stats.categories.map(c => c.count),
-          backgroundColor: colors.slice(0, stats.categories.length),
+          backgroundColor: catColors,
           borderWidth: 2,
           borderColor: '#FFFDF9'
         }]
@@ -1435,7 +1405,7 @@ function renderTodoList() {
         <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5 text-xs">
           <!-- Left: Clean Typographic Metadata -->
           <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-[#786B60]">
-            <span class="font-semibold text-[#626037]">${escapeHtml(t.category)}</span>
+            ${getCategoryBadgeHtml(t.category)}
             <span class="text-[#DECDB5]">•</span>
             <span class="${isOverdue ? 'text-[#B14720] font-bold' : 'text-[#786B60]'}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
             ${t.priority === 'urgent' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#DECDB5]/60 ml-1">Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF6E2] text-[#D39526] border border-[#DECDB5]/60 ml-1">Ưu tiên</span>' : '')}
@@ -1490,7 +1460,7 @@ function renderTodoKanban() {
         ${t.description ? `<p class="text-[11px] text-[#786B60] line-clamp-2 leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
         <div class="flex items-center justify-between text-[10px] text-[#786B60]">
           <div class="flex items-center gap-1.5">
-            <span class="px-2 py-0.5 rounded-full border ${pri.bg} ${pri.text} ${pri.border} font-bold">${pri.label}</span>
+            ${getCategoryBadgeHtml(t.category)} <span class="px-2 py-0.5 rounded-full border ${pri.bg} ${pri.text} ${pri.border} font-bold">${pri.label}</span>
             ${!isDone && t.due_date && t.due_date < new Date().toISOString().split('T')[0] ? '<span class="px-1.5 py-0.2 rounded border font-semibold bg-[#FDF3EE] text-[#B14720] border-[#F4DDD2]">Tồn đọng</span>' : ''}
           </div>
           <span>${formatDisplayDate(t.due_date)}</span>
@@ -3202,6 +3172,7 @@ window.scheduleAutoSync = function(delayMs = 80) {
 
 document.addEventListener('DOMContentLoaded', () => {
   initRippleEffects();
+  initAllCustomSelects();
   setTimeout(() => updateSlidingPills(lifeState.currentTab || 'dashboard'), 100);
   // Handle direct tab deep-linking via hash or query param (e.g. ?tab=habits or #habits)
   const urlParams = new URLSearchParams(window.location.search);
@@ -3437,3 +3408,211 @@ async function handleHeaderBackupUpload(event) {
     event.target.value = '';
   }
 }
+
+
+// =========================================================================
+// UNIVERSAL MODERN VINTAGE CUSTOM DROPDOWN ENGINE (100% Rounded & Soft Elevation)
+// =========================================================================
+function enhanceSelectElement(selectEl) {
+  if (!selectEl || selectEl.dataset.customEnhanced === 'true') return;
+
+  const isFullWidth = selectEl.classList.contains('w-full') || 
+                      selectEl.style.width === '100%' || 
+                      (selectEl.parentElement && selectEl.parentElement.classList.contains('w-full'));
+
+  // Container
+  const wrapper = document.createElement('div');
+  wrapper.className = `custom-dropdown-container ${isFullWidth ? 'w-full' : ''}`;
+  wrapper.dataset.targetId = selectEl.id || '';
+
+  // Trigger
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = `custom-dropdown-trigger ${isFullWidth ? 'w-full' : ''}`;
+  
+  const labelSpan = document.createElement('span');
+  labelSpan.className = 'custom-dropdown-label flex items-center gap-1.5 truncate text-left';
+  
+  const chevron = document.createElement('span');
+  chevron.className = 'shrink-0 text-[#A49688] transition-transform duration-200';
+  chevron.innerHTML = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+
+  trigger.appendChild(labelSpan);
+  trigger.appendChild(chevron);
+
+  // Popup Menu
+  const menu = document.createElement('div');
+  menu.className = 'custom-dropdown-menu hidden';
+  if (isFullWidth) menu.style.minWidth = '100%';
+
+  function renderOptions() {
+    menu.innerHTML = '';
+    const options = Array.from(selectEl.options);
+    const selectedVal = selectEl.value;
+    let selectedText = '';
+
+    options.forEach(opt => {
+      const item = document.createElement('div');
+      item.className = 'custom-dropdown-item';
+      const isSelected = opt.value === selectedVal || (!selectedVal && opt === options[0]);
+      if (isSelected) {
+        item.classList.add('selected');
+        selectedText = opt.text;
+      }
+
+      // Check if priority dot or category
+      let formattedHtml = escapeHtml(opt.text);
+      if (opt.text.includes('🔴') || opt.value === 'urgent') {
+        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#B14720]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
+      } else if (opt.text.includes('🟡') || opt.text.includes('🟠') || opt.value === 'high') {
+        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#D39526]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
+      } else if (opt.text.includes('🟢') || opt.value === 'normal') {
+        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#5F7465]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
+      } else if (opt.text.includes('⚪') || opt.value === 'low') {
+        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#A49688]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
+      } else if (VINTAGE_CATEGORY_PALETTE[opt.text]) {
+        const meta = VINTAGE_CATEGORY_PALETTE[opt.text];
+        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(opt.text)}</span></span>`;
+      }
+
+      item.innerHTML = `<span>${formattedHtml}</span>${isSelected ? '<span class="text-xs text-[#5F7465] font-bold">✓</span>' : ''}`;
+
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectEl.value = opt.value;
+        labelSpan.innerHTML = formattedHtml;
+        closeAllCustomDropdowns();
+        selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        if (typeof selectEl.onchange === 'function') {
+          selectEl.onchange();
+        }
+        renderOptions();
+      });
+
+      menu.appendChild(item);
+    });
+
+    if (!selectedText && options.length > 0) {
+      selectedText = options[0].text;
+    }
+    
+    // Set trigger label
+    if (selectedText.includes('🔴') || selectedVal === 'urgent') {
+      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#B14720]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (selectedText.includes('🟡') || selectedText.includes('🟠') || selectedVal === 'high') {
+      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#D39526]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (selectedText.includes('🟢') || selectedVal === 'normal') {
+      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#5F7465]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (selectedText.includes('⚪') || selectedVal === 'low') {
+      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#A49688]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (VINTAGE_CATEGORY_PALETTE[selectedText]) {
+      const meta = VINTAGE_CATEGORY_PALETTE[selectedText];
+      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(selectedText)}</span>`;
+    } else {
+      labelSpan.textContent = selectedText;
+    }
+  }
+
+  renderOptions();
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = menu.classList.contains('hidden');
+    closeAllCustomDropdowns();
+    if (isHidden) {
+      renderOptions();
+      const rect = trigger.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 200 && rect.top > 200) {
+        menu.classList.add('open-up');
+      } else {
+        menu.classList.remove('open-up');
+      }
+      menu.classList.remove('hidden');
+      trigger.classList.add('active');
+      chevron.style.transform = 'rotate(180deg)';
+    }
+  });
+
+  // Insert wrapper before selectEl and move selectEl inside wrapper
+  selectEl.parentNode.insertBefore(wrapper, selectEl);
+  wrapper.appendChild(trigger);
+  wrapper.appendChild(menu);
+  wrapper.appendChild(selectEl);
+
+  // Visually hide native select but preserve form & event functionality
+  selectEl.style.position = 'absolute';
+  selectEl.style.width = '0';
+  selectEl.style.height = '0';
+  selectEl.style.opacity = '0';
+  selectEl.style.pointerEvents = 'none';
+  selectEl.style.margin = '0';
+  selectEl.style.padding = '0';
+  selectEl.style.border = 'none';
+  selectEl.tabIndex = -1;
+
+  selectEl.dataset.customEnhanced = 'true';
+}
+
+function closeAllCustomDropdowns() {
+  document.querySelectorAll('.custom-dropdown-menu').forEach(m => m.classList.add('hidden'));
+  document.querySelectorAll('.custom-dropdown-trigger').forEach(t => {
+    t.classList.remove('active');
+    const chev = t.querySelector('span:last-child');
+    if (chev) chev.style.transform = 'rotate(0deg)';
+  });
+}
+
+function syncCustomDropdown(selectIdOrEl) {
+  const el = typeof selectIdOrEl === 'string' ? document.getElementById(selectIdOrEl) : selectIdOrEl;
+  if (!el) return;
+  const wrapper = el.closest('.custom-dropdown-container');
+  if (!wrapper) {
+    enhanceSelectElement(el);
+    return;
+  }
+  const label = wrapper.querySelector('.custom-dropdown-label');
+  const selOpt = el.options[el.selectedIndex];
+  if (label && selOpt) {
+    const text = selOpt.text;
+    const val = el.value;
+    if (text.includes('🔴') || val === 'urgent') {
+      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#B14720]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (text.includes('🟡') || text.includes('🟠') || val === 'high') {
+      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#D39526]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (text.includes('🟢') || val === 'normal') {
+      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#5F7465]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (text.includes('⚪') || val === 'low') {
+      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#A49688]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
+    } else if (VINTAGE_CATEGORY_PALETTE[text]) {
+      const meta = VINTAGE_CATEGORY_PALETTE[text];
+      label.innerHTML = `<span class="w-2 h-2 rounded-full" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(text)}</span>`;
+    } else {
+      label.textContent = text;
+    }
+  }
+}
+
+function syncAllCustomSelects() {
+  document.querySelectorAll('select').forEach(s => {
+    if (s.dataset.customEnhanced === 'true') {
+      syncCustomDropdown(s);
+    } else {
+      enhanceSelectElement(s);
+    }
+  });
+}
+
+function initAllCustomSelects() {
+  document.querySelectorAll('select:not([data-custom-enhanced="true"])').forEach(s => enhanceSelectElement(s));
+}
+
+// Global dismiss on click outside or escape
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.custom-dropdown-container')) {
+    closeAllCustomDropdowns();
+  }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeAllCustomDropdowns();
+});

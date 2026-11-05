@@ -535,3 +535,107 @@ html, body {
     margin: 0 auto 12px auto;
   }
 }
+
+
+/* =========================================================================
+   UNIVERSAL MODERN VINTAGE CUSTOM DROPDOWN (100% Rounded & Soft Elevation)
+   ========================================================================= */
+.custom-dropdown-container {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+}
+
+.custom-dropdown-container.w-full {
+  display: block;
+  width: 100%;
+}
+
+.custom-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #FFFDF9;
+  border: 1px solid #DECDB5;
+  border-radius: 12px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2B231D;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(43, 35, 29, 0.04);
+}
+
+.custom-dropdown-trigger:hover {
+  border-color: #5F7465;
+  background: #FFFDF9;
+}
+
+.custom-dropdown-trigger:focus,
+.custom-dropdown-trigger.active {
+  border-color: #5F7465;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(95, 116, 101, 0.18);
+}
+
+.custom-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: 280px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: #FFFDF9;
+  border: 1px solid #DECDB5;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px -4px rgba(35, 51, 41, 0.16), 0 8px 10px -4px rgba(35, 51, 41, 0.08);
+  padding: 5px;
+  z-index: 60;
+  animation: dropdownFadeScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-dropdown-menu.open-up {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
+.custom-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2B231D;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.custom-dropdown-item:hover {
+  background: #F2ECE1;
+  color: #233329;
+}
+
+.custom-dropdown-item.selected {
+  background: rgba(95, 116, 101, 0.12);
+  color: #233329;
+  font-weight: 700;
+}
+
+@keyframes dropdownFadeScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
