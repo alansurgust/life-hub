@@ -77,6 +77,12 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.3.0`** | [`v2.3.0.zip`](./v2.3.0.zip) | **`MINOR`** | 2387.5 KB | 63 | **Tich hop co che Cloud Persistence qua GitHub Gist luu giu data 24/7 khong can bat PC** |
 | **`v2.3.1`** | [`v2.3.1.zip`](./v2.3.1.zip) | **`PATCH`** | 2387.6 KB | 63 | **Bo sung Realtime Sync va Cloud Persistence cho toan bo thao tac them sua xoa Todo, Habit, Note tren dien thoai** |
 | **`v2.4.0`** | [`v2.4.0.zip`](./v2.4.0.zip) | **`MINOR`** | 2391.2 KB | 63 | **Tich hop tron ven 5 hieu ung Animate-UI chuyen dong muot ma** |
+| **`v2.4.1`** | [`v2.4.1.zip`](./v2.4.1.zip) | **`PATCH`** | 2392.0 KB | 63 | **Fix cu phap updateSlidingPills va hoan tat kiem toan toan dien UI UX** |
+| **`v2.4.2`** | [`v2.4.2.zip`](./v2.4.2.zip) | **`PATCH`** | 2392.1 KB | 63 | **Fix mat thanh bottom navigation tren dien thoai do xung dot CSS** |
+
+---
+
+---
 
 ---
 
@@ -97,6 +103,8 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
+
 
 
 
@@ -660,6 +668,26 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Thời gian tạo:** 2026-11-05 07:54:40
 - **Yêu cầu từ người dùng:**
   > "Tich hop ca 5 hieu ung Animate-UI"
+- **Số lượng file mã nguồn:** 63 files
+
+---
+
+### 📦 Phiên bản v2.4.1 — Fix cu phap updateSlidingPills va hoan tat kiem toan toan dien UI UX
+- **Tập tin nén:** `v2.4.1.zip` (2,449,430 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 08:18:32
+- **Yêu cầu từ người dùng:**
+  > "Kiem tra va danh gia toan dien cac phan vua duoc sua doi trong he thong Life Hub OS"
+- **Số lượng file mã nguồn:** 63 files
+
+---
+
+### 📦 Phiên bản v2.4.2 — Fix mat thanh bottom navigation tren dien thoai do xung dot CSS
+- **Tập tin nén:** `v2.4.2.zip` (2,449,496 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 09:23:13
+- **Yêu cầu từ người dùng:**
+  > "Sua loi mat thanh duoi tren dien thoai"
 - **Số lượng file mã nguồn:** 63 files
 
 ---
