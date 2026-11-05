@@ -58,7 +58,7 @@
   </script>
   <script src="/static/vendor/chart.min.js"></script>
   <script src="/static/vendor/lucide.min.js"></script>
-  <link rel="stylesheet" href="/static/css/style.css?v=5">
+  <link rel="stylesheet" href="/static/css/style.css?v=6">
 </head>
 <body class="bg-[#F7F2E8] text-[#2B231D] h-screen h-[100dvh] min-h-[100dvh] overflow-hidden antialiased font-sans selection:bg-[#5F7465] selection:text-[#FFFDF9]">
 
@@ -85,7 +85,7 @@
         <!-- Navigation Links (Dashboard + 5 Life Sections) -->
         <nav class="p-3 space-y-1 text-sm font-semibold relative select-none">
           <div id="sidebarNavPill" class="sidebar-nav-pill opacity-0"></div>
-          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer bg-[#233329] text-[#FFFDF9] shadow-xs tap-spring">
+          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#FFFDF9] bg-transparent tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
               <span>Tổng quan</span>
@@ -309,11 +309,7 @@
               <span id="syncPulseDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 transition-colors ring-1 ring-white"></span>
             </button>
 
-            <!-- Link Mobile Button in Header (hidden on mobile, already on phone) -->
-            <button onclick="openMobileConnectModal()" title="Kết nối iPhone / iPad" class="hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl bg-[#5F7465]/10 hover:bg-[#5F7465]/20 text-[#5F7465] border border-[#5F7465]/30 transition cursor-pointer shadow-2xs">
-              <i data-lucide="smartphone" class="w-4 h-4 text-[#5F7465]"></i>
-              <span class="hidden sm:inline">📱 Link Điện Thoại</span>
-            </button>
+
 
             <!-- Global Reload Button -->
             <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\Finance" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
@@ -978,10 +974,18 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <!-- Bar Chart: 7-day velocity -->
         <div class="lg:col-span-8 bg-[#FFFDF9] p-5 rounded-2xl border border-[#DECDB5] shadow-2xs flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
             <div>
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
-              
+            </div>
+            <!-- Velocity Mode Toggle (Grouped vs Stacked) -->
+            <div class="flex items-center gap-1 bg-[#F2ECE1] p-1 rounded-xl border border-[#DECDB5] text-[11px] font-bold">
+              <button onclick="setTodoVelocityMode('grouped')" id="velModeBtn_grouped" class="px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer" title="Tách riêng 3 cột độc lập">
+                Tách riêng
+              </button>
+              <button onclick="setTodoVelocityMode('stacked')" id="velModeBtn_stacked" class="px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Xếp chồng công việc">
+                Xếp chồng
+              </button>
             </div>
           </div>
           <div class="relative h-64 mt-2">

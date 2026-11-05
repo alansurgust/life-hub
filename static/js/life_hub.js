@@ -499,26 +499,37 @@ function switchLifeTab(tabName) {
   // 5 standard unified tabs everywhere: Desktop & Mobile
   const tabs = ['dashboard', 'finance', 'todos', 'habits', 'notebook'];
 
-  // Update sidebar active classes immediately
+  // Immediately spring slide navigation indicator pill on both desktop & mobile
+  updateSlidingPills(tabName);
+
+  // Update sidebar active classes immediately (keep z-10 and transparent background so sliding pill shows cleanly behind)
   tabs.forEach(t => {
     const btn = document.getElementById(`navTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
     if (btn) {
       if (t === tabName) {
-        btn.className = 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer bg-[#233329] text-[#FFFDF9] shadow-xs';
+        btn.className = 'relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#FFFDF9] bg-transparent tap-spring';
       } else {
-        btn.className = 'w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]';
+        btn.className = 'relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]/40 bg-transparent tap-spring';
       }
     }
   });
 
-  // Update mobile bottom navigation bar active button
+  // Update sidebar badge styling to match active/inactive pill background
+  const dashBadge = document.getElementById('sidebarDashBadge');
+  if (dashBadge) dashBadge.className = tabName === 'dashboard' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FFFDF9]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]';
+  const todosBadge = document.getElementById('sidebarTodosBadge');
+  if (todosBadge) todosBadge.className = tabName === 'todos' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FFFDF9]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]';
+  const habitsBadge = document.getElementById('sidebarHabitsBadge');
+  if (habitsBadge) habitsBadge.className = tabName === 'habits' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FFFDF9]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]';
+
+  // Update mobile bottom navigation bar active button (keep z-10 and tap-spring)
   tabs.forEach(t => {
     const mBtn = document.getElementById(`mobileNav_${t}`);
     if (mBtn) {
       if (t === tabName) {
-        mBtn.className = 'flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer';
+        mBtn.className = 'relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring';
       } else {
-        mBtn.className = 'flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer';
+        mBtn.className = 'relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring';
       }
     }
   });
@@ -1130,6 +1141,33 @@ function renderTodoStats(stats) {
   if (weekElem) weekElem.textContent = `${stats.week_completed} việc`;
 }
 
+function setTodoVelocityMode(mode) {
+  lifeState.todoVelocityMode = mode;
+  try {
+    localStorage.setItem('lifehub_todo_vel_mode', mode);
+  } catch (e) {}
+
+  const btnGrouped = document.getElementById('velModeBtn_grouped');
+  const btnStacked = document.getElementById('velModeBtn_stacked');
+  if (btnGrouped && btnStacked) {
+    if (mode === 'grouped') {
+      btnGrouped.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+      btnStacked.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
+    } else {
+      btnGrouped.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
+      btnStacked.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+    }
+  }
+
+  if (todoCharts.velocity) {
+    todoCharts.velocity.destroy();
+    todoCharts.velocity = null;
+  }
+  if (lifeState.todoStats) {
+    renderTodoCharts(lifeState.todoStats);
+  }
+}
+
 function renderTodoCharts(stats) {
   if (!stats || !stats.chart) return;
 
@@ -1138,12 +1176,39 @@ function renderTodoCharts(stats) {
     return; // Will be animated cleanly once unhidden
   }
 
-  // 1. Velocity Chart (Grouped & Stacked Bar Chart for last 7 days)
+  // Velocity mode: 'grouped' (default - 3 distinct side-by-side columns) vs 'stacked'
+  const mode = lifeState.todoVelocityMode || localStorage.getItem('lifehub_todo_vel_mode') || 'grouped';
+  lifeState.todoVelocityMode = mode;
+  const isStacked = mode === 'stacked';
+
+  // Update button visual state
+  const btnGrouped = document.getElementById('velModeBtn_grouped');
+  const btnStacked = document.getElementById('velModeBtn_stacked');
+  if (btnGrouped && btnStacked) {
+    if (isStacked) {
+      btnGrouped.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
+      btnStacked.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+    } else {
+      btnGrouped.className = 'px-2.5 py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+      btnStacked.className = 'px-2.5 py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
+    }
+  }
+
+  // 1. Velocity Chart: High-contrast Vintage Palette (Sage Green vs Terracotta vs Gold)
   const ctxVel = document.getElementById('todoVelocityChart');
   if (ctxVel) {
     const backlogData = stats.chart.backlog || [];
     const newData = stats.chart.new_tasks || stats.chart.created || [];
     const completedData = stats.chart.completed || [];
+
+    // If chart exists, destroy if stacking mode mismatched to guarantee clean axis & bar geometry
+    if (todoCharts.velocity) {
+      const currentStacked = todoCharts.velocity.options.scales.x.stacked;
+      if (currentStacked !== isStacked) {
+        todoCharts.velocity.destroy();
+        todoCharts.velocity = null;
+      }
+    }
 
     if (todoCharts.velocity) {
       todoCharts.velocity.data.labels = stats.chart.labels;
@@ -1160,32 +1225,36 @@ function renderTodoCharts(stats) {
             {
               label: 'Hoàn thành',
               data: completedData,
-              backgroundColor: '#5F7465', // Vintage Sage Green
+              backgroundColor: '#5F7465', // Vintage Sage Green (Tươi mát, biểu thị thành công)
               borderRadius: 6,
               borderSkipped: false,
-              barPercentage: 0.65,
-              categoryPercentage: 0.65,
-              stack: 'completed'
+              barPercentage: isStacked ? 0.65 : 0.85,
+              categoryPercentage: isStacked ? 0.65 : 0.82,
+              stack: isStacked ? 'completed' : undefined
             },
             {
               label: 'Tồn đọng cũ',
               data: backlogData,
-              backgroundColor: '#B39D7F', // Vintage be đậm ở bên dưới
-              borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 },
+              backgroundColor: '#B14720', // Vintage Terracotta (Màu đất nung đậm, tương phản rõ rệt với xanh và vàng)
+              borderRadius: isStacked ? { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 } : 6,
               borderSkipped: false,
-              barPercentage: 0.65,
-              categoryPercentage: 0.65,
-              stack: 'workload'
+              borderWidth: isStacked ? 1.5 : 0,
+              borderColor: '#FFFDF9',
+              barPercentage: isStacked ? 0.65 : 0.85,
+              categoryPercentage: isStacked ? 0.65 : 0.82,
+              stack: isStacked ? 'workload' : undefined
             },
             {
               label: 'Mới trong ngày',
               data: newData,
-              backgroundColor: '#DECDB5', // Vintage be sáng ở bên trên, cùng một cột
-              borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+              backgroundColor: '#D39526', // Vintage Gold (Vàng hổ phách rực rỡ, biểu thị việc mới phát sinh)
+              borderRadius: isStacked ? { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 } : 6,
               borderSkipped: false,
-              barPercentage: 0.65,
-              categoryPercentage: 0.65,
-              stack: 'workload'
+              borderWidth: isStacked ? 1.5 : 0,
+              borderColor: '#FFFDF9',
+              barPercentage: isStacked ? 0.65 : 0.85,
+              categoryPercentage: isStacked ? 0.65 : 0.82,
+              stack: isStacked ? 'workload' : undefined
             }
           ]
         },
@@ -1200,39 +1269,49 @@ function renderTodoCharts(stats) {
             legend: {
               position: 'top',
               labels: {
-                font: { family: 'inherit', size: 11, weight: '600' },
-                color: '#786B60',
-                boxWidth: 12
+                font: { family: 'inherit', size: 11, weight: '700' },
+                color: '#2B231D',
+                boxWidth: 12,
+                usePointStyle: true,
+                pointStyle: 'circle',
+                padding: 14
               }
             },
             tooltip: {
               backgroundColor: '#233329',
               titleFont: { family: 'inherit', size: 12, weight: 'bold' },
-              bodyFont: { family: 'inherit', size: 12 },
+              bodyFont: { family: 'inherit', size: 11 },
               padding: 10,
               cornerRadius: 12,
+              boxPadding: 4,
               callbacks: {
+                label: function(context) {
+                  const label = context.dataset.label || '';
+                  const val = context.parsed.y || 0;
+                  return `  ${label}: ${val} việc`;
+                },
                 footer: function(items) {
                   let totalWorkload = 0;
+                  let done = 0;
                   items.forEach(it => {
-                    if (it.datasetIndex === 1 || it.datasetIndex === 2) {
-                      totalWorkload += (it.parsed.y || 0);
-                    }
+                    if (it.datasetIndex === 0) done += (it.parsed.y || 0);
+                    if (it.datasetIndex === 1 || it.datasetIndex === 2) totalWorkload += (it.parsed.y || 0);
                   });
-                  return totalWorkload > 0 ? `Tổng việc cần làm: ${totalWorkload}` : '';
+                  return `──────────────────────
+📌 Cần giải quyết: ${totalWorkload} việc | ✓ Xong: ${done}`;
                 }
               }
             }
           },
           scales: {
             x: {
-              stacked: true,
+              stacked: isStacked,
               grid: { display: false },
-              ticks: { font: { family: 'inherit', size: 10 }, color: '#786B60' }
+              ticks: { font: { family: 'inherit', size: 10, weight: '600' }, color: '#786B60' }
             },
             y: {
-              stacked: true,
-              grid: { color: 'rgba(222, 205, 181, 0.3)' },
+              stacked: isStacked,
+              grid: { color: 'rgba(222, 205, 181, 0.4)' },
               ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10 }, color: '#786B60' }
             }
           }
