@@ -1850,6 +1850,45 @@ def get_habits(month: Optional[str] = None):
         "days_in_month": num_days
     }
 
+    # Discipline Streak (> 75% daily completion rate across all habits)
+    total_habits_count = len(habits)
+    discipline_max_streak = 0
+    discipline_current_streak = 0
+    if total_habits_count > 0:
+        c.execute("""
+            SELECT date, COUNT(DISTINCT habit_id) as cnt
+            FROM habit_logs
+            WHERE date IS NOT NULL AND date <= ?
+            GROUP BY date
+            ORDER BY date ASC
+        """, (today_str,))
+        qualified_dates = []
+        for row in c.fetchall():
+            # Strictly > 75% (e.g. 6/7 = 85.7%, 4/5 = 80%, 3/3 = 100%; if 4 habits, 4/4 = 100% > 75%, or >= 0.75? User said: "trên 75% thì mới tính là ngày kỷ luật" -> rate >= 0.75)
+            if (row["cnt"] / total_habits_count) >= 0.75:
+                try:
+                    qualified_dates.append(datetime.date.fromisoformat(row["date"]))
+                except Exception:
+                    pass
+        qualified_set = set(qualified_dates)
+        cur_run = 0
+        prev_d = None
+        for d_obj in qualified_dates:
+            if prev_d is not None and (d_obj - prev_d).days == 1:
+                cur_run += 1
+            else:
+                cur_run = 1
+            if cur_run > discipline_max_streak:
+                discipline_max_streak = cur_run
+            prev_d = d_obj
+
+        chk = today
+        if chk not in qualified_set:
+            chk = chk - datetime.timedelta(days=1)
+        while chk in qualified_set:
+            discipline_current_streak += 1
+            chk = chk - datetime.timedelta(days=1)
+
     conn.close()
     return {
         "habits": result,
@@ -1859,7 +1898,9 @@ def get_habits(month: Optional[str] = None):
         "first_weekday": first_weekday,
         "days_in_month": num_days,
         "chart": chart_data,
-        "today_str": today_str
+        "today_str": today_str,
+        "discipline_max_streak": discipline_max_streak,
+        "discipline_current_streak": discipline_current_streak
     }
 
 @app.post("/api/habits")

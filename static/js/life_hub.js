@@ -1195,35 +1195,46 @@ function renderTodoCharts(stats) {
             {
               label: 'Hoàn thành',
               data: completedData,
-              backgroundColor: '#8FA896', // Muted Pastel Sage Green (cột 1 độc lập)
-              borderRadius: 5,
-              borderSkipped: false,
-              barPercentage: 0.85,
-              categoryPercentage: 0.72,
+              backgroundColor: '#7A9682',
+              hoverBackgroundColor: '#5F7465',
+              borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+              borderSkipped: 'bottom',
+              borderWidth: 0,
+              barPercentage: 0.72,
+              categoryPercentage: 0.56,
+              maxBarThickness: 26,
               stack: 'completed'
             },
             {
               label: 'Tồn đọng cũ',
               data: backlogData,
-              backgroundColor: '#D89B88', // Muted Pastel Terracotta (cột 2: nằm ở dưới)
-              borderRadius: 5,
+              backgroundColor: '#D4927E',
+              hoverBackgroundColor: '#C27D68',
+              borderRadius: function(ctx) {
+                const idx = ctx.dataIndex;
+                const topVal = (ctx.chart.data.datasets[2]?.data?.[idx]) || 0;
+                return topVal > 0
+                  ? { topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0 }
+                  : { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 };
+              },
               borderSkipped: false,
-              borderWidth: 1.5,
-              borderColor: '#FFFDF9',
-              barPercentage: 0.85,
-              categoryPercentage: 0.72,
+              borderWidth: 0,
+              barPercentage: 0.72,
+              categoryPercentage: 0.56,
+              maxBarThickness: 26,
               stack: 'workload'
             },
             {
               label: 'Mới trong ngày',
               data: newData,
-              backgroundColor: '#E5C78A', // Muted Pastel Warm Wheat (cột 2: xếp chồng lên trên)
-              borderRadius: 5,
-              borderSkipped: false,
-              borderWidth: 1.5,
-              borderColor: '#FFFDF9',
-              barPercentage: 0.85,
-              categoryPercentage: 0.72,
+              backgroundColor: '#E3C280',
+              hoverBackgroundColor: '#D4B06A',
+              borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+              borderSkipped: 'bottom',
+              borderWidth: 0,
+              barPercentage: 0.72,
+              categoryPercentage: 0.56,
+              maxBarThickness: 26,
               stack: 'workload'
             }
           ]
@@ -1231,6 +1242,9 @@ function renderTodoCharts(stats) {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: {
+            padding: { top: 4, right: 8, bottom: 0, left: 0 }
+          },
           interaction: {
             mode: 'index',
             intersect: false
@@ -1241,10 +1255,11 @@ function renderTodoCharts(stats) {
               labels: {
                 font: { family: 'inherit', size: 11, weight: '700' },
                 color: '#2B231D',
-                boxWidth: 12,
+                boxWidth: 10,
+                boxHeight: 10,
                 usePointStyle: true,
                 pointStyle: 'circle',
-                padding: 14
+                padding: 16
               }
             },
             tooltip: {
@@ -1276,12 +1291,16 @@ function renderTodoCharts(stats) {
             x: {
               stacked: true,
               grid: { display: false },
-              ticks: { font: { family: 'inherit', size: 10, weight: '600' }, color: '#786B60' }
+              border: { color: '#DECDB5', width: 1 },
+              ticks: { font: { family: 'inherit', size: 11, weight: '600' }, color: '#6E6055', padding: 6 }
             },
             y: {
               stacked: true,
-              grid: { color: 'rgba(222, 205, 181, 0.4)' },
-              ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10 }, color: '#786B60' }
+              beginAtZero: true,
+              grace: '10%',
+              border: { display: false },
+              grid: { color: 'rgba(222, 205, 181, 0.35)', drawTicks: false },
+              ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10, weight: '600' }, color: '#8C7E72', padding: 8 }
             }
           }
         }
@@ -1848,16 +1867,30 @@ function renderHabits(data) {
   }
 
   // KPIs
-  let maxStreak = 0;
   let doneToday = 0;
   let totalChecks = 0;
   let possibleChecks = habits.length * daysInMonth;
 
   habits.forEach(h => {
-    if (h.best_streak > maxStreak) maxStreak = h.best_streak;
     if (h.completed_today) doneToday++;
     totalChecks += (h.month_completed_count || 0);
   });
+
+  // Chuỗi kỷ luật dài nhất: chỉ tính những ngày có tỷ lệ hoàn thành thói quen >= 75%
+  let maxStreak = 0;
+  if (typeof data.discipline_max_streak === 'number') {
+    maxStreak = data.discipline_max_streak;
+  } else if (data.chart && Array.isArray(data.chart.completed) && habits.length > 0) {
+    let curRun = 0;
+    data.chart.completed.forEach(cnt => {
+      if ((cnt / habits.length) >= 0.75) {
+        curRun++;
+        if (curRun > maxStreak) maxStreak = curRun;
+      } else {
+        curRun = 0;
+      }
+    });
+  }
 
   const consistencyRate = possibleChecks > 0 ? Math.round((totalChecks / possibleChecks) * 100) : 0;
 
