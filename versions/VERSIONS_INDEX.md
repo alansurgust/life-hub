@@ -90,6 +90,9 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.7.1`** | [`v2.7.1.zip`](./v2.7.1.zip) | **`PATCH`** | 596.9 KB | 44 | **Bieu do tien do 2 cot moi ngay: Cot 1 Hoan thanh, Cot 2 Ton dong cu va Moi trong ngay** |
 | **`v2.8.0`** | [`v2.8.0.zip`](./v2.8.0.zip) | **`MINOR`** | 597.8 KB | 44 | **Sua triet de dong bo Cloud khong can laptop, phuc hoi thanh dieu huong duoi va cac tab Thoi quen So tay** |
 | **`v2.8.1`** | [`v2.8.1 (Cap nhat dat ten file version kem mo ngoac mo ta sua doi).zip`](./v2.8.1%20%28Cap%20nhat%20dat%20ten%20file%20version%20kem%20mo%20ngoac%20mo%20ta%20sua%20doi%29.zip) | **`PATCH`** | 599.3 KB | 46 | **Cap nhat dat ten file version kem mo ngoac mo ta sua doi** |
+| **`v2.8.2`** | [`v2.8.2 (Chong cache HTML cu tren dien thoai de hien thanh dieu huong duoi).zip`](./v2.8.2%20%28Chong%20cache%20HTML%20cu%20tren%20dien%20thoai%20de%20hien%20thanh%20dieu%20huong%20duoi%29.zip) | **`PATCH`** | 597.9 KB | 44 | **Chong cache HTML cu tren dien thoai de hien thanh dieu huong duoi** |
+
+---
 
 ---
 
@@ -136,6 +139,7 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
 
 
 
@@ -843,5 +847,15 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Yêu cầu từ người dùng:**
   > "Gio moi phien ban ma sua vao folder version thi them phan mo ngoac ben canh la sua cai gi"
 - **Số lượng file mã nguồn:** 46 files
+
+---
+
+### 📦 Phiên bản v2.8.2 — Chong cache HTML cu tren dien thoai de hien thanh dieu huong duoi
+- **Tập tin nén:** `v2.8.2 (Chong cache HTML cu tren dien thoai de hien thanh dieu huong duoi).zip` (612,242 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 16:39:58
+- **Yêu cầu từ người dùng:**
+  > "App tren dien thoai van chua hien thanh ben duoi"
+- **Số lượng file mã nguồn:** 44 files
 
 ---
