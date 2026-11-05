@@ -85,6 +85,12 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.5.3`** | [`v2.5.3.zip`](./v2.5.3.zip) | **`PATCH`** | 2395.4 KB | 64 | **Xac nhan PAT Token va ho tro .env local** |
 | **`v2.5.4`** | [`v2.5.4.zip`](./v2.5.4.zip) | **`PATCH`** | 2395.5 KB | 64 | **Chuyen toan bo du lieu va ket noi sang D:\app\finance va xoa thu muc D:\Finance cu** |
 | **`v2.6.0`** | [`v2.6.0.zip`](./v2.6.0.zip) | **`MINOR`** | 2336.6 KB | 64 | **Dong bo Gist 13 viec, chuan hoa bieu do xep chong 3 lop, bien dich lai Finance.exe va cap nhat Desktop shortcut** |
+| **`v2.6.1`** | [`v2.6.1.zip`](./v2.6.1.zip) | **`PATCH`** | 596.7 KB | 44 | **Don dep toan dien cac file FinAI cu, file Cloud Run va log rac tren ca local va GitHub** |
+| **`v2.7.0`** | [`v2.7.0.zip`](./v2.7.0.zip) | **`MINOR`** | 597.1 KB | 44 | **Universal Rounded Custom Dropdowns va Triet De Dong Bo Cloud Gist Ngam** |
+
+---
+
+---
 
 ---
 
@@ -121,6 +127,8 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
+
 
 
 
@@ -773,5 +781,25 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Yêu cầu từ người dùng:**
   > "Khong dong bo viec tren dien thoai khi tat may tinh, bieu do tien do ngay khong hien ton dong va khong mo duoc app tren desktop"
 - **Số lượng file mã nguồn:** 64 files
+
+---
+
+### 📦 Phiên bản v2.6.1 — Don dep toan dien cac file FinAI cu, file Cloud Run va log rac tren ca local va GitHub
+- **Tập tin nén:** `v2.6.1.zip` (610,972 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 13:11:57
+- **Yêu cầu từ người dùng:**
+  > "Xoa cac file cu va rac khong con su dung"
+- **Số lượng file mã nguồn:** 44 files
+
+---
+
+### 📦 Phiên bản v2.7.0 — Universal Rounded Custom Dropdowns va Triet De Dong Bo Cloud Gist Ngam
+- **Tập tin nén:** `v2.7.0.zip` (611,430 bytes)
+- **Phân loại thay đổi:** `MINOR`
+- **Thời gian tạo:** 2026-11-05 13:33:05
+- **Yêu cầu từ người dùng:**
+  > "Bo tron cac dropbox trong app khong bi vuong, dong bo cloud doc lap khong phu thuoc laptop, don dep repo"
+- **Số lượng file mã nguồn:** 44 files
 
 ---
