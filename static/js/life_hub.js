@@ -1200,9 +1200,9 @@ function renderTodoCharts(stats) {
               borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
               borderSkipped: 'bottom',
               borderWidth: 0,
-              barPercentage: 0.72,
-              categoryPercentage: 0.56,
-              maxBarThickness: 26,
+              barPercentage: 0.82,
+              categoryPercentage: 0.64,
+              maxBarThickness: 24,
               stack: 'completed'
             },
             {
@@ -1219,9 +1219,9 @@ function renderTodoCharts(stats) {
               },
               borderSkipped: false,
               borderWidth: 0,
-              barPercentage: 0.72,
-              categoryPercentage: 0.56,
-              maxBarThickness: 26,
+              barPercentage: 0.82,
+              categoryPercentage: 0.64,
+              maxBarThickness: 24,
               stack: 'workload'
             },
             {
@@ -1232,9 +1232,9 @@ function renderTodoCharts(stats) {
               borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
               borderSkipped: 'bottom',
               borderWidth: 0,
-              barPercentage: 0.72,
-              categoryPercentage: 0.56,
-              maxBarThickness: 26,
+              barPercentage: 0.82,
+              categoryPercentage: 0.64,
+              maxBarThickness: 24,
               stack: 'workload'
             }
           ]
@@ -1282,7 +1282,8 @@ function renderTodoCharts(stats) {
                     if (it.datasetIndex === 0) done += (it.parsed.y || 0);
                     if (it.datasetIndex === 1 || it.datasetIndex === 2) totalWorkload += (it.parsed.y || 0);
                   });
-                  return `──────────────────────\n📌 Tổng việc: ${totalWorkload + done} việc | ✓ Đã xong: ${done}`;
+                  const rateStr = totalWorkload > 0 ? ` (${Math.round(done / totalWorkload * 100)}%)` : '';
+                  return `──────────────────────\n📌 Tổng việc cần làm: ${totalWorkload} việc | ✓ Đã xong: ${done} việc${rateStr}`;
                 }
               }
             }

@@ -1717,7 +1717,11 @@ def get_todo_stats():
     urgent_count = c.fetchone()[0]
 
     seven_days_ago = (today - datetime.timedelta(days=6)).isoformat()
-    c.execute("SELECT COUNT(*) FROM todos WHERE status = 'completed' AND (completed_at >= ? OR (due_date >= ? AND completed_at IS NOT NULL))", (seven_days_ago, seven_days_ago))
+    c.execute("""
+        SELECT COUNT(*) FROM todos 
+        WHERE status = 'completed' 
+          AND (date(completed_at) >= ? OR (completed_at IS NULL AND due_date >= ?))
+    """, (seven_days_ago, seven_days_ago))
     week_completed = c.fetchone()[0]
 
     daily_labels = []
@@ -1733,32 +1737,34 @@ def get_todo_stats():
         day_label = f"{day_names[d.weekday()]} ({d.strftime('%d/%m')})"
         daily_labels.append(day_label)
 
-        # 1. Đã hoàn thành trong ngày
+        # 1. Đã hoàn thành trong ngày d: việc có completed_at vào ngày d
         c.execute("""
             SELECT COUNT(*) FROM todos 
-            WHERE status = 'completed' AND (date(completed_at) = ? OR (due_date = ? AND completed_at IS NOT NULL))
+            WHERE status = 'completed' 
+              AND (date(completed_at) = ? OR (completed_at IS NULL AND due_date = ?))
         """, (d_str, d_str))
         completed_series.append(c.fetchone()[0])
 
-        # 2. Tồn đọng cũ (tạo trước ngày d hoặc hạn trước ngày d, chưa hoàn thành trước ngày d) -> Cột màu be đậm ở dưới
+        # 2. Tồn đọng cũ từ hôm trước: việc có hạn trước ngày d, và chưa hoàn thành trước ngày d
         c.execute("""
             SELECT COUNT(*) FROM todos 
-            WHERE (date(created_at) < ? OR (created_at IS NULL AND due_date IS NOT NULL AND due_date < ?))
-              AND (completed_at IS NULL OR date(completed_at) > ?)
+            WHERE due_date < ?
+              AND (date(created_at) <= ? OR created_at IS NULL)
+              AND (completed_at IS NULL OR date(completed_at) >= ?)
         """, (d_str, d_str, d_str))
         backlog_count = c.fetchone()[0]
         backlog_series.append(backlog_count)
 
-        # 3. Mới trong ngày d -> Cột màu be nhạt ở trên cùng một thanh
+        # 3. Mới trong ngày d: việc có hạn vào đúng ngày d
         c.execute("""
             SELECT COUNT(*) FROM todos 
-            WHERE (date(created_at) = ? OR (created_at IS NULL AND due_date = ?))
-              AND (completed_at IS NULL OR date(completed_at) > ?)
-        """, (d_str, d_str, d_str))
+            WHERE due_date = ?
+              AND (date(created_at) <= ? OR created_at IS NULL)
+        """, (d_str, d_str))
         new_count = c.fetchone()[0]
         new_series.append(new_count)
 
-        # Gộp tổng cần làm
+        # Gộp tổng khối lượng cần làm của ngày (Cũ + Mới)
         created_series.append(backlog_count + new_count)
 
     c.execute("SELECT category, COUNT(*) as count FROM todos GROUP BY category ORDER BY count DESC")
