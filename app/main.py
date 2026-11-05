@@ -183,19 +183,30 @@ async def startup_cloud_listener():
     except Exception:
         pass
 
-    # If running on Render Cloud, restore latest state from Gist on boot!
-    if is_cloud_instance():
-        try:
-            from app.cloud_persistence import load_data_from_gist
-            gist_data = await asyncio.to_thread(load_data_from_gist)
-            if gist_data:
-                import_sync_data(gist_data)
-                logger.info("⚡ [Cloud Boot] Restored complete database from GitHub Gist!")
-        except Exception as e:
-            logger.warning(f"Failed to load from Gist on startup: {e}")
+    # Always restore latest state from central GitHub Gist on boot (both Render Cloud and PC Local)!
+    try:
+        from app.cloud_persistence import load_data_from_gist
+        gist_data = await asyncio.to_thread(load_data_from_gist)
+        if gist_data:
+            res = import_sync_data(gist_data)
+            logger.info(f"⚡ [Boot Sync] Restored latest state from GitHub Gist! (changes: {res.get('changes_count', 0)})")
+    except Exception as e:
+        logger.warning(f"Failed to load from Gist on startup: {e}")
 
     # If running locally on PC (not on Render Cloud), maintain a background connection to Cloud WebSocket
     if not is_cloud_instance():
+        # Also pull any active state from Render Cloud and push merged state back so both are 100% in sync
+        async def _initial_pc_cloud_sync():
+            try:
+                await asyncio.sleep(1.0)
+                pull_res = await asyncio.to_thread(pull_from_cloud, {"cloud_url": "https://life-hub-cv9l.onrender.com"})
+                if isinstance(pull_res, dict) and pull_res.get("changes_count", 0) > 0:
+                    await sync_manager._broadcast_async({"event": "data_changed", "source": "cloud_sync", "changes_count": pull_res.get("changes_count", 0)})
+                schedule_cloud_push(delay_sec=1.5)
+            except Exception as e:
+                logger.debug(f"[Initial PC Cloud Sync] Warning: {e}")
+        asyncio.create_task(_initial_pc_cloud_sync())
+
         async def _cloud_ws_worker():
             import websockets
             cloud_ws_url = "wss://life-hub-cv9l.onrender.com/ws/sync"
@@ -1548,6 +1559,14 @@ def update_todo(todo_id: int, item: TodoUpdate):
         conn.close()
         raise HTTPException(status_code=404, detail="Không tìm thấy việc cần làm")
 
+    old_uid = f"{existing['title']}||{existing['due_date']}"
+    new_title = item.title if item.title is not None else existing["title"]
+    new_due = item.due_date if item.due_date is not None else existing["due_date"]
+    new_uid = f"{new_title}||{new_due}"
+    if old_uid != new_uid:
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (old_uid,))
+        c.execute("DELETE FROM deleted_records WHERE table_name = 'todos' AND record_uid = ?", (new_uid,))
+
     updates = []
     params = []
     for field, val in item.dict(exclude_unset=True).items():
@@ -1629,6 +1648,7 @@ def increment_todo_pomodoro(todo_id: int):
     c.execute("SELECT * FROM todos WHERE id = ?", (todo_id,))
     updated = dict(c.fetchone())
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "pomodoro", "todo_id": todo_id, "timestamp": datetime.datetime.now().isoformat()})
     return updated
 
 @app.delete("/api/todos/completed/clear")
@@ -1983,6 +2003,10 @@ def update_habit(habit_id: int, item: HabitUpdate):
         conn.close()
         raise HTTPException(status_code=404, detail="Không tìm thấy thói quen")
 
+    if item.name and item.name != existing["name"]:
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('habits', ?)", (existing["name"],))
+        c.execute("DELETE FROM deleted_records WHERE table_name = 'habits' AND record_uid = ?", (item.name,))
+
     updates = []
     params = []
     for f, v in item.dict(exclude_unset=True).items():
@@ -2116,6 +2140,11 @@ def create_note(item: NoteCreate):
 def update_note(note_id: int, item: NoteUpdate):
     conn = get_db_connection()
     c = conn.cursor()
+    c.execute("SELECT title FROM notes WHERE id = ?", (note_id,))
+    existing = c.fetchone()
+    if existing and item.title and item.title != existing["title"]:
+        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('notes', ?)", (existing["title"],))
+        c.execute("DELETE FROM deleted_records WHERE table_name = 'notes' AND record_uid = ?", (item.title,))
     updates = []
     params = []
     for f, v in item.dict(exclude_unset=True).items():
@@ -2133,6 +2162,7 @@ def update_note(note_id: int, item: NoteUpdate):
     conn.close()
     if not row:
         raise HTTPException(status_code=404, detail="Không tìm thấy ghi chú")
+    sync_manager.broadcast({"event": "data_changed", "tab": "notes", "action": "update", "note_id": note_id, "timestamp": datetime.datetime.now().isoformat()})
     return dict(row)
 
 @app.patch("/api/notes/{note_id}/pin")
@@ -2149,6 +2179,7 @@ def toggle_pin_note(note_id: int):
     c.execute("UPDATE notes SET is_pinned = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (new_pin, note_id))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "notes", "action": "pin", "note_id": note_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True, "note_id": note_id, "is_pinned": new_pin}
 
 @app.delete("/api/notes/{note_id}")
@@ -2162,6 +2193,7 @@ def delete_note(note_id: int):
         c.execute("DELETE FROM notes WHERE id = ?", (note_id,))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "notes", "action": "delete", "note_id": note_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True}
 
 # =========================================================================
@@ -2265,6 +2297,8 @@ def import_sync_data(payload: dict):
                     h_id = local_habit_name_to_id.get(parts[0])
                     if h_id:
                         c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (h_id, parts[1]))
+                        if c.rowcount > 0:
+                            changes_count += 1
                 c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid, deleted_at) VALUES (?, ?, ?)",
                           (t_name, uid, deleted_at))
                 continue
@@ -2284,22 +2318,32 @@ def import_sync_data(payload: dict):
                     c.execute("DELETE FROM todos WHERE title = ? AND due_date = ?", (parts[0], parts[1]))
                 else:
                     c.execute("DELETE FROM todos WHERE title = ?", (parts[0],))
+                if c.rowcount > 0:
+                    changes_count += 1
             elif t_name == "notes":
                 c.execute("DELETE FROM notes WHERE title = ?", (uid,))
+                if c.rowcount > 0:
+                    changes_count += 1
             elif t_name == "habits":
                 c.execute("DELETE FROM habits WHERE name = ?", (uid,))
+                if c.rowcount > 0:
+                    changes_count += 1
             elif t_name == "habit_logs":
                 parts = uid.split("||", 1)
                 if len(parts) == 2:
                     h_id = local_habit_name_to_id.get(parts[0])
                     if h_id:
                         c.execute("DELETE FROM habit_logs WHERE habit_id = ? AND date = ?", (h_id, parts[1]))
+                        if c.rowcount > 0:
+                            changes_count += 1
             elif t_name == "transactions":
                 parts = uid.split("||", 3)
                 if len(parts) == 4:
                     try:
                         c.execute("DELETE FROM transactions WHERE date = ? AND amount = ? AND type = ? AND description = ?",
                                   (parts[0], float(parts[1]), parts[2], parts[3]))
+                        if c.rowcount > 0:
+                            changes_count += 1
                     except Exception:
                         pass
 
@@ -2349,7 +2393,7 @@ def import_sync_data(payload: dict):
             if ("todos", todo_uid) in del_records:
                 continue
 
-            c.execute("SELECT id, status, updated_at, created_at FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
+            c.execute("SELECT id, status, description, priority, category, pomodoro_est, pomodoro_done, updated_at, created_at FROM todos WHERE title = ? AND due_date = ?", (item.get("title"), item.get("due_date")))
             row = c.fetchone()
             if not row:
                 c.execute("""
@@ -2377,9 +2421,18 @@ def import_sync_data(payload: dict):
                     continue
 
                 remote_status = item.get("status", "pending")
-                if remote_status != row["status"]:
-                    c.execute("UPDATE todos SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?",
-                              (remote_status, item.get("completed_at"), rem_up or datetime.datetime.now().isoformat(), row["id"]))
+                remote_desc = item.get("description", "")
+                remote_pri = item.get("priority", "normal")
+                remote_cat = item.get("category", "Công việc")
+                remote_pomo_done = item.get("pomodoro_done", 0)
+                if (remote_status != row["status"] or remote_desc != row["description"] or
+                    remote_pri != row["priority"] or remote_cat != row["category"] or
+                    remote_pomo_done != row["pomodoro_done"]):
+                    c.execute("""
+                        UPDATE todos
+                        SET status = ?, completed_at = ?, description = ?, priority = ?, category = ?, pomodoro_done = ?, updated_at = ?
+                        WHERE id = ?
+                    """, (remote_status, item.get("completed_at"), remote_desc, remote_pri, remote_cat, remote_pomo_done, rem_up or datetime.datetime.now().isoformat(), row["id"]))
                     changes_count += 1
 
         # Remote habit id -> name lookup map
@@ -2400,6 +2453,7 @@ def import_sync_data(payload: dict):
                 c.execute("INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
                           (name, h.get("icon", "flame"), h.get("color", "#5F7465"), h.get("target_days", 7), h.get("streak", 0), h.get("best_streak", 0),
                            h.get("updated_at") or datetime.datetime.now().isoformat()))
+                changes_count += 1
             else:
                 rem_up = str(h.get("updated_at") or "")
                 loc_up = str(row["updated_at"] or "")
@@ -2407,8 +2461,10 @@ def import_sync_data(payload: dict):
                     continue
                 new_streak = max(row["streak"], h.get("streak", 0))
                 new_best = max(row["best_streak"], h.get("best_streak", 0))
-                c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = ? WHERE id = ?",
-                          (new_streak, new_best, rem_up or datetime.datetime.now().isoformat(), row["id"]))
+                if new_streak != row["streak"] or new_best != row["best_streak"]:
+                    c.execute("UPDATE habits SET streak = ?, best_streak = ?, updated_at = ? WHERE id = ?",
+                              (new_streak, new_best, rem_up or datetime.datetime.now().isoformat(), row["id"]))
+                    changes_count += 1
 
         # Refresh local habit map after inserting any new habits
         c.execute("SELECT id, name FROM habits")
@@ -2434,43 +2490,52 @@ def import_sync_data(payload: dict):
 
         # 5. Journal entries merge (with Last-Write-Wins updated_at check)
         for j in payload.get("journal_entries", []):
-            c.execute("SELECT id, updated_at FROM journal_entries WHERE date = ?", (j.get("date"),))
+            c.execute("SELECT id, title, mood, gratitude, improvement, content, updated_at FROM journal_entries WHERE date = ?", (j.get("date"),))
             row = c.fetchone()
             if not row:
                 c.execute("INSERT INTO journal_entries (date, title, mood, gratitude, improvement, content, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
                           (j.get("date"), j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"),
                            j.get("updated_at") or datetime.datetime.now().isoformat()))
+                changes_count += 1
             else:
                 rem_up = str(j.get("updated_at") or "")
                 loc_up = str(row["updated_at"] or "")
                 if rem_up and loc_up and rem_up < loc_up:
                     continue
-                c.execute("""
-                    UPDATE journal_entries SET title = COALESCE(?, title), mood = COALESCE(?, mood),
-                    gratitude = COALESCE(?, gratitude), improvement = COALESCE(?, improvement), content = COALESCE(?, content), updated_at = ?
-                    WHERE date = ?
-                """, (j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"),
-                      rem_up or datetime.datetime.now().isoformat(), j.get("date")))
+                if (j.get("title") != row["title"] or j.get("mood") != row["mood"] or
+                    j.get("gratitude") != row["gratitude"] or j.get("improvement") != row["improvement"] or
+                    j.get("content") != row["content"]):
+                    c.execute("""
+                        UPDATE journal_entries SET title = COALESCE(?, title), mood = COALESCE(?, mood),
+                        gratitude = COALESCE(?, gratitude), improvement = COALESCE(?, improvement), content = COALESCE(?, content), updated_at = ?
+                        WHERE date = ?
+                    """, (j.get("title"), j.get("mood"), j.get("gratitude"), j.get("improvement"), j.get("content"),
+                          rem_up or datetime.datetime.now().isoformat(), j.get("date")))
+                    changes_count += 1
 
         # 6. Notes merge (with Last-Write-Wins updated_at check)
         for n in payload.get("notes", []):
             title = n.get("title")
             if not title or ("notes", title) in del_records:
                 continue
-            c.execute("SELECT id, updated_at FROM notes WHERE title = ?", (title,))
+            c.execute("SELECT id, content, category, is_pinned, color, updated_at FROM notes WHERE title = ?", (title,))
             row = c.fetchone()
             if not row:
                 c.execute("INSERT INTO notes (title, content, category, is_pinned, color, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
                           (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"),
                            n.get("updated_at") or datetime.datetime.now().isoformat()))
+                changes_count += 1
             else:
                 rem_up = str(n.get("updated_at") or "")
                 loc_up = str(row["updated_at"] or "")
                 if rem_up and loc_up and rem_up < loc_up:
                     continue
-                c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ?, updated_at = ? WHERE title = ?",
-                          (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"),
-                           rem_up or datetime.datetime.now().isoformat(), title))
+                if (n.get("content") != row["content"] or n.get("category") != row["category"] or
+                    n.get("is_pinned", 0) != row["is_pinned"]):
+                    c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ?, updated_at = ? WHERE title = ?",
+                              (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#5F7465"),
+                               rem_up or datetime.datetime.now().isoformat(), title))
+                    changes_count += 1
 
         conn.commit()
         if changes_count > 0:
