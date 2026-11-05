@@ -1180,8 +1180,11 @@ function renderTodoCharts(stats) {
     if (todoCharts.velocity) {
       todoCharts.velocity.data.labels = stats.chart.labels;
       todoCharts.velocity.data.datasets[0].data = completedData;
+      todoCharts.velocity.data.datasets[0].stack = 'completed';
       todoCharts.velocity.data.datasets[1].data = backlogData;
+      todoCharts.velocity.data.datasets[1].stack = 'workload';
       todoCharts.velocity.data.datasets[2].data = newData;
+      todoCharts.velocity.data.datasets[2].stack = 'workload';
       todoCharts.velocity.update('none');
     } else {
       todoCharts.velocity = new Chart(ctxVel.getContext('2d'), {
@@ -1192,36 +1195,36 @@ function renderTodoCharts(stats) {
             {
               label: 'Hoàn thành',
               data: completedData,
-              backgroundColor: '#8FA896', // Muted Pastel Sage Green (nhẹ nhàng, thanh thoát)
-              borderRadius: 6,
+              backgroundColor: '#8FA896', // Muted Pastel Sage Green (cột 1 độc lập)
+              borderRadius: 5,
               borderSkipped: false,
-              barPercentage: 0.65,
-              categoryPercentage: 0.65,
-              stack: 'daily_progress'
+              barPercentage: 0.85,
+              categoryPercentage: 0.72,
+              stack: 'completed'
             },
             {
               label: 'Tồn đọng cũ',
               data: backlogData,
-              backgroundColor: '#D89B88', // Muted Pastel Terracotta (đất nung phấn nhạt, không gắt)
-              borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 },
+              backgroundColor: '#D89B88', // Muted Pastel Terracotta (cột 2: nằm ở dưới)
+              borderRadius: 5,
               borderSkipped: false,
-              borderWidth: 2,
+              borderWidth: 1.5,
               borderColor: '#FFFDF9',
-              barPercentage: 0.65,
-              categoryPercentage: 0.65,
-              stack: 'daily_progress'
+              barPercentage: 0.85,
+              categoryPercentage: 0.72,
+              stack: 'workload'
             },
             {
               label: 'Mới trong ngày',
               data: newData,
-              backgroundColor: '#E5C78A', // Muted Pastel Warm Wheat (vàng kem lúa mì dịu mắt)
-              borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+              backgroundColor: '#E5C78A', // Muted Pastel Warm Wheat (cột 2: xếp chồng lên trên)
+              borderRadius: 5,
               borderSkipped: false,
-              borderWidth: 2,
+              borderWidth: 1.5,
               borderColor: '#FFFDF9',
-              barPercentage: 0.65,
-              categoryPercentage: 0.65,
-              stack: 'daily_progress'
+              barPercentage: 0.85,
+              categoryPercentage: 0.72,
+              stack: 'workload'
             }
           ]
         },
