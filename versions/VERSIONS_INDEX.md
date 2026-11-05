@@ -80,6 +80,9 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.4.1`** | [`v2.4.1.zip`](./v2.4.1.zip) | **`PATCH`** | 2392.0 KB | 63 | **Fix cu phap updateSlidingPills va hoan tat kiem toan toan dien UI UX** |
 | **`v2.4.2`** | [`v2.4.2.zip`](./v2.4.2.zip) | **`PATCH`** | 2392.1 KB | 63 | **Fix mat thanh bottom navigation tren dien thoai do xung dot CSS** |
 | **`v2.5.0`** | [`v2.5.0.zip`](./v2.5.0.zip) | **`MINOR`** | 2394.5 KB | 63 | **Khoa bieu do xep chong mau pastel va bo tron toan bo dropdown toan app** |
+| **`v2.5.1`** | [`v2.5.1.zip`](./v2.5.1.zip) | **`PATCH`** | 2394.9 KB | 63 | **Di chuyen toan bo du an vao thu muc D:\app\finance va cap nhat toan bo duong dan** |
+
+---
 
 ---
 
@@ -106,6 +109,7 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
 
 
 
@@ -702,6 +706,16 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Thời gian tạo:** 2026-11-05 09:40:20
 - **Yêu cầu từ người dùng:**
   > "Chuyen bieu do sang xep chong pastel, cap nhat palette danh muc va bo tron toan bo dropdown"
+- **Số lượng file mã nguồn:** 63 files
+
+---
+
+### 📦 Phiên bản v2.5.1 — Di chuyen toan bo du an vao thu muc D:\app\finance va cap nhat toan bo duong dan
+- **Tập tin nén:** `v2.5.1.zip` (2,452,329 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 10:26:46
+- **Yêu cầu từ người dùng:**
+  > "Chuyen folder finance vao folder app o cung vi tri do"
 - **Số lượng file mã nguồn:** 63 files
 
 ---

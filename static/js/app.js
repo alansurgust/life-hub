@@ -28,7 +28,7 @@ window.switchMobileKanbanCol = function(colName) {
  * - 3-Column Categorization Board (Đã phân loại, Chưa phân loại < 65%, Khác)
  * - Instant automatic column transition on category change
  * - One-click Header Reload
- * - Instant offline startup & D:\Finance data storage
+ * - Instant offline startup & D:\app\finance data storage
  */
 
 // Global State
@@ -163,7 +163,7 @@ async function reloadAllData(silent = false) {
   try {
     await refreshDashboard();
     if (!silent) {
-      showToast('Đã làm mới dữ liệu từ D:\\Finance thành công!', 'success');
+      showToast('Đã làm mới dữ liệu từ D:\\app\\finance thành công!', 'success');
     }
   } catch (err) {
     if (!silent) {
@@ -1397,7 +1397,7 @@ async function submitUploadStatement() {
 
   const btn = document.getElementById('uploadSubmitBtn');
   btn.disabled = true;
-  btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Đang xử lý & lưu vào D:\\Finance...</span>`;
+  btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Đang xử lý & lưu vào D:\\app\\finance...</span>`;
   lucide.createIcons({ root: btn });
 
   try {
@@ -1412,7 +1412,7 @@ async function submitUploadStatement() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.detail || 'Lỗi khi xử lý file sao kê');
 
-    let msg = `Thành công: Đã nạp ${data.transaction_count} giao dịch mới vào D:\\Finance!`;
+    let msg = `Thành công: Đã nạp ${data.transaction_count} giao dịch mới vào D:\\app\\finance!`;
     if (data.duplicate_count > 0) {
       msg += ` (Đã bỏ qua ${data.duplicate_count} giao dịch trùng)`;
     }
@@ -1435,7 +1435,7 @@ async function submitUploadStatement() {
 // ----------------- BULK ACTIONS -----------------
 
 async function seedDemoData() {
-  if (!confirm('Nạp 32 giao dịch mẫu phong phú để kiểm tra thử? Dữ liệu sẽ lưu vào D:\\Finance.')) return;
+  if (!confirm('Nạp 32 giao dịch mẫu phong phú để kiểm tra thử? Dữ liệu sẽ lưu vào D:\\app\\finance.')) return;
 
   try {
     const res = await fetch('/api/seed-demo', { method: 'POST' });
@@ -1461,7 +1461,7 @@ async function triggerAICategorize() {
 }
 
 async function resetAllData() {
-  if (!confirm('CẢNH BÁO: Thao tác này sẽ xóa toàn bộ giao dịch trong D:\\Finance\\expense_data.db để làm mới lại từ đầu. Bạn có chắc không?')) return;
+  if (!confirm('CẢNH BÁO: Thao tác này sẽ xóa toàn bộ giao dịch trong D:\\app\\finance\\expense_data.db để làm mới lại từ đầu. Bạn có chắc không?')) return;
 
   try {
     const res = await fetch('/api/reset-all', { method: 'POST' });

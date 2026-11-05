@@ -720,7 +720,7 @@ function reloadActiveTabData(silent = false) {
   setTimeout(() => {
     if (icon && !silent) icon.classList.remove('animate-spin');
     if (!silent) {
-      showToast('Đã làm mới dữ liệu từ ổ D:\\Finance', 'success');
+      showToast('Đã làm mới dữ liệu từ ổ D:\\app\\finance', 'success');
     }
   }, 500);
 }
