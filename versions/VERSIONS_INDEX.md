@@ -89,6 +89,9 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.7.0`** | [`v2.7.0.zip`](./v2.7.0.zip) | **`MINOR`** | 597.1 KB | 44 | **Universal Rounded Custom Dropdowns va Triet De Dong Bo Cloud Gist Ngam** |
 | **`v2.7.1`** | [`v2.7.1.zip`](./v2.7.1.zip) | **`PATCH`** | 596.9 KB | 44 | **Bieu do tien do 2 cot moi ngay: Cot 1 Hoan thanh, Cot 2 Ton dong cu va Moi trong ngay** |
 | **`v2.8.0`** | [`v2.8.0.zip`](./v2.8.0.zip) | **`MINOR`** | 597.8 KB | 44 | **Sua triet de dong bo Cloud khong can laptop, phuc hoi thanh dieu huong duoi va cac tab Thoi quen So tay** |
+| **`v2.8.1`** | [`v2.8.1 (Cap nhat dat ten file version kem mo ngoac mo ta sua doi).zip`](./v2.8.1%20%28Cap%20nhat%20dat%20ten%20file%20version%20kem%20mo%20ngoac%20mo%20ta%20sua%20doi%29.zip) | **`PATCH`** | 599.3 KB | 46 | **Cap nhat dat ten file version kem mo ngoac mo ta sua doi** |
+
+---
 
 ---
 
@@ -133,6 +136,7 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
 
 
 
@@ -829,5 +833,15 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Yêu cầu từ người dùng:**
   > "Sua loi phai bat may tinh moi dong bo len dien thoai, khong hien thanh duoi tren mobile, trong tab thoi quen va so tay"
 - **Số lượng file mã nguồn:** 44 files
+
+---
+
+### 📦 Phiên bản v2.8.1 — Cap nhat dat ten file version kem mo ngoac mo ta sua doi
+- **Tập tin nén:** `v2.8.1 (Cap nhat dat ten file version kem mo ngoac mo ta sua doi).zip` (613,687 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 16:35:03
+- **Yêu cầu từ người dùng:**
+  > "Gio moi phien ban ma sua vao folder version thi them phan mo ngoac ben canh la sua cai gi"
+- **Số lượng file mã nguồn:** 46 files
 
 ---

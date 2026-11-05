@@ -17,7 +17,7 @@ Sau mỗi lượt sửa đổi mã nguồn xong, chỉ cần chạy script tự 
 & "C:\Users\Admin\AppData\Local\Python\pythoncore-3.14-64\python.exe" "D:\Finance\versions\auto_version.py" --type patch|minor|major --title "Mô tả thay đổi" --request "Yêu cầu của người dùng"
 ```
 Script sẽ tự động:
-- Đóng gói toàn bộ code và tài nguyên hiện tại thành `vX.Y.Z.zip`
+- Đóng gói toàn bộ code và tài nguyên hiện tại thành `vX.Y.Z (Mô tả sửa đổi).zip` (có phần mở ngoặc mô tả nội dung sửa đổi bên cạnh tên phiên bản)
 - Tạo file `VERSION_INFO.md` bên trong gói zip
 - Cập nhật dòng mới vào bảng `VERSIONS_INDEX.md` và `README.md`
 - Báo cáo mã phiên bản mới cho người dùng.

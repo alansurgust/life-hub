@@ -11,7 +11,7 @@ Usage:
     python auto_version.py --type major --title "Đại tu Z" --request "..."
 """
 
-import os, sys, shutil, zipfile, re, argparse
+import os, sys, shutil, zipfile, re, argparse, urllib.parse
 from datetime import datetime
 
 try:
@@ -24,11 +24,17 @@ VERSIONS_DIR = os.path.join(PROJECT_DIR, 'versions')
 INDEX_FILE = os.path.join(VERSIONS_DIR, 'VERSIONS_INDEX.md')
 README_FILE = os.path.join(VERSIONS_DIR, 'README.md')
 
+def sanitize_filename(name: str) -> str:
+    # Remove or replace invalid windows filename characters: \ / : * ? " < > |
+    clean = re.sub(r'[\\/:*?"<>|]', '-', name)
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    return clean[:90]
+
 def get_latest_version():
     latest = (0, 0, 0)
     if os.path.exists(VERSIONS_DIR):
         for f in os.listdir(VERSIONS_DIR):
-            m = re.match(r'^v(\d+)\.(\d+)\.(\d+)\.zip$', f)
+            m = re.match(r'^v(\d+)\.(\d+)\.(\d+)(?:[^\.]*)\.zip$', f)
             if m:
                 cur = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
                 if cur > latest:
@@ -51,7 +57,8 @@ def create_version(bump_type, title, request_text=""):
     latest = get_latest_version()
     new_v = bump_version(latest, bump_type)
     ver_str = f"{new_v[0]}.{new_v[1]}.{new_v[2]}"
-    zip_name = f"v{ver_str}.zip"
+    clean_title = sanitize_filename(title)
+    zip_name = f"v{ver_str} ({clean_title}).zip" if clean_title else f"v{ver_str}.zip"
     zip_path = os.path.join(VERSIONS_DIR, zip_name)
     now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -142,7 +149,8 @@ def create_version(bump_type, title, request_text=""):
 
 def update_index(ver_str, zip_name, ctype, zip_size, file_count, title, now_str, request_text):
     sz_kb = zip_size / 1024
-    row = f"| **`v{ver_str}`** | [`{zip_name}`](./{zip_name}) | **`{ctype}`** | {sz_kb:.1f} KB | {file_count} | **{title}** |\n"
+    quoted_link = urllib.parse.quote(zip_name)
+    row = f"| **`v{ver_str}`** | [`{zip_name}`](./{quoted_link}) | **`{ctype}`** | {sz_kb:.1f} KB | {file_count} | **{title}** |\n"
     
     details_block = f"""
 ### 📦 Phiên bản v{ver_str} — {title}
