@@ -171,8 +171,6 @@ def wait_for_server(host, port, timeout=10.0):
 
 def apply_window_icon():
     ico_path = os.path.join(APP_DIR, "Finance_500k.ico")
-    if not os.path.exists(ico_path):
-        ico_path = os.path.join(APP_DIR, "FinAI_500k.ico")
 
     if not os.path.exists(ico_path):
         return
@@ -279,8 +277,6 @@ def main():
         log_step(f"webview.create_window returned: {window}")
 
         ico_path = os.path.join(APP_DIR, "Finance_500k.ico")
-        if not os.path.exists(ico_path):
-            ico_path = os.path.join(APP_DIR, "FinAI_500k.ico")
 
         # Start background thread to ensure WM_SETICON is also set directly on Win32 HWND
         threading.Thread(target=apply_window_icon, daemon=True).start()

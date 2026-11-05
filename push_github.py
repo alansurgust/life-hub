@@ -39,6 +39,22 @@ subprocess.run([git_exe, "-C", repo_dir, "config", "user.email", "nguyentuan2306
 # Pull latest remote changes first
 subprocess.run([git_exe, "-C", repo_dir, "pull", "--rebase", remote_url, "main"])
 
+# Mirror files and deletions from D:\app\finance\update into scratch repo
+for root, dirs, files in os.walk(repo_dir):
+    if '.git' in root:
+        continue
+    rel_root = os.path.relpath(root, repo_dir)
+    for f in files:
+        rel_f = os.path.join(rel_root, f) if rel_root != "." else f
+        src_f = os.path.join(update_dir, rel_f)
+        if not os.path.exists(src_f):
+            dest_f = os.path.join(root, f)
+            try:
+                os.remove(dest_f)
+                print(f"Removed deleted file from repo: {rel_f}")
+            except Exception:
+                pass
+
 # Copy all files from D:\app\finance\update into scratch repo
 for root, dirs, files in os.walk(update_dir):
     rel_path = os.path.relpath(root, update_dir)
