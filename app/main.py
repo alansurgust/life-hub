@@ -1641,7 +1641,7 @@ def get_todo_stats():
         c.execute("""
             SELECT COUNT(*) FROM todos 
             WHERE (date(created_at) < ? OR (created_at IS NULL AND due_date IS NOT NULL AND due_date < ?))
-              AND (completed_at IS NULL OR date(completed_at) >= ?)
+              AND (completed_at IS NULL OR date(completed_at) > ?)
         """, (d_str, d_str, d_str))
         backlog_count = c.fetchone()[0]
         backlog_series.append(backlog_count)
@@ -1650,7 +1650,7 @@ def get_todo_stats():
         c.execute("""
             SELECT COUNT(*) FROM todos 
             WHERE (date(created_at) = ? OR (created_at IS NULL AND due_date = ?))
-              AND (completed_at IS NULL OR date(completed_at) >= ?)
+              AND (completed_at IS NULL OR date(completed_at) > ?)
         """, (d_str, d_str, d_str))
         new_count = c.fetchone()[0]
         new_series.append(new_count)

@@ -1197,7 +1197,7 @@ function renderTodoCharts(stats) {
               borderSkipped: false,
               barPercentage: 0.65,
               categoryPercentage: 0.65,
-              stack: 'completed'
+              stack: 'daily_progress'
             },
             {
               label: 'Tồn đọng cũ',
@@ -1209,7 +1209,7 @@ function renderTodoCharts(stats) {
               borderColor: '#FFFDF9',
               barPercentage: 0.65,
               categoryPercentage: 0.65,
-              stack: 'workload'
+              stack: 'daily_progress'
             },
             {
               label: 'Mới trong ngày',
@@ -1221,7 +1221,7 @@ function renderTodoCharts(stats) {
               borderColor: '#FFFDF9',
               barPercentage: 0.65,
               categoryPercentage: 0.65,
-              stack: 'workload'
+              stack: 'daily_progress'
             }
           ]
         },
@@ -1264,7 +1264,7 @@ function renderTodoCharts(stats) {
                     if (it.datasetIndex === 0) done += (it.parsed.y || 0);
                     if (it.datasetIndex === 1 || it.datasetIndex === 2) totalWorkload += (it.parsed.y || 0);
                   });
-                  return `──────────────────────\n📌 Cần giải quyết: ${totalWorkload} việc | ✓ Xong: ${done}`;
+                  return `──────────────────────\n📌 Tổng việc: ${totalWorkload + done} việc | ✓ Đã xong: ${done}`;
                 }
               }
             }
