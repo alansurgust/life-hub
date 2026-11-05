@@ -3415,6 +3415,7 @@ async function handleHeaderBackupUpload(event) {
 // =========================================================================
 function enhanceSelectElement(selectEl) {
   if (!selectEl || selectEl.dataset.customEnhanced === 'true') return;
+  if (!selectEl.parentNode) return;
 
   const isFullWidth = selectEl.classList.contains('w-full') || 
                       selectEl.style.width === '100%' || 
@@ -3434,7 +3435,7 @@ function enhanceSelectElement(selectEl) {
   labelSpan.className = 'custom-dropdown-label flex items-center gap-1.5 truncate text-left';
   
   const chevron = document.createElement('span');
-  chevron.className = 'shrink-0 text-[#A49688] transition-transform duration-200';
+  chevron.className = 'shrink-0 text-[#A49688] transition-transform duration-200 pointer-events-none';
   chevron.innerHTML = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
 
   trigger.appendChild(labelSpan);
@@ -3445,11 +3446,29 @@ function enhanceSelectElement(selectEl) {
   menu.className = 'custom-dropdown-menu hidden';
   if (isFullWidth) menu.style.minWidth = '100%';
 
+  function getOptionFormattedHtml(opt) {
+    const text = (opt.text || opt.textContent || '').trim();
+    const val = opt.value;
+    if (text.includes('🔴') || val === 'urgent') {
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#B14720] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+    } else if (text.includes('🟡') || text.includes('🟠') || val === 'high') {
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#D39526] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+    } else if (text.includes('🟢') || val === 'normal') {
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#5F7465] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+    } else if (text.includes('⚪') || text.includes('🟣') || val === 'low') {
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#A49688] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+    } else if (typeof VINTAGE_CATEGORY_PALETTE !== 'undefined' && VINTAGE_CATEGORY_PALETTE[text]) {
+      const meta = VINTAGE_CATEGORY_PALETTE[text];
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(text)}</span></span>`;
+    }
+    return `<span>${escapeHtml(text)}</span>`;
+  }
+
   function renderOptions() {
     menu.innerHTML = '';
     const options = Array.from(selectEl.options);
     const selectedVal = selectEl.value;
-    let selectedText = '';
+    let selectedOpt = null;
 
     options.forEach(opt => {
       const item = document.createElement('div');
@@ -3457,24 +3476,10 @@ function enhanceSelectElement(selectEl) {
       const isSelected = opt.value === selectedVal || (!selectedVal && opt === options[0]);
       if (isSelected) {
         item.classList.add('selected');
-        selectedText = opt.text;
+        selectedOpt = opt;
       }
 
-      // Check if priority dot or category
-      let formattedHtml = escapeHtml(opt.text);
-      if (opt.text.includes('🔴') || opt.value === 'urgent') {
-        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#B14720]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
-      } else if (opt.text.includes('🟡') || opt.text.includes('🟠') || opt.value === 'high') {
-        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#D39526]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
-      } else if (opt.text.includes('🟢') || opt.value === 'normal') {
-        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#5F7465]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
-      } else if (opt.text.includes('⚪') || opt.value === 'low') {
-        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#A49688]"></span> <span>${escapeHtml(opt.text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span></span>`;
-      } else if (VINTAGE_CATEGORY_PALETTE[opt.text]) {
-        const meta = VINTAGE_CATEGORY_PALETTE[opt.text];
-        formattedHtml = `<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(opt.text)}</span></span>`;
-      }
-
+      const formattedHtml = getOptionFormattedHtml(opt);
       item.innerHTML = `<span>${formattedHtml}</span>${isSelected ? '<span class="text-xs text-[#5F7465] font-bold">✓</span>' : ''}`;
 
       item.addEventListener('click', (e) => {
@@ -3492,27 +3497,15 @@ function enhanceSelectElement(selectEl) {
       menu.appendChild(item);
     });
 
-    if (!selectedText && options.length > 0) {
-      selectedText = options[0].text;
+    if (!selectedOpt && options.length > 0) {
+      selectedOpt = options[0];
     }
-    
-    // Set trigger label
-    if (selectedText.includes('🔴') || selectedVal === 'urgent') {
-      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#B14720]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (selectedText.includes('🟡') || selectedText.includes('🟠') || selectedVal === 'high') {
-      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#D39526]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (selectedText.includes('🟢') || selectedVal === 'normal') {
-      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#5F7465]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (selectedText.includes('⚪') || selectedVal === 'low') {
-      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#A49688]"></span> <span>${escapeHtml(selectedText.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (VINTAGE_CATEGORY_PALETTE[selectedText]) {
-      const meta = VINTAGE_CATEGORY_PALETTE[selectedText];
-      labelSpan.innerHTML = `<span class="w-2 h-2 rounded-full" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(selectedText)}</span>`;
-    } else {
-      labelSpan.textContent = selectedText;
+    if (selectedOpt) {
+      labelSpan.innerHTML = getOptionFormattedHtml(selectedOpt);
     }
   }
 
+  wrapper._renderOptions = renderOptions;
   renderOptions();
 
   trigger.addEventListener('click', (e) => {
@@ -3523,7 +3516,7 @@ function enhanceSelectElement(selectEl) {
       renderOptions();
       const rect = trigger.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
-      if (spaceBelow < 200 && rect.top > 200) {
+      if (spaceBelow < 220 && rect.top > 220) {
         menu.classList.add('open-up');
       } else {
         menu.classList.remove('open-up');
@@ -3571,25 +3564,8 @@ function syncCustomDropdown(selectIdOrEl) {
     enhanceSelectElement(el);
     return;
   }
-  const label = wrapper.querySelector('.custom-dropdown-label');
-  const selOpt = el.options[el.selectedIndex];
-  if (label && selOpt) {
-    const text = selOpt.text;
-    const val = el.value;
-    if (text.includes('🔴') || val === 'urgent') {
-      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#B14720]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (text.includes('🟡') || text.includes('🟠') || val === 'high') {
-      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#D39526]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (text.includes('🟢') || val === 'normal') {
-      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#5F7465]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (text.includes('⚪') || val === 'low') {
-      label.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#A49688]"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪]/g, '').trim())}</span>`;
-    } else if (VINTAGE_CATEGORY_PALETTE[text]) {
-      const meta = VINTAGE_CATEGORY_PALETTE[text];
-      label.innerHTML = `<span class="w-2 h-2 rounded-full" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(text)}</span>`;
-    } else {
-      label.textContent = text;
-    }
+  if (typeof wrapper._renderOptions === 'function') {
+    wrapper._renderOptions();
   }
 }
 
@@ -3616,3 +3592,31 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeAllCustomDropdowns();
 });
+
+// Auto-run custom dropdowns on immediate script load and DOM lifecycle
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAllCustomSelects);
+} else {
+  initAllCustomSelects();
+}
+window.addEventListener('load', initAllCustomSelects);
+
+// Observer for dynamically added selects
+try {
+  let _selectObserverTimer = null;
+  const _selectObserver = new MutationObserver(() => {
+    if (_selectObserverTimer) clearTimeout(_selectObserverTimer);
+    _selectObserverTimer = setTimeout(() => {
+      initAllCustomSelects();
+    }, 60);
+  });
+  if (document.body) {
+    _selectObserver.observe(document.body, { childList: true, subtree: true });
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      _selectObserver.observe(document.body, { childList: true, subtree: true });
+    });
+  }
+} catch (e) {
+  // Graceful fallback
+}

@@ -47,6 +47,14 @@ def get_token() -> str:
         pass
     return ""
 
+def _get_github_headers(token: str) -> dict:
+    auth = f"Bearer {token}" if (token.startswith("gho_") or token.startswith("github_pat_") or token.startswith("ghp_")) else f"token {token}"
+    return {
+        "Authorization": auth,
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "LifeHubApp/1.0"
+    }
+
 def load_data_from_gist() -> Optional[dict]:
     token = get_token()
     if not token or not GITHUB_GIST_ID:
@@ -56,10 +64,7 @@ def load_data_from_gist() -> Optional[dict]:
     import httpx
     try:
         url = f"https://api.github.com/gists/{GITHUB_GIST_ID}"
-        headers = {
-            "Authorization": f"token {token}",
-            "User-Agent": "LifeHubApp/1.0"
-        }
+        headers = _get_github_headers(token)
         res = httpx.get(url, headers=headers, timeout=15.0)
         if res.status_code == 200:
             gist_data = res.json()
@@ -83,11 +88,8 @@ def save_data_to_gist_sync(data_dict: dict) -> bool:
     import httpx
     try:
         url = f"https://api.github.com/gists/{GITHUB_GIST_ID}"
-        headers = {
-            "Authorization": f"token {token}",
-            "Content-Type": "application/json",
-            "User-Agent": "LifeHubApp/1.0"
-        }
+        headers = _get_github_headers(token)
+        headers["Content-Type"] = "application/json"
         payload = {
             "files": {
                 "life_hub_data.json": {

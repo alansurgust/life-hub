@@ -540,9 +540,14 @@ html, body {
 /* =========================================================================
    UNIVERSAL MODERN VINTAGE CUSTOM DROPDOWN (100% Rounded & Soft Elevation)
    ========================================================================= */
+select {
+  border-radius: 14px !important;
+}
+
 .custom-dropdown-container {
   position: relative;
   display: inline-block;
+  vertical-align: middle;
   user-select: none;
 }
 
@@ -559,8 +564,8 @@ html, body {
   gap: 8px;
   background: #FFFDF9;
   border: 1px solid #DECDB5;
-  border-radius: 12px;
-  padding: 6px 10px;
+  border-radius: 14px;
+  padding: 6.5px 12px;
   font-size: 12px;
   font-weight: 600;
   color: #2B231D;
@@ -583,48 +588,61 @@ html, body {
 
 .custom-dropdown-menu {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 5px);
   left: 0;
   min-width: 100%;
   width: max-content;
-  max-width: 280px;
-  max-height: 240px;
+  max-width: 320px;
+  max-height: 250px;
   overflow-y: auto;
   background: #FFFDF9;
   border: 1px solid #DECDB5;
-  border-radius: 16px;
-  box-shadow: 0 12px 28px -4px rgba(35, 51, 41, 0.16), 0 8px 10px -4px rgba(35, 51, 41, 0.08);
-  padding: 5px;
-  z-index: 60;
+  border-radius: 18px !important;
+  box-shadow: 0 16px 36px -4px rgba(43, 35, 29, 0.16), 0 8px 16px -2px rgba(43, 35, 29, 0.08);
+  padding: 6px;
+  z-index: 9999;
   animation: dropdownFadeScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-dropdown-menu::-webkit-scrollbar-thumb {
+  background: #DECDB5;
+  border-radius: 9999px;
 }
 
 .custom-dropdown-menu.open-up {
   top: auto;
-  bottom: calc(100% + 4px);
+  bottom: calc(100% + 5px);
 }
 
 .custom-dropdown-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 10px;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: #2B231D;
   transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .custom-dropdown-item:hover {
-  background: #F2ECE1;
-  color: #233329;
+  background: #F4EFE6;
+  color: #1A261F;
 }
 
 .custom-dropdown-item.selected {
-  background: rgba(95, 116, 101, 0.12);
+  background: rgba(95, 116, 101, 0.14);
   color: #233329;
   font-weight: 700;
 }
