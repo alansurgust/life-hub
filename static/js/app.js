@@ -749,15 +749,22 @@ async function loadOverview() {
     // Update Soft Month Dropdown UI
     updateMonthDropdownUI();
 
-    // Update KPI Card Numbers (3 Cards)
+    // Update KPI Card Numbers with Animate-UI Rolling Numbers
     const expEl = document.getElementById('cardTotalExpense');
-    if (expEl) expEl.textContent = formatCurrency(data.total_expense);
+    if (expEl) {
+      if (typeof animateNumberValue === 'function') animateNumberValue(expEl, data.total_expense, 650, v => formatCurrency(v));
+      else expEl.textContent = formatCurrency(data.total_expense);
+    }
     const incEl = document.getElementById('cardTotalIncome');
-    if (incEl) incEl.textContent = formatCurrency(data.total_income);
+    if (incEl) {
+      if (typeof animateNumberValue === 'function') animateNumberValue(incEl, data.total_income, 650, v => formatCurrency(v));
+      else incEl.textContent = formatCurrency(data.total_income);
+    }
 
     const netElem = document.getElementById('cardNetBalance');
     if (netElem) {
-      netElem.textContent = formatCurrency(data.net_balance);
+      if (typeof animateNumberValue === 'function') animateNumberValue(netElem, data.net_balance, 650, v => formatCurrency(v));
+      else netElem.textContent = formatCurrency(data.net_balance);
       if (data.net_balance >= 0) {
         netElem.className = 'text-2xl sm:text-[28px] font-black text-[#5F7465] tabular-nums tracking-tight my-1';
       } else {
@@ -767,7 +774,10 @@ async function loadOverview() {
 
     const rate = Math.max(0, Math.min(100, Math.round(data.savings_rate || 0)));
     const rateEl = document.getElementById('cardSavingsRate');
-    if (rateEl) rateEl.textContent = `${rate}%`;
+    if (rateEl) {
+      if (typeof animateNumberValue === 'function') animateNumberValue(rateEl, rate, 650, v => `${Math.round(v)}%`);
+      else rateEl.textContent = `${rate}%`;
+    }
     const pBar = document.getElementById('savingsProgressBar');
     if (pBar) {
       pBar.style.width = `${rate}%`;
@@ -1321,16 +1331,19 @@ async function deleteTransaction(id) {
 // ----------------- STATEMENT UPLOAD -----------------
 
 function openUploadModal() {
-  const modal = document.getElementById('uploadModal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    lucide.createIcons({ root: modal });
+  if (typeof openAnimatedModal === 'function') openAnimatedModal('uploadModal');
+  else {
+    const modal = document.getElementById('uploadModal');
+    if (modal) modal.classList.remove('hidden');
   }
 }
 
 function closeUploadModal() {
-  const modal = document.getElementById('uploadModal');
-  if (modal) modal.classList.add('hidden');
+  if (typeof closeAnimatedModal === 'function') closeAnimatedModal('uploadModal');
+  else {
+    const modal = document.getElementById('uploadModal');
+    if (modal) modal.classList.add('hidden');
+  }
   state.selectedFile = null;
   const fileNameBox = document.getElementById('selectedFileName');
   if (fileNameBox) fileNameBox.classList.add('hidden');
@@ -1474,19 +1487,25 @@ function exportCSV() {
 // ----------------- MANUAL TRANSACTION MODAL -----------------
 
 function openAddTransactionModal() {
-  const modal = document.getElementById('addTransactionModal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    document.getElementById('transDate').value = new Date().toISOString().slice(0, 10);
-    document.getElementById('transDesc').value = '';
-    document.getElementById('transAmount').value = '';
-    lucide.createIcons({ root: modal });
+  if (typeof openAnimatedModal === 'function') openAnimatedModal('addTransactionModal');
+  else {
+    const modal = document.getElementById('addTransactionModal');
+    if (modal) modal.classList.remove('hidden');
   }
+  const dateInput = document.getElementById('transDate');
+  if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
+  const descInput = document.getElementById('transDesc');
+  if (descInput) descInput.value = '';
+  const amountInput = document.getElementById('transAmount');
+  if (amountInput) amountInput.value = '';
 }
 
 function closeAddTransactionModal() {
-  const modal = document.getElementById('addTransactionModal');
-  if (modal) modal.classList.add('hidden');
+  if (typeof closeAnimatedModal === 'function') closeAnimatedModal('addTransactionModal');
+  else {
+    const modal = document.getElementById('addTransactionModal');
+    if (modal) modal.classList.add('hidden');
+  }
 }
 
 async function saveManualTransaction() {
@@ -1528,16 +1547,19 @@ async function saveManualTransaction() {
 // ----------------- SETTINGS MODAL -----------------
 
 function openSettingsModal() {
-  const modal = document.getElementById('settingsModal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    lucide.createIcons({ root: modal });
+  if (typeof openAnimatedModal === 'function') openAnimatedModal('settingsModal');
+  else {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.classList.remove('hidden');
   }
 }
 
 function closeSettingsModal() {
-  const modal = document.getElementById('settingsModal');
-  if (modal) modal.classList.add('hidden');
+  if (typeof closeAnimatedModal === 'function') closeAnimatedModal('settingsModal');
+  else {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.classList.add('hidden');
+  }
 }
 
 async function loadSettings() {

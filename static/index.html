@@ -58,7 +58,7 @@
   </script>
   <script src="/static/vendor/chart.min.js"></script>
   <script src="/static/vendor/lucide.min.js"></script>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/style.css?v=5">
 </head>
 <body class="bg-[#F7F2E8] text-[#2B231D] h-screen h-[100dvh] min-h-[100dvh] overflow-hidden antialiased font-sans selection:bg-[#5F7465] selection:text-[#FFFDF9]">
 
@@ -83,8 +83,9 @@
         </div>
 
         <!-- Navigation Links (Dashboard + 5 Life Sections) -->
-        <nav class="p-3 space-y-1 text-sm font-semibold">
-          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer bg-[#233329] text-[#FFFDF9] shadow-xs">
+        <nav class="p-3 space-y-1 text-sm font-semibold relative select-none">
+          <div id="sidebarNavPill" class="sidebar-nav-pill opacity-0"></div>
+          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer bg-[#233329] text-[#FFFDF9] shadow-xs tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
               <span>Tổng quan</span>
@@ -92,7 +93,7 @@
             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20" id="sidebarDashBadge">Live</span>
           </button>
 
-          <button onclick="switchLifeTab('finance')" id="navTabFinance" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+          <button onclick="switchLifeTab('finance')" id="navTabFinance" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="wallet" class="w-4 h-4"></i>
               <span>Tài chính</span>
@@ -100,7 +101,7 @@
             
           </button>
 
-          <button onclick="switchLifeTab('todos')" id="navTabTodos" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+          <button onclick="switchLifeTab('todos')" id="navTabTodos" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="check-square" class="w-4 h-4"></i>
               <span>Việc cần làm</span>
@@ -108,7 +109,7 @@
             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarTodosBadge">4</span>
           </button>
 
-          <button onclick="switchLifeTab('habits')" id="navTabHabits" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+          <button onclick="switchLifeTab('habits')" id="navTabHabits" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="flame" class="w-4 h-4 text-[#786B60]"></i>
               <span>Thói quen</span>
@@ -116,7 +117,7 @@
             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]" id="sidebarHabitsBadge">5</span>
           </button>
 
-          <button onclick="switchLifeTab('notebook')" id="navTabNotebook" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]">
+          <button onclick="switchLifeTab('notebook')" id="navTabNotebook" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="book-open" class="w-4 h-4"></i>
               <span>Sổ tay</span>
@@ -139,7 +140,7 @@
           <div class="flex items-center justify-between">
             <div id="pomoTimeDisplay" class="text-2xl font-black text-[#2B231D] tabular-nums tracking-tight">25:00</div>
             <div class="flex items-center gap-1">
-              <button onclick="togglePomodoro()" id="pomoToggleBtn" class="p-2 rounded-xl bg-[#5F7465] text-white hover:bg-[#4d5e52] transition shadow-2xs cursor-pointer" title="Bắt đầu / Tạm dừng">
+              <button onclick="togglePomodoro()" id="pomoToggleBtn" class="animate-shine p-2 rounded-xl bg-[#5F7465] text-white hover:bg-[#4d5e52] transition shadow-2xs cursor-pointer tap-spring" title="Bắt đầu / Tạm dừng">
                 <i data-lucide="play" id="pomoPlayIcon" class="w-3.5 h-3.5"></i>
               </button>
               <button onclick="resetPomodoro()" class="p-2 rounded-xl hover:bg-[#EFE7D8] text-[#786B60] transition cursor-pointer" title="Đặt lại">
@@ -268,7 +269,7 @@
 
             <!-- 2. Todos Tab Controls -->
             <div id="headerTodosControls" class="hidden flex items-center gap-2">
-              <button onclick="openTodoModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="openTodoModal()" class="animate-shine inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Việc mới</span>
               </button>
@@ -280,7 +281,7 @@
 
             <!-- 3. Habits Tab Controls -->
             <div id="headerHabitsControls" class="hidden flex items-center gap-2">
-              <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="quickAddHabit()" class="animate-shine inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Thói quen mới</span>
               </button>
@@ -288,7 +289,7 @@
 
             <!-- 4. Journal Tab Controls -->
             <div id="headerJournalControls" class="hidden flex items-center gap-2">
-              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#5F7465] text-[#FFFDF9] hover:bg-[#4d5e52] shadow-sm transition cursor-pointer">
+              <button onclick="saveCurrentJournal()" class="animate-shine inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#5F7465] text-[#FFFDF9] hover:bg-[#4d5e52] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="save" class="w-4 h-4"></i>
                 <span>Lưu trang</span>
               </button>
@@ -296,7 +297,7 @@
 
             <!-- 5. Notes Tab Controls -->
             <div id="headerNotesControls" class="hidden flex items-center gap-2">
-              <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="openNoteModal()" class="animate-shine inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Ghi chú mới</span>
               </button>
@@ -1158,7 +1159,7 @@
           </button>
 
           <!-- Add Habit button -->
-          <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-xs cursor-pointer">
+          <button onclick="quickAddHabit()" class="animate-shine inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold shadow-xs cursor-pointer tap-spring">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Thêm thói quen</span>
           </button>
@@ -1332,8 +1333,8 @@
 </div>
 
   <!-- ================= UPLOAD STATEMENT MODAL ================= -->
-  <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
+  <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFFDF9] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#5F7465] flex items-center justify-center border border-[#D7E4DB]">
@@ -1383,8 +1384,8 @@
   </div>
 
   <!-- ================= SETTINGS MODAL ================= -->
-  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFFDF9] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
@@ -1446,8 +1447,8 @@
   </div>
 
   <!-- ================= MOBILE CONNECT MODAL ================= -->
-  <div id="mobileConnectModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 max-h-[90vh] overflow-y-auto">
+  <div id="mobileConnectModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFFDF9] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 max-h-[90vh] overflow-y-auto modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-[#5F7465]/15 border border-[#5F7465]/30 text-[#5F7465] flex items-center justify-center">
@@ -1508,8 +1509,8 @@
   </div>
 
   <!-- ================= ADD TRANSACTION MODAL ================= -->
-  <div id="addTransactionModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
+  <div id="addTransactionModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFFDF9] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
@@ -1563,8 +1564,8 @@
   </div>
 
   <!-- ================= TO-DO MODAL (CREATE / EDIT) ================= -->
-  <div id="todoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
+  <div id="todoModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFFDF9] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#F0F5F2] text-[#233329] flex items-center justify-center border border-[#D7E4DB]">
@@ -1639,8 +1640,8 @@
   </div>
 
   <!-- ================= NOTE MODAL (CREATE / EDIT) ================= -->
-  <div id="noteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-[#2B231D]/45 backdrop-blur-xs p-4">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content">
+  <div id="noteModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFFDF9] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
       <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#626037] flex items-center justify-center border border-[#DECDB5]">
@@ -1706,24 +1707,25 @@
   </div>
 
   <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait - 5 Standard Tabs) ================= -->
-  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-1 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem]">
-    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-1.5 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem] relative select-none">
+    <div id="bottomNavPill" class="bottom-nav-pill opacity-0"></div>
+    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
       <span>Tổng quan</span>
     </button>
-    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="wallet" class="w-4 h-4"></i>
       <span>Tài chính</span>
     </button>
-    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="check-square" class="w-4 h-4"></i>
       <span>Việc làm</span>
     </button>
-    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="flame" class="w-4 h-4"></i>
       <span>Thói quen</span>
     </button>
-    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer">
+    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="book-open" class="w-4 h-4"></i>
       <span>Sổ tay</span>
     </button>

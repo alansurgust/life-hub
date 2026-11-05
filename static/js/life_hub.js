@@ -1,3 +1,196 @@
+
+// =========================================================================
+// ANIMATE-UI ENGINE (Micro-interactions, Springs, Sliding Pills, Numbers, Ripples)
+// Inspired by: imskyleen/animate-ui
+// =========================================================================
+
+// 1. Sliding Pill Indicator (Bottom Nav & Sidebar)
+function updateSlidingPills(activeTabKey) {
+  if (!activeTabKey) activeTabKey = lifeState.currentTab || 'dashboard';
+
+  // A. Mobile Bottom Nav Pill
+  const bottomNav = document.querySelector('.app-bottom-nav');
+  const bottomPill = document.getElementById('bottomNavPill');
+  const activeMobileBtn = document.getElementById(`mobileNav_${activeTabKey}`);
+  if (bottomNav && bottomPill && activeMobileBtn) {
+    const navRect = bottomNav.getBoundingClientRect();
+    const btnRect = activeMobileBtn.getBoundingClientRect();
+    const leftOffset = btnRect.left - navRect.left + 4;
+    const width = Math.max(0, btnRect.width - 8);
+    bottomPill.style.transform = `translateX(${leftOffset}px)`;
+    bottomPill.style.width = `${width}px`;
+    bottomPill.classList.remove('opacity-0');
+
+    // Spring scale bounce on active icon
+    const icon = activeMobileBtn.querySelector('i, svg');
+    if (icon) {
+      icon.classList.remove('animate-spring-icon');
+      void icon.offsetWidth;
+      icon.classList.add('animate-spring-icon');
+    }
+  }
+
+  // B. Desktop Sidebar Pill
+  const sidebarNav = document.querySelector('#appSidebar nav');
+  const sidebarPill = document.getElementById('sidebarNavPill');
+  const activeDesktopBtn = document.getElementById(`navTab${activeTabKey.charAt(0).toUpperCase() + activeTabKey.slice(1)}`);
+  if (sidebarNav && sidebarPill && activeDesktopBtn) {
+    const navRect = sidebarNav.getBoundingClientRect();
+    const btnRect = activeDesktopBtn.getBoundingClientRect();
+    const topOffset = btnRect.top - navRect.top;
+    const height = btnRect.height;
+    sidebarPill.style.transform = `translateY(${topOffset}px)`;
+    sidebarPill.style.height = `${height}px`;
+    sidebarPill.classList.remove('opacity-0');
+
+    const icon = activeDesktopBtn.querySelector('i, svg');
+    if (icon) {
+      icon.classList.remove('animate-spring-icon');
+      void icon.offsetWidth;
+      icon.classList.add('animate-spring-icon');
+    }
+  }
+}
+
+window.addEventListener('resize', () => {
+  if (lifeState.currentTab) updateSlidingPills(lifeState.currentTab);
+});
+
+// 2. Rolling Number Counter (Odometer Animation)
+function animateNumberValue(elOrId, targetValue, duration = 650, formatFn = null) {
+  const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+  if (!el) return;
+
+  const currentText = el.textContent || '';
+  const numMatch = currentText.replace(/[^\d.-]/g, '');
+  let startValue = 0;
+  if (numMatch && !isNaN(parseFloat(numMatch))) {
+    startValue = parseFloat(numMatch);
+  }
+
+  const startTime = performance.now();
+  const diff = targetValue - startValue;
+  if (Math.abs(diff) < 0.001) {
+    el.textContent = formatFn ? formatFn(targetValue) : targetValue;
+    return;
+  }
+
+  el.classList.add('number-counter');
+
+  function update(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+    const currentVal = startValue + diff * ease;
+
+    el.textContent = formatFn ? formatFn(currentVal) : Math.round(currentVal);
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = formatFn ? formatFn(targetValue) : targetValue;
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// 3. Dopamine Checkmark Pop & Micro-Confetti Sparkles
+function triggerDopamineCheck(element, x, y) {
+  if (!element) return;
+
+  element.classList.remove('animate-checkmark-pop');
+  void element.offsetWidth;
+  element.classList.add('animate-checkmark-pop');
+
+  if (typeof navigator !== 'undefined' && navigator.vibrate) {
+    try { navigator.vibrate([15, 25, 20]); } catch (e) {}
+  }
+
+  if (x === undefined || y === undefined) {
+    const rect = element.getBoundingClientRect();
+    x = rect.left + rect.width / 2;
+    y = rect.top + rect.height / 2;
+  }
+
+  const colors = ['#5F7465', '#D39526', '#B14720', '#626037', '#C3651F', '#233329'];
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * 2 * Math.PI + (Math.random() * 0.4 - 0.2);
+    const dist = 24 + Math.random() * 18;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    const size = 4 + Math.random() * 4;
+
+    const p = document.createElement('div');
+    p.className = 'sparkle-particle';
+    p.style.width = `${size}px`;
+    p.style.height = `${size}px`;
+    p.style.backgroundColor = colors[i % colors.length];
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.setProperty('--dx', `${dx}px`);
+    p.style.setProperty('--dy', `${dy}px`);
+
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
+
+// 4. Interactive Ripple Wave on Tap/Click
+function initRippleEffects() {
+  document.addEventListener('pointerdown', (e) => {
+    const target = e.target.closest('button, .tap-spring, [role="button"]');
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const circle = document.createElement('span');
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
+
+    target.classList.add('ripple-container');
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${e.clientX - rect.left - radius}px`;
+    circle.style.top = `${e.clientY - rect.top - radius}px`;
+    circle.classList.add('ripple-wave');
+
+    const prevWave = target.querySelector('.ripple-wave');
+    if (prevWave) prevWave.remove();
+
+    target.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+  }, { passive: true });
+}
+
+// 5. Modal Spring Slide-up & Bottom Sheet Controller
+function openAnimatedModal(modalId) {
+  const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  requestAnimationFrame(() => {
+    modal.classList.add('modal-visible');
+  });
+  if (window.lucide) lucide.createIcons({ root: modal });
+}
+
+function closeAnimatedModal(modalId) {
+  const modal = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
+  if (!modal) return;
+  modal.classList.remove('modal-visible');
+  setTimeout(() => {
+    if (!modal.classList.contains('modal-visible')) {
+      modal.classList.add('hidden');
+    }
+  }, 320);
+}
+
+// Global click outside modal dialog closes modal smoothly
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-overlay-animate') && e.target.classList.contains('modal-visible')) {
+    closeAnimatedModal(e.target);
+  }
+});
+
+
 /**
  * LIFE HUB - Personal Life OS & Tracking System v1.0
  * Modules:
@@ -150,7 +343,7 @@ async function toggleHabitLogWithFeedback(event, habitId, date) {
   // Optimistic UI feedback: Flip state on screen immediately (< 10ms)
   let prevClass = '';
   if (btn) {
-    btn.classList.add('animate-check-bounce');
+    triggerDopamineCheck(btn, event?.clientX, event?.clientY);
     prevClass = btn.className;
     const isDone = btn.classList.contains('bg-[#5F7465]');
     if (isDone) {
@@ -179,7 +372,7 @@ async function toggleTodoWithFeedback(event, id) {
   todoToggleLock.add(id);
 
   if (event && event.currentTarget) {
-    event.currentTarget.classList.add('animate-check-bounce');
+    triggerDopamineCheck(event.currentTarget, event?.clientX, event?.clientY);
   }
   triggerHaptic(30);
   playTickSound();
@@ -463,9 +656,11 @@ function switchLifeTab(tabName) {
         box.style.animationDelay = '';
       });
       showNewSection();
+    updateSlidingPills(tabName);
     }, exitDuration);
   } else {
     showNewSection();
+    updateSlidingPills(tabName);
   }
 }
 
@@ -561,7 +756,7 @@ function renderDashboard(data) {
   const pulseBalance = document.getElementById('dashPulseBalance');
   const pulseExpenseSub = document.getElementById('dashPulseExpenseSub');
   if (pulseBalance && data.finance) {
-    pulseBalance.textContent = formatVND(data.finance.balance);
+    animateNumberValue(pulseBalance, data.finance.balance, 700, v => formatVND(v));
     pulseBalance.className = `text-sm font-black mt-2 truncate ${data.finance.balance >= 0 ? 'text-[#5F7465]' : 'text-[#B14720]'}`;
   }
   if (pulseExpenseSub && data.finance) {
@@ -1446,14 +1641,12 @@ function openTodoModal(todoId = null) {
     if (pomo) pomo.value = 1;
   }
 
-  modal.classList.remove('hidden');
-  if (window.lucide) lucide.createIcons();
-  setTimeout(() => title?.focus(), 50);
+  openAnimatedModal('todoModal');
+  setTimeout(() => title?.focus(), 80);
 }
 
 function closeTodoModal() {
-  const modal = document.getElementById('todoModal');
-  if (modal) modal.classList.add('hidden');
+  closeAnimatedModal('todoModal');
 }
 
 async function saveTodoModalAction() {
@@ -1618,7 +1811,7 @@ function renderHabits(data) {
 
   if (maxStreakElem) maxStreakElem.textContent = `${maxStreak} ngày`;
   if (todayDoneElem) todayDoneElem.textContent = `${doneToday} / ${habits.length}`;
-  if (consistencyElem) consistencyElem.textContent = `${consistencyRate}%`;
+  if (consistencyElem) animateNumberValue(consistencyElem, consistencyRate, 650, v => `${Math.round(v)}%`);
 
   // Render Area Chart (Biểu đồ miền xu hướng cả tháng)
   if (data.chart) {
@@ -2300,14 +2493,12 @@ function openNoteModal(noteId = null) {
     if (content) content.value = '';
   }
 
-  modal.classList.remove('hidden');
-  if (window.lucide) lucide.createIcons();
-  setTimeout(() => title?.focus(), 50);
+  openAnimatedModal('todoModal');
+  setTimeout(() => title?.focus(), 80);
 }
 
 function closeNoteModal() {
-  const modal = document.getElementById('noteModal');
-  if (modal) modal.classList.add('hidden');
+  closeAnimatedModal('noteModal');
 }
 
 async function saveNoteModalAction() {
@@ -2631,7 +2822,7 @@ function escapeHtml(str) {
 async function openMobileConnectModal() {
   const modal = document.getElementById('mobileConnectModal');
   if (!modal) return;
-  modal.classList.remove('hidden');
+  openAnimatedModal('mobileConnectModal');
 
   try {
     const res = await fetch('/api/system/network-info');
@@ -2651,8 +2842,7 @@ async function openMobileConnectModal() {
 }
 
 function closeMobileConnectModal() {
-  const modal = document.getElementById('mobileConnectModal');
-  if (modal) modal.classList.add('hidden');
+  closeAnimatedModal('mobileConnectModal');
 }
 
 function copyMobileUrl() {
@@ -2932,6 +3122,8 @@ window.scheduleAutoSync = function(delayMs = 80) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  initRippleEffects();
+  setTimeout(() => updateSlidingPills(lifeState.currentTab || 'dashboard'), 100);
   // Handle direct tab deep-linking via hash or query param (e.g. ?tab=habits or #habits)
   const urlParams = new URLSearchParams(window.location.search);
   const initialTab = urlParams.get('tab') || window.location.hash.replace('#', '');
