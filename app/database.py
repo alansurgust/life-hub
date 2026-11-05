@@ -4,7 +4,7 @@ from typing import List, Dict, Any, Optional
 
 DB_PATH = os.environ.get("DB_PATH")
 if not DB_PATH:
-    DATA_DIR = r"D:\Finance"
+    DATA_DIR = r"D:\app\finance"
     try:
         os.makedirs(DATA_DIR, exist_ok=True)
     except Exception:

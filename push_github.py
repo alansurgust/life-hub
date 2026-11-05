@@ -53,7 +53,7 @@ subprocess.run([git_exe, "-C", repo_dir, "add", "-A"], check=True)
 status = subprocess.run([git_exe, "-C", repo_dir, "status", "--porcelain"], capture_output=True, text=True, check=True)
 
 if status.stdout.strip():
-    subprocess.run([git_exe, "-C", repo_dir, "commit", "-m", "update: sync changes from D:\\Finance"], check=True)
+    subprocess.run([git_exe, "-C", repo_dir, "commit", "-m", "update: sync changes from D:\\app\\finance"], check=True)
 
 # Push to remote
 push_res = subprocess.run([git_exe, "-C", repo_dir, "push", remote_url, "main"])
