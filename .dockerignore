@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+*.db.bak*
+app_debug.log
+desktop_crash.txt
+*.bat
+*.vbs
+*.exe
+*.lnk
+*.ico
+launcher.cs
+FinAI*
+Finance*
