@@ -105,7 +105,8 @@ class RealtimeSyncManager:
                 self.disconnect(connection)
 
     def broadcast(self, message: dict):
-        if message.get("event") == "data_changed":
+        source = message.get("source", "")
+        if message.get("event") == "data_changed" and source not in ("import_sync", "cloud_pull", "cloud_sync", "gist_restore"):
             try:
                 from app.cloud_persistence import schedule_gist_backup
                 schedule_gist_backup(export_sync_data, delay_sec=2.0)
@@ -208,10 +209,11 @@ async def startup_cloud_listener():
                         async for raw_msg in ws:
                             try:
                                 msg = json.loads(raw_msg)
-                                if msg.get("event") == "data_changed":
+                                if msg.get("event") == "data_changed" and msg.get("source") not in ("import_sync", "cloud_pull", "cloud_sync", "gist_restore"):
                                     logger.info("[Cloud Listener] Cloud data changed! Pulling to local SQLite...")
-                                    await asyncio.to_thread(pull_from_cloud, {"cloud_url": "https://life-hub-cv9l.onrender.com"})
-                                    await sync_manager._broadcast_async({"event": "data_changed", "source": "cloud_sync"})
+                                    pull_res = await asyncio.to_thread(pull_from_cloud, {"cloud_url": "https://life-hub-cv9l.onrender.com"})
+                                    if isinstance(pull_res, dict) and pull_res.get("changes_count", 0) > 0:
+                                        await sync_manager._broadcast_async({"event": "data_changed", "source": "cloud_sync", "changes_count": pull_res.get("changes_count", 0)})
                             except Exception as ex:
                                 logger.debug(f"[Cloud Listener] Message handle error: {ex}")
                 except Exception as conn_err:
@@ -248,8 +250,8 @@ def restore_from_gist_endpoint():
     if not gist_data:
         raise HTTPException(status_code=500, detail="Không thể tải dữ liệu từ GitHub Gist")
     res = import_sync_data(gist_data)
-    sync_manager.broadcast({"event": "data_changed", "source": "gist_restore", "timestamp": datetime.datetime.now().isoformat()})
-    return {"success": True, "message": "Đã khôi phục dữ liệu từ GitHub Gist thành công!", "details": res}
+    changes = res.get("changes_count", 0)
+    return {"success": True, "message": "Đã khôi phục dữ liệu từ GitHub Gist thành công!", "changes_count": changes, "details": res}
 
 @app.post("/api/sync/notify")
 def notify_sync_event(payload: Optional[dict] = None):
@@ -2430,7 +2432,14 @@ def import_sync_data(payload: dict):
                            rem_up or datetime.datetime.now().isoformat(), title))
 
         conn.commit()
-        sync_manager.broadcast({"event": "data_changed", "source": "import_sync", "changes_count": changes_count, "timestamp": datetime.datetime.now().isoformat()})
+        if changes_count > 0:
+            if is_cloud_instance():
+                try:
+                    from app.cloud_persistence import schedule_gist_backup
+                    schedule_gist_backup(export_sync_data, delay_sec=2.0)
+                except Exception:
+                    pass
+            sync_manager.broadcast({"event": "data_changed", "source": "import_sync", "changes_count": changes_count, "timestamp": datetime.datetime.now().isoformat()})
         return {"success": True, "message": "Đã nhập dữ liệu đồng bộ thành công", "changes_count": changes_count}
     finally:
         conn.close()
@@ -2510,8 +2519,10 @@ def pull_from_cloud(payload: dict = None):
             raise HTTPException(status_code=502, detail=f"Lỗi lấy dữ liệu từ Cloud: {r_pull.text}")
 
         cloud_data = r_pull.json()
-        import_sync_data(cloud_data)
-        sync_manager.broadcast({"event": "data_changed", "source": "cloud_pull", "timestamp": datetime.datetime.now().isoformat()})
+        import_res = import_sync_data(cloud_data)
+        changes_count = import_res.get("changes_count", 0)
+        if changes_count > 0:
+            sync_manager.broadcast({"event": "data_changed", "source": "cloud_pull", "changes_count": changes_count, "timestamp": datetime.datetime.now().isoformat()})
 
         conn = get_db_connection()
         try:
@@ -2526,7 +2537,8 @@ def pull_from_cloud(payload: dict = None):
         return {
             "success": True,
             "message": "Đã lấy dữ liệu từ Cloud thành công!",
-            "last_synced": now_str
+            "last_synced": now_str,
+            "changes_count": changes_count
         }
     except HTTPException:
         raise

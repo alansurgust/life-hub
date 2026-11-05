@@ -91,6 +91,9 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.8.0`** | [`v2.8.0.zip`](./v2.8.0.zip) | **`MINOR`** | 597.8 KB | 44 | **Sua triet de dong bo Cloud khong can laptop, phuc hoi thanh dieu huong duoi va cac tab Thoi quen So tay** |
 | **`v2.8.1`** | [`v2.8.1 (Cap nhat dat ten file version kem mo ngoac mo ta sua doi).zip`](./v2.8.1%20%28Cap%20nhat%20dat%20ten%20file%20version%20kem%20mo%20ngoac%20mo%20ta%20sua%20doi%29.zip) | **`PATCH`** | 599.3 KB | 46 | **Cap nhat dat ten file version kem mo ngoac mo ta sua doi** |
 | **`v2.8.2`** | [`v2.8.2 (Chong cache HTML cu tren dien thoai de hien thanh dieu huong duoi).zip`](./v2.8.2%20%28Chong%20cache%20HTML%20cu%20tren%20dien%20thoai%20de%20hien%20thanh%20dieu%20huong%20duoi%29.zip) | **`PATCH`** | 597.9 KB | 44 | **Chong cache HTML cu tren dien thoai de hien thanh dieu huong duoi** |
+| **`v2.8.3`** | [`v2.8.3 (Chan vong lap dong bo WebSocket gay refresh lien tuc tab Thoi quen va Tong quan).zip`](./v2.8.3%20%28Chan%20vong%20lap%20dong%20bo%20WebSocket%20gay%20refresh%20lien%20tuc%20tab%20Thoi%20quen%20va%20Tong%20quan%29.zip) | **`PATCH`** | 598.0 KB | 44 | **Chan vong lap dong bo WebSocket gay refresh lien tuc tab Thoi quen va Tong quan** |
+
+---
 
 ---
 
@@ -139,6 +142,7 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
 
 
 
@@ -856,6 +860,16 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Thời gian tạo:** 2026-11-05 16:39:58
 - **Yêu cầu từ người dùng:**
   > "App tren dien thoai van chua hien thanh ben duoi"
+- **Số lượng file mã nguồn:** 44 files
+
+---
+
+### 📦 Phiên bản v2.8.3 — Chan vong lap dong bo WebSocket gay refresh lien tuc tab Thoi quen va Tong quan
+- **Tập tin nén:** `v2.8.3 (Chan vong lap dong bo WebSocket gay refresh lien tuc tab Thoi quen va Tong quan).zip` (612,341 bytes)
+- **Phân loại thay đổi:** `PATCH`
+- **Thời gian tạo:** 2026-11-05 16:51:48
+- **Yêu cầu từ người dùng:**
+  > "Ca tren dien thoai va may tinh cu moi vai giay la tab Thoi quen va Tong quan lai refresh mot lan"
 - **Số lượng file mã nguồn:** 44 files
 
 ---

@@ -3013,12 +3013,15 @@ async function autoCloudSync(silent = true, isBackgroundPoll = false) {
   const isLocal = isLocalEnvironment();
   if (isSyncing) return;
   if (!isLocal) {
-    // On Mobile: pull directly from GitHub Gist via Cloud endpoint
+    // On Mobile: pull directly from GitHub Gist via Cloud endpoint only if actual changes exist
     try {
       const res = await fetch('/api/sync/restore-gist', { method: 'POST' });
       if (res.ok) {
+        const data = await res.json();
         if (!silent) showToast('Đã đồng bộ từ Cloud Gist!', 'success');
-        reloadActiveTabData(true);
+        if (data.changes_count > 0 || !silent) {
+          reloadActiveTabData(true);
+        }
       }
     } catch (e) {}
     return;
@@ -3104,9 +3107,11 @@ function initRealtimeSync() {
       try {
         const msg = JSON.parse(event.data);
         if (msg.event === 'data_changed') {
+          if (msg.changes_count !== undefined && msg.changes_count === 0) return;
           console.log('⚡ [Realtime Sync] Event received:', msg);
           const isLocal = isLocalEnvironment();
           if (isLocal) {
+            if (msg.source === 'import_sync' || msg.source === 'gist_restore') return;
             if (msg.source === 'cloud_sync' || msg.source === 'cloud_pull') {
               reloadActiveTabData(true);
             } else {
@@ -3150,8 +3155,10 @@ async function pullFromCloudSilently() {
       const data = await res.json();
       const badge = document.getElementById('syncLastTimeBadge');
       if (badge && data.last_synced) badge.textContent = `Đã đồng bộ: ${data.last_synced}`;
-      reloadActiveTabData(true);
-      console.log('⚡ [Realtime Sync] Desktop pulled latest data from cloud successfully');
+      if (data.changes_count > 0) {
+        reloadActiveTabData(true);
+        console.log('⚡ [Realtime Sync] Desktop pulled new changes from cloud:', data.changes_count);
+      }
     }
   } catch (err) {
     console.debug('Silent cloud pull error:', err);
@@ -3203,9 +3210,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initRealtimeSync();
   }, 200);
 
-  // Auto-sync immediately when app window gets focused
+  // Auto-sync when app window gets focused (throttled to at least 60s apart)
   window.addEventListener('focus', () => {
-    autoCloudSync(true, true);
+    if (Date.now() - lastAutoSyncTime > 60000) {
+      autoCloudSync(true, true);
+    }
   });
 
   // Reload active tab when user returns to app/tab (crucial on mobile phones)
