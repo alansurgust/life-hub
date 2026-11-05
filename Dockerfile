@@ -17,6 +17,8 @@ RUN mkdir -p /data
 
 ENV PORT=8080
 ENV DB_PATH=/data/expense_data.db
+ENV RENDER=true
+ENV IS_CLOUD=true
 EXPOSE 8080
 
 CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]

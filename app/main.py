@@ -1,4 +1,6 @@
 import os
+import sys
+import threading
 import io
 import csv
 import json
@@ -97,6 +99,13 @@ class RealtimeSyncManager:
             except Exception as ex:
                 logger.debug(f"[WS-Sync] Gist backup error: {ex}")
 
+            # If running locally on laptop, immediately push fresh state to Render Cloud in background
+            if not is_cloud_instance():
+                try:
+                    schedule_cloud_push(delay_sec=1.0)
+                except Exception as ex:
+                    logger.debug(f"[Auto Cloud Push] Schedule error: {ex}")
+
         if not self.active_connections:
             return
         try:
@@ -109,6 +118,47 @@ class RealtimeSyncManager:
         except Exception as e:
             logger.debug(f"[WS-Sync] Broadcast error: {e}")
 
+def is_cloud_instance() -> bool:
+    return bool(
+        os.environ.get("RENDER")
+        or os.environ.get("IS_CLOUD")
+        or os.environ.get("DB_PATH") == "/data/expense_data.db"
+        or sys.platform != "win32"
+    )
+
+_cloud_push_timer = None
+_cloud_push_lock = threading.Lock()
+
+def schedule_cloud_push(delay_sec: float = 1.0):
+    global _cloud_push_timer
+    with _cloud_push_lock:
+        if _cloud_push_timer is not None:
+            try:
+                _cloud_push_timer.cancel()
+            except Exception:
+                pass
+
+        def _do_push():
+            try:
+                conn = get_db_connection()
+                c = conn.cursor()
+                c.execute("SELECT value FROM settings WHERE key = 'cloud_run_url'")
+                row = c.fetchone()
+                conn.close()
+                cloud_url = (row["value"] if row and row["value"] else "https://life-hub-cv9l.onrender.com").strip().rstrip("/")
+                if cloud_url:
+                    import httpx
+                    local_data = export_sync_data()
+                    r = httpx.post(f"{cloud_url}/api/sync/import-data", json=local_data, timeout=30.0)
+                    if r.status_code == 200:
+                        logger.info("⚡ [Auto Cloud Push] Successfully pushed local data to Cloud!")
+            except Exception as e:
+                logger.debug(f"[Auto Cloud Push] Push error: {e}")
+
+        _cloud_push_timer = threading.Timer(delay_sec, _do_push)
+        _cloud_push_timer.daemon = True
+        _cloud_push_timer.start()
+
 sync_manager = RealtimeSyncManager()
 
 @app.on_event("startup")
@@ -120,7 +170,7 @@ async def startup_cloud_listener():
         pass
 
     # If running on Render Cloud, restore latest state from Gist on boot!
-    if os.environ.get("RENDER"):
+    if is_cloud_instance():
         try:
             from app.cloud_persistence import load_data_from_gist
             gist_data = await asyncio.to_thread(load_data_from_gist)
@@ -131,7 +181,7 @@ async def startup_cloud_listener():
             logger.warning(f"Failed to load from Gist on startup: {e}")
 
     # If running locally on PC (not on Render Cloud), maintain a background connection to Cloud WebSocket
-    if not os.environ.get("RENDER"):
+    if not is_cloud_instance():
         async def _cloud_ws_worker():
             import websockets
             cloud_ws_url = "wss://life-hub-cv9l.onrender.com/ws/sync"
@@ -177,6 +227,16 @@ async def websocket_sync_endpoint(websocket: WebSocket):
         sync_manager.disconnect(websocket)
     except Exception:
         sync_manager.disconnect(websocket)
+
+@app.post("/api/sync/restore-gist")
+def restore_from_gist_endpoint():
+    from app.cloud_persistence import load_data_from_gist
+    gist_data = load_data_from_gist()
+    if not gist_data:
+        raise HTTPException(status_code=500, detail="Không thể tải dữ liệu từ GitHub Gist")
+    res = import_sync_data(gist_data)
+    sync_manager.broadcast({"event": "data_changed", "source": "gist_restore", "timestamp": datetime.datetime.now().isoformat()})
+    return {"success": True, "message": "Đã khôi phục dữ liệu từ GitHub Gist thành công!", "details": res}
 
 @app.post("/api/sync/notify")
 def notify_sync_event(payload: Optional[dict] = None):

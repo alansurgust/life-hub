@@ -3011,7 +3011,18 @@ function updateSyncStatusUI(status) {
 
 async function autoCloudSync(silent = true, isBackgroundPoll = false) {
   const isLocal = isLocalEnvironment();
-  if (!isLocal || isSyncing) return;
+  if (isSyncing) return;
+  if (!isLocal) {
+    // On Mobile: pull directly from GitHub Gist via Cloud endpoint
+    try {
+      const res = await fetch('/api/sync/restore-gist', { method: 'POST' });
+      if (res.ok) {
+        if (!silent) showToast('Đã đồng bộ từ Cloud Gist!', 'success');
+        reloadActiveTabData(true);
+      }
+    } catch (e) {}
+    return;
+  }
 
   isSyncing = true;
   updateSyncStatusUI('syncing');

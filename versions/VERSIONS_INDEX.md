@@ -88,6 +88,9 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 | **`v2.6.1`** | [`v2.6.1.zip`](./v2.6.1.zip) | **`PATCH`** | 596.7 KB | 44 | **Don dep toan dien cac file FinAI cu, file Cloud Run va log rac tren ca local va GitHub** |
 | **`v2.7.0`** | [`v2.7.0.zip`](./v2.7.0.zip) | **`MINOR`** | 597.1 KB | 44 | **Universal Rounded Custom Dropdowns va Triet De Dong Bo Cloud Gist Ngam** |
 | **`v2.7.1`** | [`v2.7.1.zip`](./v2.7.1.zip) | **`PATCH`** | 596.9 KB | 44 | **Bieu do tien do 2 cot moi ngay: Cot 1 Hoan thanh, Cot 2 Ton dong cu va Moi trong ngay** |
+| **`v2.8.0`** | [`v2.8.0.zip`](./v2.8.0.zip) | **`MINOR`** | 597.8 KB | 44 | **Sua triet de dong bo Cloud khong can laptop, phuc hoi thanh dieu huong duoi va cac tab Thoi quen So tay** |
+
+---
 
 ---
 
@@ -130,6 +133,7 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 ---
 
 ## 🔍 CHI TIẾT TỪNG PHIÊN BẢN
+
 
 
 
@@ -814,6 +818,16 @@ Thời điểm kết xuất: 04/11/2026 16:29:59
 - **Thời gian tạo:** 2026-11-05 13:37:36
 - **Yêu cầu từ người dùng:**
   > "Hoan thanh o 1 cot, ton dong cu va moi trong ngay o 1 cot, moi ngay 2 cot"
+- **Số lượng file mã nguồn:** 44 files
+
+---
+
+### 📦 Phiên bản v2.8.0 — Sua triet de dong bo Cloud khong can laptop, phuc hoi thanh dieu huong duoi va cac tab Thoi quen So tay
+- **Tập tin nén:** `v2.8.0.zip` (612,113 bytes)
+- **Phân loại thay đổi:** `MINOR`
+- **Thời gian tạo:** 2026-11-05 16:30:56
+- **Yêu cầu từ người dùng:**
+  > "Sua loi phai bat may tinh moi dong bo len dien thoai, khong hien thanh duoi tren mobile, trong tab thoi quen va so tay"
 - **Số lượng file mã nguồn:** 44 files
 
 ---
