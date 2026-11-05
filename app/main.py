@@ -549,6 +549,7 @@ def create_transaction(item: TransactionCreate):
     conn.close()
 
     learn_user_rule(item.description, item.category)
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "create", "id": new_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"status": "success", "id": new_id}
 
 @app.put("/api/transactions/{trans_id}")
@@ -586,6 +587,7 @@ def update_transaction(trans_id: int, item: TransactionUpdate):
     if item.category and item.category != current["category"]:
         learn_user_rule(new_desc, item.category)
 
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "update", "id": trans_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"status": "success"}
 
 @app.put("/api/transactions/{trans_id}/category")
@@ -622,6 +624,8 @@ def update_transaction_category(trans_id: int, payload: CategoryUpdate):
     # Learn user rule
     desc = updated_row.get("description") or updated_row.get("raw_description") or ""
     learn_user_rule(desc, new_category)
+
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "update_category", "id": trans_id, "timestamp": datetime.datetime.now().isoformat()})
 
     target_column = "other" if new_category == "Khác" else "categorized"
 
@@ -723,6 +727,7 @@ def delete_transaction(trans_id: int):
         c.execute("DELETE FROM transactions WHERE id = ?", (trans_id,))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "delete", "id": trans_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"status": "success", "message": "Đã xóa giao dịch thành công"}
 
 # ----------------- UPLOAD & STATEMENT INGESTION APIS -----------------
@@ -853,6 +858,7 @@ async def upload_statement(
     conn.commit()
     conn.close()
 
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "upload_statement", "count": len(categorized), "timestamp": datetime.datetime.now().isoformat()})
     return {
         "status": "success",
         "statement_id": statement_id,
@@ -1030,6 +1036,7 @@ def add_rule(rule: UserRuleCreate):
     """, (rule.pattern.lower().strip(), rule.category))
     conn.commit()
     conn.close()
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "delete_statement", "statement_id": statement_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"status": "success"}
 
 @app.delete("/api/rules/{rule_id}")
@@ -1166,6 +1173,7 @@ async def seed_sample_data():
     conn.commit()
     conn.close()
 
+    sync_manager.broadcast({"event": "data_changed", "tab": "finance", "action": "seed_sample_data", "timestamp": datetime.datetime.now().isoformat()})
     return {"status": "success", "message": "Đã nạp thành công 32 giao dịch mẫu thực tế qua 3 tháng!"}
 
 # ----------------- CSV EXPORT -----------------

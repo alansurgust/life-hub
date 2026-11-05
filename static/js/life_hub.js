@@ -3508,6 +3508,32 @@ function enhanceSelectElement(selectEl) {
   wrapper._renderOptions = renderOptions;
   renderOptions();
 
+  // Watch for dynamic changes to <option> elements inside selectEl
+  try {
+    const optObserver = new MutationObserver(() => {
+      renderOptions();
+    });
+    optObserver.observe(selectEl, { childList: true, subtree: true, characterData: true });
+  } catch (e) {}
+
+  // Intercept selectEl.value setter so programmatic changes immediately update UI
+  try {
+    const valDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+    if (valDescriptor && !selectEl._valueIntercepted) {
+      selectEl._valueIntercepted = true;
+      Object.defineProperty(selectEl, 'value', {
+        get() {
+          return valDescriptor.get.call(this);
+        },
+        set(newVal) {
+          valDescriptor.set.call(this, newVal);
+          renderOptions();
+        },
+        configurable: true
+      });
+    }
+  } catch (e) {}
+
   trigger.addEventListener('click', (e) => {
     e.stopPropagation();
     const isHidden = menu.classList.contains('hidden');
@@ -3520,6 +3546,11 @@ function enhanceSelectElement(selectEl) {
         menu.classList.add('open-up');
       } else {
         menu.classList.remove('open-up');
+      }
+      if (rect.left + 220 > window.innerWidth) {
+        menu.classList.add('align-right');
+      } else {
+        menu.classList.remove('align-right');
       }
       menu.classList.remove('hidden');
       trigger.classList.add('active');

@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import asyncio
+import threading
 from typing import Optional
 
 logger = logging.getLogger("life_hub.cloud_storage")
@@ -27,8 +28,8 @@ _load_env_fallback()
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "").strip()
 GITHUB_GIST_ID = os.environ.get("GITHUB_GIST_ID", "a8045f8ff3498cbf7fe7356493f6f632").strip()
 
-_push_timer: Optional[asyncio.TimerHandle] = None
-_is_pushing = False
+_push_timer = None
+_timer_lock = threading.Lock()
 
 def get_token() -> str:
     token = os.environ.get("GITHUB_TOKEN", "").strip()
@@ -125,29 +126,32 @@ def save_data_to_gist_sync(data_dict: dict) -> bool:
         logger.error(f"[Gist-Storage] Error saving to Gist: {e}")
     return False
 
-def schedule_gist_backup(export_fn, delay_sec: float = 3.0):
-    """Debounced background backup to Gist so frequent clicks don't spam GitHub API."""
+def schedule_gist_backup(export_fn, delay_sec: float = 2.0):
+    """Debounced background backup to Gist that works from ANY thread (sync FastAPI threadpool, async loop, or background task)."""
     token = get_token()
-    if not token:
-        return
-
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
+    if not token or not GITHUB_GIST_ID:
+        logger.debug("[Gist-Storage] Cannot schedule backup: token or GIST_ID missing.")
         return
 
     global _push_timer
-
-    def _execute():
-        async def _async_backup():
+    with _timer_lock:
+        if _push_timer is not None:
             try:
+                _push_timer.cancel()
+            except Exception:
+                pass
+
+        def _do_backup():
+            try:
+                logger.info("[Gist-Storage] Executing background Gist backup...")
                 data = export_fn()
-                await asyncio.to_thread(save_data_to_gist_sync, data)
+                success = save_data_to_gist_sync(data)
+                if success:
+                    logger.info("⚡ [Gist-Storage] Gist backup completed successfully!")
             except Exception as e:
-                logger.debug(f"[Gist-Storage] Scheduled backup error: {e}")
+                logger.error(f"[Gist-Storage] Background backup error: {e}")
 
-        asyncio.create_task(_async_backup())
-
-    if _push_timer:
-        _push_timer.cancel()
-    _push_timer = loop.call_later(delay_sec, _execute)
+        _push_timer = threading.Timer(delay_sec, _do_backup)
+        _push_timer.daemon = True
+        _push_timer.start()
+        logger.debug(f"[Gist-Storage] Gist backup scheduled in {delay_sec}s")
