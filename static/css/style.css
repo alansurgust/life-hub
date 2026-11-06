@@ -1,676 +1,732 @@
-/* ==========================================================================
-   THE VINTAGE PALETTE DESIGN SYSTEM
-   Inspired by: alexpate/awesome-design-systems
-   Palette: Timeless Editorial Vintage (8 Core Swatches + Warm Paper Canvas)
-   ========================================================================== */
-
-:root {
-  /* Vintage Canvas & Surfaces */
-  --vintage-bg: #FFF0E9;              /* Warm Parchment / Retro Paper Canvas */
-  --vintage-surface: #FFF9F6;         /* Pure Warm Ivory Card Surface */
-  --vintage-surface-muted: #F2E4DC;   /* Subtle Secondary Paper Surface */
-  --vintage-surface-subtle: #F7EAE3;  /* Inset / Table Header Tone */
-
-  /* Vintage Borders */
-  --vintage-border: #BABDB2;          /* Soft Tactile Paper Border */
-  --vintage-border-strong: #9BA59D;   /* Pronounced Vintage Outline */
-  --vintage-border-focus: #D05D0A;    /* Terracotta Focus Outline */
-
-  /* Vintage Typography Inks */
-  --vintage-text: #352116;            /* Deep Warm Espresso Ink (Primary) */
-  --vintage-text-muted: #6F7C6B;      /* Warm Sepia (Secondary / Caption) */
-  --vintage-text-subtle: #9BA59D;     /* Faded Vintage Ink */
-
-  /* 8 Authentic Vintage Palette Swatches */
-  --vintage-swatch-1-sage: #6F7C6B;   /* Swatch 1: Sage Slate Green */
-  --vintage-swatch-2-gold: #E7A366;   /* Swatch 2: Vintage Mustard Gold */
-  --vintage-swatch-3-terracotta: #D05D0A; /* Swatch 3: Terracotta Red */
-  --vintage-swatch-4-olive: #3E5247;  /* Swatch 4: Heritage Olive Moss */
-  --vintage-swatch-5-rust: #D05D0A;   /* Swatch 5: Warm Amber Rust */
-  --vintage-swatch-6-sienna: #D05D0A; /* Swatch 6: Tobacco / Warm Sienna */
-  --vintage-swatch-7-brick: #B34E06;  /* Swatch 7: Vintage Brick Crimson */
-  --vintage-swatch-8-espresso: #3E5247; /* Swatch 8: Deep Mahogany */
-
-  /* Deep Forest Accent (for primary buttons & logo) */
-  --vintage-forest: #3E5247;
-  --vintage-forest-hover: #2F4037;
-
-  /* Vintage Paper Elevation / Shadows */
-  --vintage-shadow-xs: 0 1px 2px rgba(62, 82, 71, 0.04);
-  --vintage-shadow-sm: 0 2px 6px rgba(62, 82, 71, 0.05), 0 1px 2px rgba(62, 82, 71, 0.03);
-  --vintage-shadow-md: 0 6px 18px rgba(62, 82, 71, 0.06), 0 2px 6px rgba(62, 82, 71, 0.04);
-  --vintage-shadow-lg: 0 14px 32px rgba(62, 82, 71, 0.09), 0 4px 10px rgba(62, 82, 71, 0.05);
-}
-
-@layer base {
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-    background-color: var(--vintage-bg);
-    color: var(--vintage-text);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-}
-
-/* Typography - Clean Vietnamese-compatible Font Family */
-.font-serif-vintage {
-  font-family: 'Newsreader', 'Georgia', 'Cambria', serif;
-  letter-spacing: -0.015em;
-}
-
-/* Tabular figures for financial numbers */
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Custom Vintage Scrollbar */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #BABDB2;
-  border-radius: 9999px;
-  border: 1px solid #F2E4DC;
-}
-
-/* Subtle animation for today's active check ring */
-@keyframes pulseSubtle {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-
-.animate-pulse-subtle {
-  animation: pulseSubtle 2.8s infinite ease-in-out;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #9BA59D;
-}
-
-/* Vintage Paper Card Hover Animation */
-.card-hover {
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--vintage-shadow-md);
-  border-color: var(--vintage-border-strong);
-}
-
-/* Toast Slide In */
-@keyframes slideIn {
-  from {
-    transform: translateY(-12px) scale(0.96);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-.toast-enter {
-  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Dropdown menu animation */
-@keyframes dropDown {
-  from {
-    opacity: 0;
-    transform: translateY(6px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.dropdown-enter {
-  animation: dropDown 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Vintage Skeleton loading */
-@keyframes vintageShimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #F7EAE3 25%, #F2E4DC 50%, #F7EAE3 75%);
-  background-size: 200% 100%;
-  animation: vintageShimmer 1.8s infinite;
-}
-
-/* Dopamine Check Bounce & Tactile Interactions */
-@keyframes checkBounce {
-  0% { transform: scale(1); }
-  35% { transform: scale(1.32) rotate(-6deg); }
-  70% { transform: scale(0.92) rotate(3deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
-
-.animate-check-bounce {
-  animation: checkBounce 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* Enhanced Soft Elevation & Contrast for Ivory/White Cards */
-.bg-\[\#FFF9F6\],
-.bg-white,
-.card-vintage {
-  box-shadow: 0 1px 3px rgba(62, 82, 71, 0.05), 0 5px 16px rgba(62, 82, 71, 0.045);
-}
-
-/* Swipe Actions on Mobile */
-.swipe-item-container {
-  position: relative;
-  overflow: hidden;
-  touch-action: pan-y;
-}
-
-.swipe-item-content {
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-}
-
-/* Tab Switching Transitions: Smooth Staggered Fade Up & Out / Float Up & In */
-@keyframes tabBoxFadeOutUp {
-  0% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes tabBoxFadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.tab-box-exit {
-  animation: tabBoxFadeOutUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
-  pointer-events: none;
-}
-
-.tab-box-enter {
-  animation: tabBoxFadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Mobile Viewport Stabilization - Lock horizontal jitter & wobble */
-html, body {
-  height: 100%;
-  height: 100dvh;
-  max-width: 100vw;
-  overflow-x: hidden !important;
-  touch-action: pan-y;
-  overscroll-behavior-x: none;
-  -webkit-overflow-scrolling: touch;
-}
-
-#mainScrollArea {
-  max-width: 100%;
-  overflow-x: hidden !important;
-  touch-action: pan-y;
-  overscroll-behavior-x: none;
-}
-
-
-/* ==========================================================================
-   SAFE AREA & MOBILE HEADER OPTIMIZATIONS (iPhone Notch & Dynamic Island)
-   ========================================================================== */
-.app-top-header {
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-left: env(safe-area-inset-left, 0px);
-  padding-right: env(safe-area-inset-right, 0px);
-}
-
-@media (max-width: 768px) {
-  .app-top-header {
-    /* Guaranteed generous clearance under iPhone status bar, clock, notch & Dynamic Island */
-    padding-top: max(env(safe-area-inset-top, 0px), 44px) !important;
-    padding-bottom: 6px !important;
-  }
-  .app-top-header #headerDashboardControls,
-  .app-top-header #headerTodosControls,
-  .app-top-header #headerHabitsControls,
-  .app-top-header #headerJournalControls,
-  .app-top-header #headerNotesControls,
-  .app-top-header #mobilePomoHeaderBtn,
-  .app-top-header #liveSyncStatus,
-  .app-top-header #reloadBtn,
-  .app-top-header #headerFinanceControls > :not(#monthNavContainer) {
-    display: none !important;
-  }
-}
-
-.app-bottom-nav {
-  /* Elevated bottom navigation with comfortable thumb reach & clearance from home indicator */
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  z-index: 40 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-around !important;
-  background: rgba(255, 240, 233, 0.96) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border-top: 1px solid #BABDB2 !important;
-  padding-top: 6px !important;
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 18px) !important;
-  padding-left: env(safe-area-inset-left, 0px) !important;
-  padding-right: env(safe-area-inset-right, 0px) !important;
-  min-height: 4rem !important;
-  box-shadow: 0 -4px 20px rgba(62, 82, 71, 0.08) !important;
-}
-
-@media (max-width: 768px) {
-  #mainScrollArea {
-    padding-bottom: calc(5.8rem + env(safe-area-inset-bottom, 0px)) !important;
-  }
-}
-
-@media (min-width: 769px) {
-  #mainScrollArea {
-    padding-bottom: 0 !important;
-  }
-  .app-bottom-nav {
-    display: none !important;
-  }
-}
-
-/* Minimalist Hairline Borders & Clean Elevation */
-.border-hairline {
-  border-color: rgba(111, 124, 107, 0.16) !important;
-}
-
-.border-hairline-subtle {
-  border-color: rgba(111, 124, 107, 0.09) !important;
-}
-
-/* Modal Responsive Dialog */
-.modal-dialog-content {
-  max-height: 88vh;
-  max-height: 88dvh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Kanban Column Responsive Height */
-.kanban-column-body {
-  max-height: calc(100vh - 22rem);
-  min-height: 380px;
-}
-
-@media (max-width: 767px) {
-  .kanban-column-body {
-    max-height: 520px;
-    min-height: 280px;
-  }
-}
-
-
-/* ==========================================================================
-   ANIMATE-UI INTEGRATION SYSTEM (Micro-interactions & Physics Springs)
-   Inspired by: imskyleen/animate-ui
-   ========================================================================== */
-
-/* 1. SLIDING PILL INDICATOR (Bottom Nav & Sidebar) */
-.bottom-nav-pill {
-  position: absolute;
-  top: 6px;
-  left: 0;
-  height: 46px;
-  background: rgba(111, 124, 107, 0.12);
-  border: 1px solid rgba(111, 124, 107, 0.24);
-  border-radius: 14px;
-  pointer-events: none;
-  z-index: 1;
-  transition: transform 0.32s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-  will-change: transform, width;
-  box-shadow: 0 2px 8px rgba(111, 124, 107, 0.08);
-}
-
-.sidebar-nav-pill {
-  position: absolute;
-  top: 0;
-  left: 12px;
-  right: 12px;
-  background: #3E5247;
-  border-radius: 12px;
-  pointer-events: none;
-  z-index: 1;
-  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1), height 0.22s ease, opacity 0.2s ease;
-  will-change: transform, height;
-  box-shadow: 0 4px 12px rgba(62, 82, 71, 0.2);
-}
-
-/* Icon spring bounce when tab becomes active */
-@keyframes springBounce {
-  0% { transform: scale(1); }
-  30% { transform: scale(1.24) translateY(-2px); }
-  60% { transform: scale(0.92) translateY(1px); }
-  85% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-
-.animate-spring-icon {
-  animation: springBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-}
-
-/* Tap Scale feedback on interactive buttons */
-.tap-spring {
-  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-.tap-spring:active {
-  transform: scale(0.94) !important;
-}
-
-/* 2. RIPPLE & SPRING POP (Dopamine Checkmarks) */
-.ripple-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.ripple-wave {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(111, 124, 107, 0.35) 0%, rgba(111, 124, 107, 0) 70%);
-  transform: scale(0);
-  pointer-events: none;
-  animation: rippleSpread 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes rippleSpread {
-  0% {
-    transform: scale(0);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(2.8);
-    opacity: 0;
-  }
-}
-
-/* Checkmark spring explosion pop */
-@keyframes checkmarkPop {
-  0% { transform: scale(0.65) rotate(-12deg); opacity: 0.4; }
-  45% { transform: scale(1.36) rotate(6deg); opacity: 1; }
-  75% { transform: scale(0.94) rotate(-2deg); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-.animate-checkmark-pop {
-  animation: checkmarkPop 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
-}
-
-/* Sparkle / Confetti particle */
-.sparkle-particle {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  animation: sparkleFly 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes sparkleFly {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--dx), var(--dy)) scale(0);
-    opacity: 0;
-  }
-}
-
-/* 3. ROLLING NUMBER COUNTER (Odometer/Ticker) */
-.number-counter {
-  display: inline-block;
-  font-variant-numeric: tabular-nums;
-  transition: color 0.3s ease;
-}
-
-/* 4. SHINE EFFECT (CTA Buttons) */
-.animate-shine {
-  position: relative;
-  overflow: hidden;
-}
-
-.animate-shine::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.22) 50%,
-    transparent 100%
-  );
-  transform: translateX(-160%) skewX(-24deg);
-  animation: shineGlide 4.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-}
-
-@keyframes shineGlide {
-  0%, 65% {
-    transform: translateX(-160%) skewX(-24deg);
-  }
-  85%, 100% {
-    transform: translateX(240%) skewX(-24deg);
-  }
-}
-
-/* 5. MODAL SPRING SLIDE-UP & BOTTOM SHEET (iOS Physics) */
-.modal-overlay-animate {
-  opacity: 0;
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
-}
-
-.modal-overlay-animate.modal-visible {
-  opacity: 1;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.modal-content-animate {
-  opacity: 0;
-  transform: translateY(18px) scale(0.94);
-  transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.26s ease;
-  will-change: transform, opacity;
-}
-
-.modal-visible .modal-content-animate {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* Mobile-specific iOS Bottom Sheet Physics */
-@media (max-width: 768px) {
-  .modal-dialog-bottomsheet {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-    border-top-left-radius: 28px !important;
-    border-top-right-radius: 28px !important;
-    max-height: 90vh !important;
-    max-height: 90dvh !important;
-    transform: translateY(100%) !important;
-    transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
-    padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px) !important;
-  }
-
-  .modal-visible .modal-dialog-bottomsheet {
-    transform: translateY(0) !important;
-    opacity: 1 !important;
-  }
-
-  /* Sheet drag handle indicator */
-  .sheet-handle {
-    width: 36px;
-    height: 4px;
-    border-radius: 9999px;
-    background: #BABDB2;
-    margin: 0 auto 12px auto;
-  }
-}
-
-
-/* =========================================================================
-   UNIVERSAL MODERN VINTAGE CUSTOM DROPDOWN (100% Rounded & Soft Elevation)
-   ========================================================================= */
-select {
-  border-radius: 14px !important;
-}
-
-.custom-dropdown-container {
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  user-select: none;
-}
-
-.custom-dropdown-container.w-full {
-  display: block;
-  width: 100%;
-}
-
-.custom-dropdown-trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  background: #FFF9F6;
-  border: 1px solid #BABDB2;
-  border-radius: 14px;
-  padding: 6.5px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #352116;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(62, 82, 71, 0.04);
-}
-
-.custom-dropdown-trigger:hover {
-  border-color: #6F7C6B;
-  background: #FFF9F6;
-}
-
-.custom-dropdown-trigger:focus,
-.custom-dropdown-trigger.active {
-  border-color: #6F7C6B;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(111, 124, 107, 0.18);
-}
-
-.custom-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
-  min-width: 100%;
-  width: max-content;
-  max-width: 320px;
-  max-height: 250px;
-  overscroll-behavior: contain;
-  overflow-y: auto;
-  background: #FFF9F6;
-  border: 1px solid #BABDB2;
-  border-radius: 18px !important;
-  box-shadow: 0 16px 36px -4px rgba(62, 82, 71, 0.16), 0 8px 16px -2px rgba(62, 82, 71, 0.08);
-  padding: 6px;
-  z-index: 9999;
-  animation: dropdownFadeScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.custom-dropdown-menu::-webkit-scrollbar {
-  width: 5px;
-}
-
-.custom-dropdown-menu::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-dropdown-menu::-webkit-scrollbar-thumb {
-  background: #BABDB2;
-  border-radius: 9999px;
-}
-
-.custom-dropdown-menu.align-right {
-  left: auto;
-  right: 0;
-}
-
-.custom-dropdown-menu.open-up {
-  top: auto;
-  bottom: calc(100% + 5px);
-}
-
-.custom-dropdown-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #352116;
-  transition: all 0.15s ease;
-  cursor: pointer;
-}
-
-.custom-dropdown-item:hover {
-  background: #F7EAE3;
-  color: #2F4037;
-}
-
-.custom-dropdown-item.selected {
-  background: rgba(111, 124, 107, 0.14);
-  color: #3E5247;
-  font-weight: 700;
-}
-
-@keyframes dropdownFadeScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.96) translateY(-4px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
+/* ==========================================================================
+   THE VINTAGE PALETTE DESIGN SYSTEM
+   Inspired by: alexpate/awesome-design-systems
+   Palette: Timeless Editorial Vintage (8 Core Swatches + Warm Paper Canvas)
+   ========================================================================== */
+
+:root {
+  /* Vintage Canvas & Surfaces */
+  --vintage-bg: #FFF0E9;              /* Warm Parchment / Retro Paper Canvas */
+  --vintage-surface: #FFF9F6;         /* Pure Warm Ivory Card Surface */
+  --vintage-surface-muted: #F2E4DC;   /* Subtle Secondary Paper Surface */
+  --vintage-surface-subtle: #F7EAE3;  /* Inset / Table Header Tone */
+
+  /* Vintage Borders */
+  --vintage-border: #BABDB2;          /* Soft Tactile Paper Border */
+  --vintage-border-strong: #9BA59D;   /* Pronounced Vintage Outline */
+  --vintage-border-focus: #D05D0A;    /* Terracotta Focus Outline */
+
+  /* Vintage Typography Inks */
+  --vintage-text: #352116;            /* Deep Warm Espresso Ink (Primary) */
+  --vintage-text-muted: #6F7C6B;      /* Warm Sepia (Secondary / Caption) */
+  --vintage-text-subtle: #9BA59D;     /* Faded Vintage Ink */
+
+  /* 8 Authentic Vintage Palette Swatches */
+  --vintage-swatch-1-sage: #6F7C6B;   /* Swatch 1: Sage Slate Green */
+  --vintage-swatch-2-gold: #E7A366;   /* Swatch 2: Vintage Mustard Gold */
+  --vintage-swatch-3-terracotta: #D05D0A; /* Swatch 3: Terracotta Red */
+  --vintage-swatch-4-olive: #3E5247;  /* Swatch 4: Heritage Olive Moss */
+  --vintage-swatch-5-rust: #D05D0A;   /* Swatch 5: Warm Amber Rust */
+  --vintage-swatch-6-sienna: #D05D0A; /* Swatch 6: Tobacco / Warm Sienna */
+  --vintage-swatch-7-brick: #B34E06;  /* Swatch 7: Vintage Brick Crimson */
+  --vintage-swatch-8-espresso: #3E5247; /* Swatch 8: Deep Mahogany */
+
+  /* Deep Forest Accent (for primary buttons & logo) */
+  --vintage-forest: #3E5247;
+  --vintage-forest-hover: #2F4037;
+
+  /* Vintage Paper Elevation / Shadows */
+  --vintage-shadow-xs: 0 1px 2px rgba(62, 82, 71, 0.04);
+  --vintage-shadow-sm: 0 2px 6px rgba(62, 82, 71, 0.05), 0 1px 2px rgba(62, 82, 71, 0.03);
+  --vintage-shadow-md: 0 6px 18px rgba(62, 82, 71, 0.06), 0 2px 6px rgba(62, 82, 71, 0.04);
+  --vintage-shadow-lg: 0 14px 32px rgba(62, 82, 71, 0.09), 0 4px 10px rgba(62, 82, 71, 0.05);
+}
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background-color: var(--vintage-bg);
+    color: var(--vintage-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Typography - Clean Vietnamese-compatible Font Family */
+.font-serif-vintage {
+  font-family: 'Newsreader', 'Georgia', 'Cambria', serif;
+  letter-spacing: -0.015em;
+}
+
+/* Tabular figures for financial numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom Vintage Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #BABDB2;
+  border-radius: 9999px;
+  border: 1px solid #F2E4DC;
+}
+
+/* Subtle animation for today's active check ring */
+@keyframes pulseSubtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.animate-pulse-subtle {
+  animation: pulseSubtle 2.8s infinite ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9BA59D;
+}
+
+/* Vintage Paper Card Hover Animation */
+.card-hover {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--vintage-shadow-md);
+  border-color: var(--vintage-border-strong);
+}
+
+/* Toast Slide In */
+@keyframes slideIn {
+  from {
+    transform: translateY(-12px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Dropdown menu animation */
+@keyframes dropDown {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-enter {
+  animation: dropDown 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Vintage Skeleton loading */
+@keyframes vintageShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #F7EAE3 25%, #F2E4DC 50%, #F7EAE3 75%);
+  background-size: 200% 100%;
+  animation: vintageShimmer 1.8s infinite;
+}
+
+/* Dopamine Check Bounce & Tactile Interactions */
+@keyframes checkBounce {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.32) rotate(-6deg); }
+  70% { transform: scale(0.92) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.animate-check-bounce {
+  animation: checkBounce 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Enhanced Soft Elevation & Contrast for Ivory/White Cards */
+.bg-\[\#FFF9F6\],
+.bg-white,
+.card-vintage {
+  box-shadow: 0 1px 3px rgba(62, 82, 71, 0.05), 0 5px 16px rgba(62, 82, 71, 0.045);
+}
+
+/* Swipe Actions on Mobile */
+.swipe-item-container {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.swipe-item-content {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* Tab Switching Transitions: Smooth Staggered Fade Up & Out / Float Up & In */
+@keyframes tabBoxFadeOutUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes tabBoxFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-box-exit {
+  animation: tabBoxFadeOutUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+
+.tab-box-enter {
+  animation: tabBoxFadeInUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Mobile Viewport Stabilization - Lock horizontal jitter & wobble */
+html, body {
+  height: 100%;
+  height: 100dvh;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+#mainScrollArea {
+  max-width: 100%;
+  overflow-x: hidden !important;
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+}
+
+
+/* ==========================================================================
+   SAFE AREA & MOBILE HEADER OPTIMIZATIONS (iPhone Notch & Dynamic Island)
+   ========================================================================== */
+.app-top-header {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@media (max-width: 768px) {
+  .app-top-header {
+    /* Guaranteed generous clearance under iPhone status bar, clock, notch & Dynamic Island */
+    padding-top: max(env(safe-area-inset-top, 0px), 44px) !important;
+    padding-bottom: 6px !important;
+  }
+  .app-top-header #headerDashboardControls,
+  .app-top-header #headerTodosControls,
+  .app-top-header #headerHabitsControls,
+  .app-top-header #headerJournalControls,
+  .app-top-header #headerNotesControls,
+  .app-top-header #mobilePomoHeaderBtn,
+  .app-top-header #liveSyncStatus,
+  .app-top-header #reloadBtn,
+  .app-top-header #headerFinanceControls > :not(#monthNavContainer) {
+    display: none !important;
+  }
+}
+
+.app-bottom-nav {
+  /* Apple iOS 26 / visionOS Liquid Glass Floating Capsule Dock */
+  position: fixed !important;
+  bottom: max(env(safe-area-inset-bottom, 0px), 12px) !important;
+  left: max(env(safe-area-inset-left, 0px), 14px) !important;
+  right: max(env(safe-area-inset-right, 0px), 14px) !important;
+  z-index: 40 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-around !important;
+  padding: 5px 6px !important;
+  min-height: 3.75rem !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.56) 0%,
+    rgba(255, 249, 246, 0.36) 50%,
+    rgba(238, 241, 237, 0.48) 100%
+  ) !important;
+  backdrop-filter: blur(28px) saturate(195%) brightness(1.04) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(195%) brightness(1.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.78) !important;
+  box-shadow:
+    inset 0 1.5px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1.5px rgba(255, 255, 255, 0.55),
+    inset 0 0 22px rgba(255, 255, 255, 0.32),
+    0 14px 34px -6px rgba(53, 33, 22, 0.18),
+    0 4px 12px rgba(62, 82, 71, 0.10) !important;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease !important;
+}
+
+/* Specular Optical Rim Glint on top & inner curve of Liquid Glass Dock */
+.app-bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.96) 30%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.96) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.app-bottom-nav::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(
+    120% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.44) 0%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  #mainScrollArea {
+    padding-bottom: calc(6.2rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (min-width: 769px) {
+  #mainScrollArea {
+    padding-bottom: 0 !important;
+  }
+  .app-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* Minimalist Hairline Borders & Clean Elevation */
+.border-hairline {
+  border-color: rgba(111, 124, 107, 0.16) !important;
+}
+
+.border-hairline-subtle {
+  border-color: rgba(111, 124, 107, 0.09) !important;
+}
+
+/* Modal Responsive Dialog */
+.modal-dialog-content {
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Kanban Column Responsive Height */
+.kanban-column-body {
+  max-height: calc(100vh - 22rem);
+  min-height: 380px;
+}
+
+@media (max-width: 767px) {
+  .kanban-column-body {
+    max-height: 520px;
+    min-height: 280px;
+  }
+}
+
+
+/* ==========================================================================
+   ANIMATE-UI INTEGRATION SYSTEM (Micro-interactions & Physics Springs)
+   Inspired by: imskyleen/animate-ui
+   ========================================================================== */
+
+/* 1. SLIDING PILL INDICATOR (Apple Liquid Glass Lens Pill & Sidebar) */
+.bottom-nav-pill {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  height: calc(100% - 10px);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(255, 249, 246, 0.66) 52%,
+    rgba(238, 241, 237, 0.80) 100%
+  );
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.96);
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 0.38s cubic-bezier(0.22, 1.32, 0.36, 1), width 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  will-change: transform, width;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px rgba(111, 124, 107, 0.16),
+    0 4px 14px rgba(62, 82, 71, 0.14),
+    0 1px 3px rgba(53, 33, 22, 0.08);
+}
+
+.sidebar-nav-pill {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  background: #3E5247;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1), height 0.22s ease, opacity 0.2s ease;
+  will-change: transform, height;
+  box-shadow: 0 4px 12px rgba(62, 82, 71, 0.2);
+}
+
+/* Icon spring bounce when tab becomes active */
+@keyframes springBounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.24) translateY(-2px); }
+  60% { transform: scale(0.92) translateY(1px); }
+  85% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.animate-spring-icon {
+  animation: springBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+/* Tap Scale feedback on interactive buttons */
+.tap-spring {
+  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.tap-spring:active {
+  transform: scale(0.94) !important;
+}
+
+/* 2. RIPPLE & SPRING POP (Dopamine Checkmarks) */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(111, 124, 107, 0.35) 0%, rgba(111, 124, 107, 0) 70%);
+  transform: scale(0);
+  pointer-events: none;
+  animation: rippleSpread 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rippleSpread {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Checkmark spring explosion pop */
+@keyframes checkmarkPop {
+  0% { transform: scale(0.65) rotate(-12deg); opacity: 0.4; }
+  45% { transform: scale(1.36) rotate(6deg); opacity: 1; }
+  75% { transform: scale(0.94) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.animate-checkmark-pop {
+  animation: checkmarkPop 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+}
+
+/* Sparkle / Confetti particle */
+.sparkle-particle {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  animation: sparkleFly 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sparkleFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* 3. ROLLING NUMBER COUNTER (Odometer/Ticker) */
+.number-counter {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
+}
+
+/* 4. SHINE EFFECT (CTA Buttons) */
+.animate-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 100%
+  );
+  transform: translateX(-160%) skewX(-24deg);
+  animation: shineGlide 4.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+@keyframes shineGlide {
+  0%, 65% {
+    transform: translateX(-160%) skewX(-24deg);
+  }
+  85%, 100% {
+    transform: translateX(240%) skewX(-24deg);
+  }
+}
+
+/* 5. MODAL SPRING SLIDE-UP & BOTTOM SHEET (iOS Physics) */
+.modal-overlay-animate {
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.28s ease, -webkit-backdrop-filter 0.28s ease;
+}
+
+.modal-overlay-animate.modal-visible {
+  opacity: 1;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-content-animate {
+  opacity: 0;
+  transform: translateY(18px) scale(0.94);
+  transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.26s ease;
+  will-change: transform, opacity;
+}
+
+.modal-visible .modal-content-animate {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Mobile-specific iOS Bottom Sheet Physics */
+@media (max-width: 768px) {
+  .modal-dialog-bottomsheet {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 28px !important;
+    border-top-right-radius: 28px !important;
+    max-height: 90vh !important;
+    max-height: 90dvh !important;
+    transform: translateY(100%) !important;
+    transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px) !important;
+  }
+
+  .modal-visible .modal-dialog-bottomsheet {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+  }
+
+  /* Sheet drag handle indicator */
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 9999px;
+    background: #BABDB2;
+    margin: 0 auto 12px auto;
+  }
+}
+
+
+/* =========================================================================
+   UNIVERSAL MODERN VINTAGE CUSTOM DROPDOWN (100% Rounded & Soft Elevation)
+   ========================================================================= */
+select {
+  border-radius: 14px !important;
+}
+
+.custom-dropdown-container {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.custom-dropdown-container.w-full {
+  display: block;
+  width: 100%;
+}
+
+.custom-dropdown-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #FFF9F6;
+  border: 1px solid #BABDB2;
+  border-radius: 14px;
+  padding: 6.5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #352116;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(62, 82, 71, 0.04);
+}
+
+.custom-dropdown-trigger:hover {
+  border-color: #6F7C6B;
+  background: #FFF9F6;
+}
+
+.custom-dropdown-trigger:focus,
+.custom-dropdown-trigger.active {
+  border-color: #6F7C6B;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(111, 124, 107, 0.18);
+}
+
+.custom-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: 320px;
+  max-height: 250px;
+  overscroll-behavior: contain;
+  overflow-y: auto;
+  background: #FFF9F6;
+  border: 1px solid #BABDB2;
+  border-radius: 18px !important;
+  box-shadow: 0 16px 36px -4px rgba(62, 82, 71, 0.16), 0 8px 16px -2px rgba(62, 82, 71, 0.08);
+  padding: 6px;
+  z-index: 9999;
+  animation: dropdownFadeScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-dropdown-menu::-webkit-scrollbar-thumb {
+  background: #BABDB2;
+  border-radius: 9999px;
+}
+
+.custom-dropdown-menu.align-right {
+  left: auto;
+  right: 0;
+}
+
+.custom-dropdown-menu.open-up {
+  top: auto;
+  bottom: calc(100% + 5px);
+}
+
+.custom-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #352116;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.custom-dropdown-item:hover {
+  background: #F7EAE3;
+  color: #2F4037;
+}
+
+.custom-dropdown-item.selected {
+  background: rgba(111, 124, 107, 0.14);
+  color: #3E5247;
+  font-weight: 700;
+}
+
+@keyframes dropdownFadeScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
