@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-title" content="Life Hub">
   <link rel="apple-touch-icon" href="/static/Finance_500k.png?v=3">
   <link rel="manifest" href="/static/manifest.json">
-  <meta name="theme-color" content="#FCF5EF">
+  <meta name="theme-color" content="#FFF0E9">
 
   <!-- Local Offline Vendor Assets (Instant Startup, Zero CDN Blocking) -->
   <script src="/static/vendor/tailwind.min.js"></script>
@@ -24,28 +24,28 @@
         extend: {
           colors: {
             vintage: {
-              bg: '#FCF5EF',
-              surface: '#FFFDFB',
-              muted: '#E6F1F4',
-              subtle: '#EDF5F7',
-              border: '#B8D8E0',
-              'border-strong': '#6DB5CA',
-              text: '#1E3D47',
-              'text-muted': '#527987',
-              'text-subtle': '#7FA3B0',
-              sage: '#6DB5CA',
-              'sage-light': '#EBF5F8',
-              gold: '#FF7235',
-              'gold-light': '#FFF3EC',
-              terracotta: '#FF7235',
-              'terracotta-light': '#FFF1EB',
-              olive: '#2B677A',
-              rust: '#FF7235',
-              sienna: '#FF7235',
-              brick: '#E05A20',
-              espresso: '#1E3D47',
-              forest: '#6DB5CA',
-              'forest-hover': '#529BB0'
+              bg: '#FFF0E9',
+              surface: '#FFF9F6',
+              muted: '#F2E4DC',
+              subtle: '#F7EAE3',
+              border: '#BABDB2',
+              'border-strong': '#9BA59D',
+              text: '#352116',
+              'text-muted': '#6F7C6B',
+              'text-subtle': '#9BA59D',
+              sage: '#6F7C6B',
+              'sage-light': '#EEF1ED',
+              gold: '#E7A366',
+              'gold-light': '#FCF0E3',
+              terracotta: '#D05D0A',
+              'terracotta-light': '#FCEEED',
+              olive: '#3E5247',
+              rust: '#D05D0A',
+              sienna: '#D05D0A',
+              brick: '#B34E06',
+              espresso: '#3E5247',
+              forest: '#3E5247',
+              'forest-hover': '#2F4037'
             }
           },
           fontFamily: {
@@ -64,21 +64,21 @@
     }
   </script>
   <script src="/static/vendor/lucide.min.js"></script>
-  <link rel="stylesheet" href="/static/css/style.css?v=2.16.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.17.0">
 </head>
-<body class="bg-[#FCF5EF] text-[#1E3D47] h-screen h-[100dvh] min-h-[100dvh] overflow-hidden antialiased font-sans selection:bg-[#6DB5CA] selection:text-[#FFFDFB]">
+<body class="bg-[#FFF0E9] text-[#352116] h-screen h-[100dvh] min-h-[100dvh] overflow-hidden antialiased font-sans selection:bg-[#6F7C6B] selection:text-[#FFF9F6]">
 
   <!-- ================= APP WRAPPER WITH LEFT SIDEBAR ================= -->
-  <div class="flex h-screen h-[100dvh] overflow-hidden bg-[#FCF5EF]">
+  <div class="flex h-screen h-[100dvh] overflow-hidden bg-[#FFF0E9]">
 
     <!-- ================= LEFT NAVIGATION SIDEBAR ================= -->
-    <aside id="appSidebar" class="w-64 bg-[#EAF3F5] border-r border-[#B8D8E0] flex flex-col justify-between shrink-0 select-none z-40 hidden md:flex">
+    <aside id="appSidebar" class="w-64 bg-[#F5E6DF] border-r border-[#BABDB2] flex flex-col justify-between shrink-0 select-none z-40 hidden md:flex">
       <div class="flex flex-col">
 
         <!-- Navigation Links (Dashboard + 5 Life Sections) -->
         <nav class="p-3 space-y-1 text-sm font-semibold relative select-none">
           <div id="sidebarNavPill" class="sidebar-nav-pill opacity-0"></div>
-          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#FFFDFB] bg-transparent tap-spring">
+          <button onclick="switchLifeTab('dashboard')" id="navTabDashboard" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#FFF9F6] bg-transparent tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
               <span>Tổng quan</span>
@@ -86,7 +86,7 @@
             <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20" id="sidebarDashBadge">Live</span>
           </button>
 
-          <button onclick="switchLifeTab('finance')" id="navTabFinance" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#527987] hover:text-[#1E3D47] hover:bg-[#D6E8EE] tap-spring">
+          <button onclick="switchLifeTab('finance')" id="navTabFinance" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#6F7C6B] hover:text-[#352116] hover:bg-[#E2E5DE] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="wallet" class="w-4 h-4"></i>
               <span>Tài chính</span>
@@ -94,80 +94,80 @@
             
           </button>
 
-          <button onclick="switchLifeTab('todos')" id="navTabTodos" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#527987] hover:text-[#1E3D47] hover:bg-[#D6E8EE] tap-spring">
+          <button onclick="switchLifeTab('todos')" id="navTabTodos" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#6F7C6B] hover:text-[#352116] hover:bg-[#E2E5DE] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="check-square" class="w-4 h-4"></i>
               <span>Việc cần làm</span>
             </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#B8D8E0] text-[#1E3D47]" id="sidebarTodosBadge">4</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#BABDB2] text-[#352116]" id="sidebarTodosBadge">4</span>
           </button>
 
-          <button onclick="switchLifeTab('habits')" id="navTabHabits" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#527987] hover:text-[#1E3D47] hover:bg-[#D6E8EE] tap-spring">
+          <button onclick="switchLifeTab('habits')" id="navTabHabits" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#6F7C6B] hover:text-[#352116] hover:bg-[#E2E5DE] tap-spring">
             <div class="flex items-center gap-3">
-              <i data-lucide="flame" class="w-4 h-4 text-[#527987]"></i>
+              <i data-lucide="flame" class="w-4 h-4 text-[#6F7C6B]"></i>
               <span>Thói quen</span>
             </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#B8D8E0] text-[#1E3D47]" id="sidebarHabitsBadge">5</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#BABDB2] text-[#352116]" id="sidebarHabitsBadge">5</span>
           </button>
 
-          <button onclick="switchLifeTab('notebook')" id="navTabNotebook" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#527987] hover:text-[#1E3D47] hover:bg-[#D6E8EE] tap-spring">
+          <button onclick="switchLifeTab('notebook')" id="navTabNotebook" class="relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#6F7C6B] hover:text-[#352116] hover:bg-[#E2E5DE] tap-spring">
             <div class="flex items-center gap-3">
               <i data-lucide="book-open" class="w-4 h-4"></i>
               <span>Sổ tay</span>
             </div>
-            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#B8D8E0] text-[#1E3D47] hidden" id="sidebarNotebookBadge"></span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#BABDB2] text-[#352116] hidden" id="sidebarNotebookBadge"></span>
           </button>
         </nav>
       </div>
 
       <!-- Bottom Sidebar: Pomodoro Focus Widget (Super Productivity) & Storage info -->
-      <div class="p-3 border-t border-[#B8D8E0] space-y-3">
+      <div class="p-3 border-t border-[#BABDB2] space-y-3">
         <!-- Pomodoro Widget -->
-        <div class="bg-[#FFFDFB] border border-[#B8D8E0] rounded-2xl p-3 shadow-2xs">
-          <div class="flex items-center justify-between text-xs text-[#527987] font-bold mb-1.5">
-            <span class="flex items-center gap-1.5 text-[#FF7235]">
+        <div class="bg-[#FFF9F6] border border-[#BABDB2] rounded-2xl p-3 shadow-2xs">
+          <div class="flex items-center justify-between text-xs text-[#6F7C6B] font-bold mb-1.5">
+            <span class="flex items-center gap-1.5 text-[#D05D0A]">
               <i data-lucide="timer" class="w-3.5 h-3.5"></i> Pomodoro Focus
             </span>
-            <span id="pomoSessionCount" class="text-[10px] px-1.5 py-0.5 bg-[#E6F1F4] rounded text-[#2B677A]">0 phiên</span>
+            <span id="pomoSessionCount" class="text-[10px] px-1.5 py-0.5 bg-[#F2E4DC] rounded text-[#3E5247]">0 phiên</span>
           </div>
           <div class="flex items-center justify-between">
-            <div id="pomoTimeDisplay" class="text-2xl font-extrabold text-[#1E3D47] tabular-nums tracking-tight">25:00</div>
+            <div id="pomoTimeDisplay" class="text-2xl font-extrabold text-[#352116] tabular-nums tracking-tight">25:00</div>
             <div class="flex items-center gap-1">
-              <button onclick="togglePomodoro()" id="pomoToggleBtn" class="animate-shine p-2 rounded-xl bg-[#6DB5CA] text-white hover:bg-[#529BB0] transition shadow-2xs cursor-pointer tap-spring" title="Bắt đầu / Tạm dừng">
+              <button onclick="togglePomodoro()" id="pomoToggleBtn" class="animate-shine p-2 rounded-xl bg-[#6F7C6B] text-white hover:bg-[#3E5247] transition shadow-2xs cursor-pointer tap-spring" title="Bắt đầu / Tạm dừng">
                 <i data-lucide="play" id="pomoPlayIcon" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="resetPomodoro()" class="p-2 rounded-xl hover:bg-[#E6F1F4] text-[#527987] transition cursor-pointer" title="Đặt lại">
+              <button onclick="resetPomodoro()" class="p-2 rounded-xl hover:bg-[#F2E4DC] text-[#6F7C6B] transition cursor-pointer" title="Đặt lại">
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
 
           <!-- Pomodoro Mode Selector (25m Focus / 5m Break / 15m Long Break) -->
-          <div class="grid grid-cols-3 gap-1 mt-2.5 pt-2 border-t border-[#B8D8E0]/60 text-[10px] font-bold text-center">
-            <button onclick="setPomoMode('focus')" id="pomoMode_focus" title="Tập trung 25 phút" class="py-1 rounded-lg bg-[#6DB5CA] text-[#FFFDFB] shadow-2xs transition cursor-pointer">25m</button>
-            <button onclick="setPomoMode('short')" id="pomoMode_short" title="Nghỉ ngắn 5 phút" class="py-1 rounded-lg text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition cursor-pointer">5m</button>
-            <button onclick="setPomoMode('long')" id="pomoMode_long" title="Nghỉ dài 15 phút" class="py-1 rounded-lg text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition cursor-pointer">15m</button>
+          <div class="grid grid-cols-3 gap-1 mt-2.5 pt-2 border-t border-[#BABDB2]/60 text-[10px] font-bold text-center">
+            <button onclick="setPomoMode('focus')" id="pomoMode_focus" title="Tập trung 25 phút" class="py-1 rounded-lg bg-[#3E5247] text-[#FFF9F6] shadow-2xs transition cursor-pointer">25m</button>
+            <button onclick="setPomoMode('short')" id="pomoMode_short" title="Nghỉ ngắn 5 phút" class="py-1 rounded-lg text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition cursor-pointer">5m</button>
+            <button onclick="setPomoMode('long')" id="pomoMode_long" title="Nghỉ dài 15 phút" class="py-1 rounded-lg text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition cursor-pointer">15m</button>
           </div>
 
           <!-- Active Linked Task Banner -->
-          <div id="pomoActiveTaskBanner" class="hidden mt-2 pt-1.5 border-t border-[#B8D8E0]/60 flex items-center justify-between text-[11px] text-[#527987]">
-            <span class="truncate flex-1 mr-1">🎯 <strong id="pomoActiveTaskTitle" class="text-[#1E3D47]">...</strong></span>
-            <button onclick="clearActivePomoTask()" class="text-[#7FA3B0] hover:text-[#FF7235] text-xs p-0.5 cursor-pointer" title="Hủy liên kết">✕</button>
+          <div id="pomoActiveTaskBanner" class="hidden mt-2 pt-1.5 border-t border-[#BABDB2]/60 flex items-center justify-between text-[11px] text-[#6F7C6B]">
+            <span class="truncate flex-1 mr-1">🎯 <strong id="pomoActiveTaskTitle" class="text-[#352116]">...</strong></span>
+            <button onclick="clearActivePomoTask()" class="text-[#9BA59D] hover:text-[#D05D0A] text-xs p-0.5 cursor-pointer" title="Hủy liên kết">✕</button>
           </div>
         </div>
 
         <!-- Mobile Link Pill Button -->
-        <button onclick="openMobileConnectModal()" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#6DB5CA]/10 hover:bg-[#6DB5CA]/20 text-[#6DB5CA] border border-[#6DB5CA]/25 text-xs font-bold transition cursor-pointer">
+        <button onclick="openMobileConnectModal()" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#6F7C6B]/10 hover:bg-[#6F7C6B]/20 text-[#6F7C6B] border border-[#6F7C6B]/25 text-xs font-bold transition cursor-pointer">
           <i data-lucide="smartphone" class="w-3.5 h-3.5"></i>
           <span>Link iPhone / iPad</span>
         </button>
 
         <!-- Storage Info & Settings -->
-        <div class="flex items-center justify-between px-1 text-xs text-[#527987]">
-          <span class="text-[10px] font-semibold text-[#2B677A] flex items-center gap-1">
-            <i data-lucide="hard-drive" class="w-3 h-3 text-[#6DB5CA]"></i> D:\app\finance
+        <div class="flex items-center justify-between px-1 text-xs text-[#6F7C6B]">
+          <span class="text-[10px] font-semibold text-[#3E5247] flex items-center gap-1">
+            <i data-lucide="hard-drive" class="w-3 h-3 text-[#6F7C6B]"></i> D:\app\finance
           </span>
-          <button onclick="openSettingsModal()" class="p-1.5 rounded-lg hover:bg-[#D6E8EE] text-[#527987] hover:text-[#1E3D47] transition cursor-pointer" title="Cài đặt">
+          <button onclick="openSettingsModal()" class="p-1.5 rounded-lg hover:bg-[#E2E5DE] text-[#6F7C6B] hover:text-[#352116] transition cursor-pointer" title="Cài đặt">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>
           </button>
         </div>
@@ -178,13 +178,13 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-y-auto" id="mainScrollArea">
 
       <!-- TOP HEADER -->
-      <header class="app-top-header bg-[#FFFDFB]/95 backdrop-blur-md border-b border-[#B8D8E0] sticky top-0 z-30 shadow-xs max-w-full">
+      <header class="app-top-header bg-[#FFF9F6]/95 backdrop-blur-md border-b border-[#BABDB2] sticky top-0 z-30 shadow-xs max-w-full">
         <div class="max-w-[1560px] mx-auto px-3 sm:px-8 lg:px-10 min-h-[3.75rem] py-2 flex items-center justify-between gap-2 sm:gap-3 w-full">
           
           <!-- Breadcrumb / Section Title -->
           <div class="flex items-center gap-2 min-w-0 flex-1">
-            <h1 id="pageTitle" class="font-extrabold text-lg sm:text-xl tracking-tight text-[#6DB5CA] truncate">Tổng quan</h1>
-            <span id="pageSubtitle" class="text-xs text-[#527987] hidden md:inline">• Trung tâm điều hành tích hợp toàn diện</span>
+            <h1 id="pageTitle" class="font-extrabold text-lg sm:text-xl tracking-tight text-[#3E5247] truncate">Tổng quan</h1>
+            <span id="pageSubtitle" class="text-xs text-[#6F7C6B] hidden md:inline">• Trung tâm điều hành tích hợp toàn diện</span>
           </div>
 
           <!-- Dynamic Controls based on active tab -->
@@ -192,8 +192,8 @@
             
             <!-- 0. Dashboard Tab Controls -->
             <div id="headerDashboardControls" class="hidden flex items-center gap-2">
-              <span class="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#E6F1F4] text-[#2B677A] border border-[#B8D8E0]">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#FF7235]"></i>
+              <span class="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#F2E4DC] text-[#3E5247] border border-[#BABDB2]">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#E7A366]"></i>
                 <span id="dashHeaderDate">Thứ Hai, 02/11/2026</span>
               </span>
             </div>
@@ -201,59 +201,59 @@
             <!-- 1. Finance Tab Controls -->
             <div id="headerFinanceControls" class="hidden flex items-center gap-1.5 sm:gap-2">
               <!-- Smart Segmented Month Navigation -->
-              <div class="flex items-center gap-0.5 sm:gap-1 bg-[#E6F1F4] p-1 rounded-2xl border border-[#B8D8E0] shadow-2xs relative" id="monthNavContainer">
-                <button onclick="stepMonth(-1)" title="Tháng trước" class="p-1 sm:p-1.5 rounded-xl hover:bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] transition hover:shadow-xs cursor-pointer">
+              <div class="flex items-center gap-0.5 sm:gap-1 bg-[#F2E4DC] p-1 rounded-2xl border border-[#BABDB2] shadow-2xs relative" id="monthNavContainer">
+                <button onclick="stepMonth(-1)" title="Tháng trước" class="p-1 sm:p-1.5 rounded-xl hover:bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] transition hover:shadow-xs cursor-pointer">
                   <i data-lucide="chevron-left" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </button>
                 
                 <!-- Custom Soft Month Dropdown -->
                 <div class="relative">
-                  <button onclick="toggleMonthDropdown(event)" id="monthDropdownBtn" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 text-xs font-bold text-[#1E3D47] hover:bg-[#FFFDFB] rounded-xl transition cursor-pointer shadow-2xs">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#527987] shrink-0"></i>
+                  <button onclick="toggleMonthDropdown(event)" id="monthDropdownBtn" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 text-xs font-bold text-[#352116] hover:bg-[#FFF9F6] rounded-xl transition cursor-pointer shadow-2xs">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#6F7C6B] shrink-0"></i>
                     <span id="monthDropdownLabel" class="truncate max-w-[140px] sm:max-w-none">Tháng 10/2026</span>
-                    <i data-lucide="chevron-down" class="w-3 h-3 text-[#7FA3B0] shrink-0"></i>
+                    <i data-lucide="chevron-down" class="w-3 h-3 text-[#9BA59D] shrink-0"></i>
                   </button>
 
-                  <div id="monthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-52 bg-[#FFFDFB] rounded-2xl shadow-xl border border-[#B8D8E0] p-1.5 z-50 dropdown-enter text-xs max-h-64 overflow-y-auto">
+                  <div id="monthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-52 bg-[#FFF9F6] rounded-2xl shadow-xl border border-[#BABDB2] p-1.5 z-50 dropdown-enter text-xs max-h-64 overflow-y-auto">
                     <!-- Populated dynamically -->
                   </div>
                 </div>
 
-                <button onclick="stepMonth(1)" title="Tháng sau" class="p-1 sm:p-1.5 rounded-xl hover:bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] transition hover:shadow-xs cursor-pointer">
+                <button onclick="stepMonth(1)" title="Tháng sau" class="p-1 sm:p-1.5 rounded-xl hover:bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] transition hover:shadow-xs cursor-pointer">
                   <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </button>
               </div>
 
               <!-- Upload Statement Button (Desktop only) -->
-              <button onclick="openUploadModal()" class="hidden md:inline-flex items-center gap-1.5 sm:gap-2 text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] shadow-sm transition cursor-pointer">
+              <button onclick="openUploadModal()" class="hidden md:inline-flex items-center gap-1.5 sm:gap-2 text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] shadow-sm transition cursor-pointer">
                 <i data-lucide="upload-cloud" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Tải sao kê</span>
               </button>
 
               <!-- Actions Menu Dropdown (Desktop only) -->
               <div class="relative hidden md:block">
-                <button onclick="toggleActionMenu()" id="actionMenuBtn" title="Thao tác & Dữ liệu" class="inline-flex items-center gap-1 sm:gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFFDFB] hover:bg-[#E6F1F4] text-[#1E3D47] border border-[#B8D8E0] shadow-2xs transition cursor-pointer">
-                  <i data-lucide="layers" class="w-3.5 h-3.5 text-[#527987]"></i>
+                <button onclick="toggleActionMenu()" id="actionMenuBtn" title="Thao tác & Dữ liệu" class="inline-flex items-center gap-1 sm:gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFF9F6] hover:bg-[#F2E4DC] text-[#352116] border border-[#BABDB2] shadow-2xs transition cursor-pointer">
+                  <i data-lucide="layers" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
                   <span class="hidden md:inline">Thao tác</span>
-                  <i data-lucide="chevron-down" class="w-3 h-3 text-[#7FA3B0]"></i>
+                  <i data-lucide="chevron-down" class="w-3 h-3 text-[#9BA59D]"></i>
                 </button>
 
-                <div id="actionMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-[#FFFDFB] rounded-2xl shadow-xl border border-[#B8D8E0] p-1.5 z-50 dropdown-enter text-xs">
-                  <button onclick="seedDemoData(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#FFF3EC] text-[#1E3D47] hover:text-[#D95318] transition font-medium cursor-pointer">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-[#FF7235]"></i>
+                <div id="actionMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-[#FFF9F6] rounded-2xl shadow-xl border border-[#BABDB2] p-1.5 z-50 dropdown-enter text-xs">
+                  <button onclick="seedDemoData(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#FCF0E3] text-[#352116] hover:text-[#9E4405] transition font-medium cursor-pointer">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-[#E7A366]"></i>
                     <span>Nạp 32 giao dịch mẫu</span>
                   </button>
-                  <button onclick="triggerAICategorize(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#EBF5F8] text-[#1E3D47] hover:text-[#6DB5CA] transition font-medium cursor-pointer">
-                    <i data-lucide="bot" class="w-4 h-4 text-[#6DB5CA]"></i>
+                  <button onclick="triggerAICategorize(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#EEF1ED] text-[#352116] hover:text-[#3E5247] transition font-medium cursor-pointer">
+                    <i data-lucide="bot" class="w-4 h-4 text-[#6F7C6B]"></i>
                     <span>AI Phân loại lại tất cả</span>
                   </button>
-                  <button onclick="exportCSV(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#EBF5F8] text-[#1E3D47] hover:text-[#6DB5CA] transition font-medium cursor-pointer">
-                    <i data-lucide="download" class="w-4 h-4 text-[#6DB5CA]"></i>
+                  <button onclick="exportCSV(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#EEF1ED] text-[#352116] hover:text-[#3E5247] transition font-medium cursor-pointer">
+                    <i data-lucide="download" class="w-4 h-4 text-[#6F7C6B]"></i>
                     <span>Xuất dữ liệu Excel / CSV</span>
                   </button>
-                  <div class="border-t border-[#B8D8E0]/60 my-1"></div>
-                  <button onclick="resetAllData(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#FFF1EB] text-[#FF7235] transition font-medium cursor-pointer">
-                    <i data-lucide="rotate-ccw" class="w-4 h-4 text-[#FF7235]"></i>
+                  <div class="border-t border-[#BABDB2]/60 my-1"></div>
+                  <button onclick="resetAllData(); toggleActionMenu();" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#FCEEED] text-[#D05D0A] transition font-medium cursor-pointer">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 text-[#D05D0A]"></i>
                     <span>Xóa & Đặt lại từ đầu</span>
                   </button>
                 </div>
@@ -262,19 +262,19 @@
 
             <!-- 2. Todos Tab Controls (Desktop only) -->
             <div id="headerTodosControls" class="hidden flex items-center gap-2">
-              <button onclick="openTodoModal()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] shadow-sm transition cursor-pointer tap-spring">
+              <button onclick="openTodoModal()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Việc mới</span>
               </button>
-              <button onclick="clearCompletedTodosAction()" class="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFFDFB] text-[#527987] hover:text-[#FF7235] hover:bg-[#FFF1EB] border border-[#B8D8E0] transition cursor-pointer" title="Dọn dẹp công việc đã hoàn thành">
-                <i data-lucide="check-check" class="w-4 h-4 text-[#6DB5CA]"></i>
+              <button onclick="clearCompletedTodosAction()" class="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#D05D0A] hover:bg-[#FCEEED] border border-[#BABDB2] transition cursor-pointer" title="Dọn dẹp công việc đã hoàn thành">
+                <i data-lucide="check-check" class="w-4 h-4 text-[#6F7C6B]"></i>
                 <span class="hidden md:inline">Dọn việc xong</span>
               </button>
             </div>
 
             <!-- 3. Habits Tab Controls (Desktop only) -->
             <div id="headerHabitsControls" class="hidden flex items-center gap-2">
-              <button onclick="quickAddHabit()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] shadow-sm transition cursor-pointer tap-spring">
+              <button onclick="quickAddHabit()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Thói quen mới</span>
               </button>
@@ -282,7 +282,7 @@
 
             <!-- 4. Journal Tab Controls (Desktop only) -->
             <div id="headerJournalControls" class="hidden flex items-center gap-2">
-              <button onclick="saveCurrentJournal()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] shadow-sm transition cursor-pointer tap-spring">
+              <button onclick="saveCurrentJournal()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#6F7C6B] text-[#FFF9F6] hover:bg-[#3E5247] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="save" class="w-4 h-4"></i>
                 <span>Lưu trang</span>
               </button>
@@ -290,34 +290,34 @@
 
             <!-- 5. Notes Tab Controls (Desktop only) -->
             <div id="headerNotesControls" class="hidden flex items-center gap-2">
-              <button onclick="openNoteModal()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] shadow-sm transition cursor-pointer tap-spring">
+              <button onclick="openNoteModal()" class="animate-shine hidden md:inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Ghi chú mới</span>
               </button>
             </div>
 
             <!-- Mobile Pomodoro Header Trigger (Hidden on mobile as requested) -->
-            <button onclick="toggleMobilePomodoro()" id="mobilePomoHeaderBtn" class="hidden items-center gap-1 px-2 h-9 rounded-xl bg-[#FFFDFB] hover:bg-[#E6F1F4] border border-[#B8D8E0] shadow-2xs shrink-0 transition text-xs font-bold text-[#527987] cursor-pointer" title="Đồng hồ Pomodoro">
-              <i data-lucide="timer" class="w-4 h-4 text-[#FF7235]"></i>
+            <button onclick="toggleMobilePomodoro()" id="mobilePomoHeaderBtn" class="hidden items-center gap-1 px-2 h-9 rounded-xl bg-[#FFF9F6] hover:bg-[#F2E4DC] border border-[#BABDB2] shadow-2xs shrink-0 transition text-xs font-bold text-[#6F7C6B] cursor-pointer" title="Đồng hồ Pomodoro">
+              <i data-lucide="timer" class="w-4 h-4 text-[#D05D0A]"></i>
               <span id="mobilePomoHeaderTime" class="tabular-nums">25:00</span>
             </button>
 
             <!-- Mobile Quick Settings Button (Hidden on mobile as requested) -->
-            <button onclick="openSettingsModal()" class="hidden w-9 h-9 rounded-xl items-center justify-center bg-[#FFFDFB] hover:bg-[#E6F1F4] border border-[#B8D8E0] shadow-2xs shrink-0 transition text-[#527987] hover:text-[#1E3D47] cursor-pointer" title="Cài đặt">
+            <button onclick="openSettingsModal()" class="hidden w-9 h-9 rounded-xl items-center justify-center bg-[#FFF9F6] hover:bg-[#F2E4DC] border border-[#BABDB2] shadow-2xs shrink-0 transition text-[#6F7C6B] hover:text-[#352116] cursor-pointer" title="Cài đặt">
               <i data-lucide="settings" class="w-4 h-4"></i>
             </button>
 
             <!-- Live Realtime Sync Status: Desktop only -->
-            <button onclick="triggerCloudSyncNow()" id="liveSyncStatus" class="hidden md:flex w-9 h-9 rounded-xl items-center justify-center bg-[#FFFDFB] hover:bg-[#E6F1F4] border border-[#B8D8E0] shadow-2xs shrink-0 select-none relative transition cursor-pointer" title="Đồng bộ thời gian thực: Đã kết nối & sẵn sàng">
-              <i data-lucide="cloud" id="liveSyncCloudIcon" class="w-4 h-4 text-[#6DB5CA] transition-transform"></i>
+            <button onclick="triggerCloudSyncNow()" id="liveSyncStatus" class="hidden md:flex w-9 h-9 rounded-xl items-center justify-center bg-[#FFF9F6] hover:bg-[#F2E4DC] border border-[#BABDB2] shadow-2xs shrink-0 select-none relative transition cursor-pointer" title="Đồng bộ thời gian thực: Đã kết nối & sẵn sàng">
+              <i data-lucide="cloud" id="liveSyncCloudIcon" class="w-4 h-4 text-[#6F7C6B] transition-transform"></i>
               <span id="syncPulseDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 transition-colors ring-1 ring-white"></span>
             </button>
 
 
 
             <!-- Global Reload Button -->
-            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\app\finance" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] border border-[#B8D8E0] bg-[#FFFDFB] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
-              <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#527987] group-hover:text-[#6DB5CA] transition"></i>
+            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\app\finance" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] border border-[#BABDB2] bg-[#FFF9F6] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
+              <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#6F7C6B] group-hover:text-[#6F7C6B] transition"></i>
               <span class="hidden lg:inline">Làm mới</span>
             </button>
 
@@ -333,15 +333,15 @@
         <section id="section-dashboard" class="space-y-6">
 
           <!-- 1. Hero Pulse Greeting & High-level Status -->
-          <div class="bg-gradient-to-br from-[#FFFDFB] via-[#FCF5EF] to-[#E6F1F4] p-6 sm:p-7 rounded-3xl border border-[#B8D8E0] shadow-xs relative overflow-hidden">
+          <div class="bg-gradient-to-br from-[#FFF9F6] via-[#FFF0E9] to-[#F2E4DC] p-6 sm:p-7 rounded-3xl border border-[#BABDB2] shadow-xs relative overflow-hidden">
             <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div>
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B8D8E0]/60 text-[#2B677A] text-xs font-bold mb-2">
-                  <span class="w-2 h-2 rounded-full bg-[#6DB5CA] animate-pulse"></span>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#BABDB2]/60 text-[#3E5247] text-xs font-bold mb-2">
+                  <span class="w-2 h-2 rounded-full bg-[#6F7C6B] animate-pulse"></span>
                   <span id="dashHeroDate">Thứ Hai, 02/11/2026</span>
                 </div>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#1E3D47] tracking-tight" id="dashHeroGreeting">Chào bạn!</h2>
-                <p class="text-xs sm:text-sm text-[#527987] mt-1 max-w-xl" id="dashHeroQuote">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-[#352116] tracking-tight" id="dashHeroGreeting">Chào bạn!</h2>
+                <p class="text-xs sm:text-sm text-[#6F7C6B] mt-1 max-w-xl" id="dashHeroQuote">
                   "Sự kiên trì từng ngày tạo nên những kết quả phi thường."
                 </p>
               </div>
@@ -349,43 +349,43 @@
               <!-- 4 Quick Pulse Metric Pills (Interactive shortcuts) -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 lg:gap-3.5">
                 <!-- Finance pulse -->
-                <div onclick="switchLifeTab('finance')" class="bg-[#FFFDFB]/90 hover:bg-white p-3 rounded-2xl border border-[#B8D8E0] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
-                  <div class="flex items-center justify-between text-[11px] font-bold text-[#527987]">
+                <div onclick="switchLifeTab('finance')" class="bg-[#FFF9F6]/90 hover:bg-white p-3 rounded-2xl border border-[#BABDB2] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#6F7C6B]">
                     <span>Tài chính</span>
-                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+                    <i data-lucide="wallet" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
                   </div>
-                  <div class="text-sm font-extrabold text-[#1E3D47] mt-2 truncate" id="dashPulseBalance">0 ₫</div>
-                  <div class="text-[10px] text-[#527987] mt-0.5" id="dashPulseExpenseSub">Chi tiêu tháng này</div>
+                  <div class="text-sm font-extrabold text-[#352116] mt-2 truncate" id="dashPulseBalance">0 ₫</div>
+                  <div class="text-[10px] text-[#6F7C6B] mt-0.5" id="dashPulseExpenseSub">Chi tiêu tháng này</div>
                 </div>
 
                 <!-- Todos pulse -->
-                <div onclick="switchLifeTab('todos')" class="bg-[#FFFDFB]/90 hover:bg-white p-3 rounded-2xl border border-[#B8D8E0] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
-                  <div class="flex items-center justify-between text-[11px] font-bold text-[#527987]">
+                <div onclick="switchLifeTab('todos')" class="bg-[#FFF9F6]/90 hover:bg-white p-3 rounded-2xl border border-[#BABDB2] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#6F7C6B]">
                     <span>Việc cần làm</span>
-                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+                    <i data-lucide="check-square" class="w-3.5 h-3.5 text-[#3E5247]"></i>
                   </div>
-                  <div class="text-sm font-extrabold text-[#1E3D47] mt-2" id="dashPulseTodos">0 việc</div>
-                  <div class="text-[10px] text-[#6DB5CA] font-semibold mt-0.5" id="dashPulseTodosSub">Đang hoàn thành 0%</div>
+                  <div class="text-sm font-extrabold text-[#352116] mt-2" id="dashPulseTodos">0 việc</div>
+                  <div class="text-[10px] text-[#6F7C6B] font-semibold mt-0.5" id="dashPulseTodosSub">Đang hoàn thành 0%</div>
                 </div>
 
                 <!-- Habits pulse -->
-                <div onclick="switchLifeTab('habits')" class="bg-[#FFFDFB]/90 hover:bg-white p-3 rounded-2xl border border-[#B8D8E0] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
-                  <div class="flex items-center justify-between text-[11px] font-bold text-[#527987]">
+                <div onclick="switchLifeTab('habits')" class="bg-[#FFF9F6]/90 hover:bg-white p-3 rounded-2xl border border-[#BABDB2] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#6F7C6B]">
                     <span>Thói quen</span>
-                    <i data-lucide="flame" class="w-3.5 h-3.5 text-[#FF7235]"></i>
+                    <i data-lucide="flame" class="w-3.5 h-3.5 text-[#D05D0A]"></i>
                   </div>
-                  <div class="text-sm font-extrabold text-[#1E3D47] mt-2" id="dashPulseHabits">0/0 đã làm</div>
-                  <div class="text-[10px] text-[#FF7235] font-semibold mt-0.5" id="dashPulseHabitsSub">Chuỗi liên tiếp</div>
+                  <div class="text-sm font-extrabold text-[#352116] mt-2" id="dashPulseHabits">0/0 đã làm</div>
+                  <div class="text-[10px] text-[#D05D0A] font-semibold mt-0.5" id="dashPulseHabitsSub">Chuỗi liên tiếp</div>
                 </div>
 
                 <!-- Mood pulse -->
-                <div onclick="switchLifeTab('journal')" class="bg-[#FFFDFB]/90 hover:bg-white p-3 rounded-2xl border border-[#B8D8E0] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
-                  <div class="flex items-center justify-between text-[11px] font-bold text-[#527987]">
+                <div onclick="switchLifeTab('journal')" class="bg-[#FFF9F6]/90 hover:bg-white p-3 rounded-2xl border border-[#BABDB2] shadow-2xs hover:shadow-sm cursor-pointer transition flex flex-col justify-between">
+                  <div class="flex items-center justify-between text-[11px] font-bold text-[#6F7C6B]">
                     <span>Tâm trạng</span>
-                    <i data-lucide="smile" class="w-3.5 h-3.5 text-[#FF7235]"></i>
+                    <i data-lucide="smile" class="w-3.5 h-3.5 text-[#E7A366]"></i>
                   </div>
-                  <div class="text-sm font-extrabold text-[#1E3D47] mt-2 truncate" id="dashPulseMood">Tuyệt vời</div>
-                  <div class="text-[10px] text-[#527987] mt-0.5">Nhật ký hôm nay</div>
+                  <div class="text-sm font-extrabold text-[#352116] mt-2 truncate" id="dashPulseMood">Tuyệt vời</div>
+                  <div class="text-[10px] text-[#6F7C6B] mt-0.5">Nhật ký hôm nay</div>
                 </div>
               </div>
             </div>
@@ -400,16 +400,16 @@
             <div class="lg:col-span-7 space-y-6">
 
               <!-- Card: Việc Cần Làm Hôm Nay -->
-              <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs">
+              <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs">
                 <div class="flex items-center justify-between mb-4">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="check-square" class="w-4 h-4 text-[#6DB5CA]"></i>
+                    <i data-lucide="check-square" class="w-4 h-4 text-[#3E5247]"></i>
                     <div>
-                      <h3 class="font-bold text-[#1E3D47] text-sm tracking-tight">Việc Ưu Tiên Cần Làm</h3>
+                      <h3 class="font-bold text-[#352116] text-sm tracking-tight">Việc Ưu Tiên Cần Làm</h3>
                       
                     </div>
                   </div>
-                  <button onclick="switchLifeTab('todos')" class="text-xs font-bold text-[#6DB5CA] hover:text-[#6DB5CA] hover:underline flex items-center gap-1 cursor-pointer">
+                  <button onclick="switchLifeTab('todos')" class="text-xs font-bold text-[#6F7C6B] hover:text-[#3E5247] hover:underline flex items-center gap-1 cursor-pointer">
                     <span>Xem tất cả</span>
                     <i data-lucide="arrow-right" class="w-3 h-3"></i>
                   </button>
@@ -421,11 +421,11 @@
                 </div>
 
                 <!-- Quick add To-do directly from Dashboard -->
-                <div class="flex items-center gap-2 pt-2 border-t border-[#B8D8E0]/50">
+                <div class="flex items-center gap-2 pt-2 border-t border-[#BABDB2]/50">
                   <input type="text" id="dashQuickTodoTitle" placeholder="Thêm nhanh việc cần làm... (nhấn Enter)" 
-                         class="flex-1 bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs text-[#1E3D47] placeholder-[#7FA3B0] focus:bg-[#FFFDFB] focus:outline-none focus:ring-1 focus:ring-[#6DB5CA]"
+                         class="flex-1 bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs text-[#352116] placeholder-[#9BA59D] focus:bg-[#FFF9F6] focus:outline-none focus:ring-1 focus:ring-[#6F7C6B]"
                          onkeydown="if(event.key==='Enter') quickAddTodoFromDash()">
-                  <button onclick="quickAddTodoFromDash()" class="px-3 py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] text-xs font-bold hover:bg-[#529BB0] transition cursor-pointer flex items-center gap-1">
+                  <button onclick="quickAddTodoFromDash()" class="px-3 py-2 rounded-xl bg-[#3E5247] text-[#FFF9F6] text-xs font-bold hover:bg-[#2F4037] transition cursor-pointer flex items-center gap-1">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span class="hidden sm:inline">Thêm</span>
                   </button>
@@ -433,31 +433,31 @@
               </div>
 
               <!-- Card: Check-in Thói Quen Hôm Nay -->
-              <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs">
+              <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs">
                 <div class="flex items-center justify-between mb-4">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="flame" class="w-4 h-4 text-[#FF7235]"></i>
+                    <i data-lucide="flame" class="w-4 h-4 text-[#D05D0A]"></i>
                     <div>
-                      <h3 class="font-bold text-[#1E3D47] text-sm tracking-tight">Thói Quen Cần Rèn Luyện Hôm Nay</h3>
+                      <h3 class="font-bold text-[#352116] text-sm tracking-tight">Thói Quen Cần Rèn Luyện Hôm Nay</h3>
                       
                     </div>
                   </div>
-                  <button onclick="switchLifeTab('habits')" class="text-xs font-bold text-[#6DB5CA] hover:text-[#6DB5CA] hover:underline flex items-center gap-1 cursor-pointer">
+                  <button onclick="switchLifeTab('habits')" class="text-xs font-bold text-[#6F7C6B] hover:text-[#3E5247] hover:underline flex items-center gap-1 cursor-pointer">
                     <span>Lịch & Biểu đồ</span>
                     <i data-lucide="arrow-right" class="w-3 h-3"></i>
                   </button>
                 </div>
 
                 <!-- Progress Bar -->
-                <div class="mb-4 bg-[#FCF5EF] rounded-xl p-3 border border-[#B8D8E0]/60 flex items-center justify-between">
+                <div class="mb-4 bg-[#FFF0E9] rounded-xl p-3 border border-[#BABDB2]/60 flex items-center justify-between">
                   <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-[#1E3D47]">Tiến độ hôm nay:</span>
-                    <span id="dashHabitsRateBadge" class="text-xs font-bold text-[#6DB5CA]">0%</span>
+                    <span class="text-xs font-bold text-[#352116]">Tiến độ hôm nay:</span>
+                    <span id="dashHabitsRateBadge" class="text-xs font-bold text-[#6F7C6B]">0%</span>
                   </div>
-                  <div class="w-1/2 bg-[#E6F1F4] h-2 rounded-full overflow-hidden">
-                    <div id="dashHabitsProgressBar" class="bg-[#6DB5CA] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                  <div class="w-1/2 bg-[#F2E4DC] h-2 rounded-full overflow-hidden">
+                    <div id="dashHabitsProgressBar" class="bg-[#6F7C6B] h-full rounded-full transition-all duration-500" style="width: 0%"></div>
                   </div>
-                  <span id="dashHabitsFraction" class="text-xs font-semibold text-[#527987]">0/0</span>
+                  <span id="dashHabitsFraction" class="text-xs font-semibold text-[#6F7C6B]">0/0</span>
                 </div>
 
                 <!-- Habits List -->
@@ -472,55 +472,55 @@
             <div class="lg:col-span-5 space-y-6">
 
               <!-- Card: Tài Chính Tháng -->
-              <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs">
+              <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs">
                 <div class="flex items-center justify-between mb-4">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="wallet" class="w-4 h-4 text-[#6DB5CA]"></i>
+                    <i data-lucide="wallet" class="w-4 h-4 text-[#6F7C6B]"></i>
                     <div>
-                      <h3 class="font-bold text-[#1E3D47] text-sm tracking-tight">Tài Chính Gần Nhất</h3>
-                      <p class="text-[11px] text-[#527987]" id="dashFinanceMonthLabel">Tháng 10/2026</p>
+                      <h3 class="font-bold text-[#352116] text-sm tracking-tight">Tài Chính Gần Nhất</h3>
+                      <p class="text-[11px] text-[#6F7C6B]" id="dashFinanceMonthLabel">Tháng 10/2026</p>
                     </div>
                   </div>
-                  <button onclick="switchLifeTab('finance')" class="text-xs font-bold text-[#6DB5CA] hover:text-[#6DB5CA] hover:underline flex items-center gap-1 cursor-pointer">
+                  <button onclick="switchLifeTab('finance')" class="text-xs font-bold text-[#6F7C6B] hover:text-[#3E5247] hover:underline flex items-center gap-1 cursor-pointer">
                     <span>Chi tiết</span>
                     <i data-lucide="arrow-right" class="w-3 h-3"></i>
                   </button>
                 </div>
 
                 <!-- 3 Metric pills -->
-                <div class="grid grid-cols-3 gap-2.5 p-3 rounded-xl bg-[#FCF5EF] border border-[#B8D8E0]/60 mb-4">
+                <div class="grid grid-cols-3 gap-2.5 p-3 rounded-xl bg-[#FFF0E9] border border-[#BABDB2]/60 mb-4">
                   <div>
-                    <div class="text-[10px] font-bold text-[#527987] uppercase">Thu</div>
-                    <div class="text-xs sm:text-sm font-extrabold text-[#6DB5CA] truncate" id="dashFinIncome">0 ₫</div>
+                    <div class="text-[10px] font-bold text-[#6F7C6B] uppercase">Thu</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-[#6F7C6B] truncate" id="dashFinIncome">0 ₫</div>
                   </div>
                   <div>
-                    <div class="text-[10px] font-bold text-[#527987] uppercase">Chi</div>
-                    <div class="text-xs sm:text-sm font-extrabold text-[#FF7235] truncate" id="dashFinExpense">0 ₫</div>
+                    <div class="text-[10px] font-bold text-[#6F7C6B] uppercase">Chi</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-[#D05D0A] truncate" id="dashFinExpense">0 ₫</div>
                   </div>
                   <div>
-                    <div class="text-[10px] font-bold text-[#527987] uppercase">Số Dư</div>
-                    <div class="text-xs sm:text-sm font-extrabold text-[#1E3D47] truncate" id="dashFinBalance">0 ₫</div>
+                    <div class="text-[10px] font-bold text-[#6F7C6B] uppercase">Số Dư</div>
+                    <div class="text-xs sm:text-sm font-extrabold text-[#352116] truncate" id="dashFinBalance">0 ₫</div>
                   </div>
                 </div>
 
                 <!-- Recent Transactions list -->
-                <div class="text-xs font-bold text-[#527987] uppercase tracking-wider mb-2">Giao dịch gần đây</div>
+                <div class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider mb-2">Giao dịch gần đây</div>
                 <div id="dashRecentTransList" class="space-y-2">
                   <!-- Populated by JS -->
                 </div>
               </div>
 
               <!-- Card: Nhật Ký & Cảm Xúc -->
-              <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs">
+              <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="book-open" class="w-4 h-4 text-[#FF7235]"></i>
+                    <i data-lucide="book-open" class="w-4 h-4 text-[#E7A366]"></i>
                     <div>
-                      <h3 class="font-bold text-[#1E3D47] text-sm tracking-tight">Nhật Ký Hôm Nay</h3>
+                      <h3 class="font-bold text-[#352116] text-sm tracking-tight">Nhật Ký Hôm Nay</h3>
                       
                     </div>
                   </div>
-                  <button onclick="switchLifeTab('journal')" class="text-xs font-bold text-[#6DB5CA] hover:text-[#6DB5CA] hover:underline flex items-center gap-1 cursor-pointer">
+                  <button onclick="switchLifeTab('journal')" class="text-xs font-bold text-[#6F7C6B] hover:text-[#3E5247] hover:underline flex items-center gap-1 cursor-pointer">
                     <span>Mở nhật ký</span>
                     <i data-lucide="arrow-right" class="w-3 h-3"></i>
                   </button>
@@ -532,16 +532,16 @@
               </div>
 
               <!-- Card: Ghi Chú Đã Ghim (Second Brain) -->
-              <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs">
+              <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs">
                 <div class="flex items-center justify-between mb-3">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="sticky-note" class="w-4 h-4 text-[#2B677A]"></i>
+                    <i data-lucide="sticky-note" class="w-4 h-4 text-[#3E5247]"></i>
                     <div>
-                      <h3 class="font-bold text-[#1E3D47] text-sm tracking-tight">Ghi Chú Nổi Bật</h3>
+                      <h3 class="font-bold text-[#352116] text-sm tracking-tight">Ghi Chú Nổi Bật</h3>
                       
                     </div>
                   </div>
-                  <button onclick="switchLifeTab('notes')" class="text-xs font-bold text-[#6DB5CA] hover:text-[#6DB5CA] hover:underline flex items-center gap-1 cursor-pointer">
+                  <button onclick="switchLifeTab('notes')" class="text-xs font-bold text-[#6F7C6B] hover:text-[#3E5247] hover:underline flex items-center gap-1 cursor-pointer">
                     <span>Kho tri thức</span>
                     <i data-lucide="arrow-right" class="w-3 h-3"></i>
                   </button>
@@ -565,52 +565,52 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
       
       <!-- Total Expense -->
-      <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Tổng Chi Tiêu</span>
-          <div class="w-10 h-10 rounded-xl bg-[#FFF1EB] border border-[#FFD6C4] text-[#FF7235] flex items-center justify-center">
+          <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Tổng Chi Tiêu</span>
+          <div class="w-10 h-10 rounded-xl bg-[#FCEEED] border border-[#F7D9C4] text-[#D05D0A] flex items-center justify-center">
             <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
           </div>
         </div>
-        <div class="text-2xl sm:text-[28px] font-extrabold text-[#FF7235] tabular-nums tracking-tight my-1" id="cardTotalExpense">0 ₫</div>
-        <div class="mt-3 flex items-center gap-2 text-xs text-[#FF7235] font-semibold">
-          <span class="w-2 h-2 rounded-full bg-[#FF7235] shrink-0"></span>
+        <div class="text-2xl sm:text-[28px] font-extrabold text-[#D05D0A] tabular-nums tracking-tight my-1" id="cardTotalExpense">0 ₫</div>
+        <div class="mt-3 flex items-center gap-2 text-xs text-[#D05D0A] font-semibold">
+          <span class="w-2 h-2 rounded-full bg-[#D05D0A] shrink-0"></span>
           <span id="cardExpenseCount">0 giao dịch chi</span>
         </div>
       </div>
 
       <!-- Total Income -->
-      <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Tổng Thu Nhập</span>
-          <div class="w-10 h-10 rounded-xl bg-[#EBF5F8] border border-[#B8D8E0] text-[#6DB5CA] flex items-center justify-center">
+          <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Tổng Thu Nhập</span>
+          <div class="w-10 h-10 rounded-xl bg-[#EEF1ED] border border-[#CFD5CE] text-[#6F7C6B] flex items-center justify-center">
             <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
           </div>
         </div>
-        <div class="text-2xl sm:text-[28px] font-extrabold text-[#6DB5CA] tabular-nums tracking-tight my-1" id="cardTotalIncome">0 ₫</div>
-        <div class="mt-3 flex items-center gap-2 text-xs text-[#6DB5CA] font-semibold">
-          <span class="w-2 h-2 rounded-full bg-[#6DB5CA] shrink-0"></span>
+        <div class="text-2xl sm:text-[28px] font-extrabold text-[#6F7C6B] tabular-nums tracking-tight my-1" id="cardTotalIncome">0 ₫</div>
+        <div class="mt-3 flex items-center gap-2 text-xs text-[#6F7C6B] font-semibold">
+          <span class="w-2 h-2 rounded-full bg-[#6F7C6B] shrink-0"></span>
           <span id="cardIncomeCount">Tiền vào tài khoản</span>
         </div>
       </div>
 
       <!-- Net Balance & Savings Progress -->
-      <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover relative overflow-hidden flex flex-col justify-between">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Số Dư Tích Lũy</span>
-          <div class="w-10 h-10 rounded-xl bg-[#FCF5EF] border border-[#D6E8EE] text-[#2B677A] flex items-center justify-center">
+          <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Số Dư Tích Lũy</span>
+          <div class="w-10 h-10 rounded-xl bg-[#FFF0E9] border border-[#E2E5DE] text-[#3E5247] flex items-center justify-center">
             <i data-lucide="wallet" class="w-5 h-5"></i>
           </div>
         </div>
-        <div class="text-2xl sm:text-[28px] font-extrabold text-[#1E3D47] tabular-nums tracking-tight my-1" id="cardNetBalance">0 ₫</div>
+        <div class="text-2xl sm:text-[28px] font-extrabold text-[#352116] tabular-nums tracking-tight my-1" id="cardNetBalance">0 ₫</div>
         <div class="mt-3 space-y-1.5">
-          <div class="flex items-center justify-between text-xs text-[#527987] font-medium">
+          <div class="flex items-center justify-between text-xs text-[#6F7C6B] font-medium">
             <span>Tỷ lệ tích lũy:</span>
-            <span id="cardSavingsRate" class="font-bold text-[#6DB5CA]">0%</span>
+            <span id="cardSavingsRate" class="font-bold text-[#6F7C6B]">0%</span>
           </div>
           <!-- Visual Mini Bar -->
-          <div class="w-full bg-[#E6F1F4] rounded-full h-1.5 overflow-hidden">
-            <div id="savingsProgressBar" class="bg-[#6DB5CA] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+          <div class="w-full bg-[#F2E4DC] rounded-full h-1.5 overflow-hidden">
+            <div id="savingsProgressBar" class="bg-[#6F7C6B] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
         </div>
       </div>
@@ -621,20 +621,20 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
       <!-- Left: Donut Chart - Category Breakdown (5 Cols) -->
-      <div class="lg:col-span-5 bg-[#FFFDFB] p-5 rounded-2xl border border-[#B8D8E0] shadow-2xs flex flex-col justify-between">
+      <div class="lg:col-span-5 bg-[#FFF9F6] p-5 rounded-2xl border border-[#BABDB2] shadow-2xs flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-1">
             <div>
-              <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Phân Bổ Chi Tiêu</h3>
-              <p class="text-xs text-[#527987]">Tỷ lệ theo từng danh mục</p>
+              <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Phân Bổ Chi Tiêu</h3>
+              <p class="text-xs text-[#6F7C6B]">Tỷ lệ theo từng danh mục</p>
             </div>
-            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#E6F1F4] text-[#527987] font-semibold border border-[#B8D8E0]" id="pieChartMonthLabel">Tháng này</span>
+            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#F2E4DC] text-[#6F7C6B] font-semibold border border-[#BABDB2]" id="pieChartMonthLabel">Tháng này</span>
           </div>
 
           <!-- Chart Canvas Container -->
           <div class="relative h-56 flex items-center justify-center my-2">
             <canvas id="categoryPieChart"></canvas>
-            <div id="pieNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#7FA3B0]">
+            <div id="pieNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#9BA59D]">
               <i data-lucide="pie-chart" class="w-8 h-8 mb-1.5 opacity-40"></i>
               <span class="text-xs">Chưa có giao dịch chi tiêu</span>
             </div>
@@ -642,26 +642,26 @@
         </div>
 
         <!-- Category Legends / Quick Breakdown List -->
-        <div class="border-t border-[#B8D8E0]/60 pt-3 max-h-44 overflow-y-auto space-y-1.5 pr-1" id="categoryLegendList">
+        <div class="border-t border-[#BABDB2]/60 pt-3 max-h-44 overflow-y-auto space-y-1.5 pr-1" id="categoryLegendList">
           <!-- Dynamic category list items -->
         </div>
       </div>
 
       <!-- Right: Trends with Tab Switching (Weekly vs Monthly) (7 Cols) -->
-      <div class="lg:col-span-7 bg-[#FFFDFB] p-5 rounded-2xl border border-[#B8D8E0] shadow-2xs flex flex-col justify-between">
+      <div class="lg:col-span-7 bg-[#FFF9F6] p-5 rounded-2xl border border-[#BABDB2] shadow-2xs flex flex-col justify-between">
         <div>
           <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
             <div>
-              <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight" id="trendChartHeaderTitle">Tiến Độ Chi Tiêu Theo Tuần</h3>
-              <p class="text-xs text-[#527987]" id="trendChartHeaderSubtitle">Theo dõi nhịp độ thu - chi các tuần trong tháng</p>
+              <h3 class="font-extrabold text-base text-[#352116] tracking-tight" id="trendChartHeaderTitle">Tiến Độ Chi Tiêu Theo Tuần</h3>
+              <p class="text-xs text-[#6F7C6B]" id="trendChartHeaderSubtitle">Theo dõi nhịp độ thu - chi các tuần trong tháng</p>
             </div>
             
             <!-- Segmented Tab Switcher -->
-            <div class="flex items-center bg-[#E6F1F4] p-0.5 rounded-xl border border-[#B8D8E0] text-xs">
-              <button onclick="switchChartTab('weekly')" id="tabWeeklyBtn" class="px-2.5 py-1 rounded-lg font-bold bg-[#FFFDFB] text-[#1E3D47] shadow-2xs transition">
+            <div class="flex items-center bg-[#F2E4DC] p-0.5 rounded-xl border border-[#BABDB2] text-xs">
+              <button onclick="switchChartTab('weekly')" id="tabWeeklyBtn" class="px-2.5 py-1 rounded-lg font-bold bg-[#FFF9F6] text-[#352116] shadow-2xs transition">
                 Theo tuần
               </button>
-              <button onclick="switchChartTab('monthly')" id="tabMonthlyBtn" class="px-2.5 py-1 rounded-lg font-semibold text-[#527987] hover:text-[#1E3D47] transition">
+              <button onclick="switchChartTab('monthly')" id="tabMonthlyBtn" class="px-2.5 py-1 rounded-lg font-semibold text-[#6F7C6B] hover:text-[#352116] transition">
                 Theo tháng
               </button>
             </div>
@@ -670,7 +670,7 @@
           <!-- Chart Canvas: Weekly View -->
           <div id="weeklyChartContainer" class="relative h-64 mt-2">
             <canvas id="weeklyBarChart"></canvas>
-            <div id="weeklyNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#7FA3B0]">
+            <div id="weeklyNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#9BA59D]">
               <i data-lucide="bar-chart-2" class="w-8 h-8 mb-1.5 opacity-40"></i>
               <span class="text-xs">Chưa có dữ liệu tuần</span>
             </div>
@@ -679,7 +679,7 @@
           <!-- Chart Canvas: Monthly View (Initially Hidden) -->
           <div id="monthlyChartContainer" class="relative h-64 mt-2 hidden">
             <canvas id="monthlyTrendChart"></canvas>
-            <div id="monthlyNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#7FA3B0]">
+            <div id="monthlyNoData" class="hidden absolute inset-0 flex flex-col items-center justify-center text-[#9BA59D]">
               <i data-lucide="line-chart" class="w-8 h-8 mb-1.5 opacity-40"></i>
               <span class="text-xs">Chưa có đủ dữ liệu tháng</span>
             </div>
@@ -687,58 +687,58 @@
         </div>
 
         <!-- Bottom legend -->
-        <div class="mt-3 border-t border-[#B8D8E0]/60 pt-2.5 text-xs text-[#527987] flex items-center justify-between">
+        <div class="mt-3 border-t border-[#BABDB2]/60 pt-2.5 text-xs text-[#6F7C6B] flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#FF7235] inline-block"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#D05D0A] inline-block"></span>
               <span>Chi tiêu</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#6DB5CA] inline-block"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#6F7C6B] inline-block"></span>
               <span>Thu nhập</span>
             </div>
           </div>
-          <span id="monthlySummaryText" class="font-bold text-[#1E3D47] text-xs"></span>
+          <span id="monthlySummaryText" class="font-bold text-[#352116] text-xs"></span>
         </div>
       </div>
 
     </div>
 
     <!-- ================= 3-COLUMN CATEGORIZATION & REVIEW BOARD (PRIMARY VIEW) ================= -->
-    <div id="threeColumnsContainer" class="bg-[#FFFDFB] rounded-2xl border border-[#B8D8E0] shadow-2xs p-4 sm:p-5 space-y-4">
+    <div id="threeColumnsContainer" class="bg-[#FFF9F6] rounded-2xl border border-[#BABDB2] shadow-2xs p-4 sm:p-5 space-y-4">
       
       <!-- Board Header & View Switcher -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#B8D8E0]/70">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#BABDB2]/70">
         <div>
           <div class="flex items-center gap-2">
-            <h3 class="font-extrabold text-base sm:text-lg text-[#1E3D47] tracking-tight">Chi Tiết Phân Loại Giao Dịch (3 Cột)</h3>
-            <span id="columnsTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-[#E6F1F4] text-[#1E3D47] font-bold border border-[#B8D8E0]">0 mục</span>
+            <h3 class="font-extrabold text-base sm:text-lg text-[#352116] tracking-tight">Chi Tiết Phân Loại Giao Dịch (3 Cột)</h3>
+            <span id="columnsTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-[#F2E4DC] text-[#352116] font-bold border border-[#BABDB2]">0 mục</span>
           </div>
-          <p class="text-xs text-[#527987]">Mục AI tự đoán có độ chính xác dưới 65% ở cột giữa. Chọn danh mục để tự động chuyển sang cột tương ứng.</p>
+          <p class="text-xs text-[#6F7C6B]">Mục AI tự đoán có độ chính xác dưới 65% ở cột giữa. Chọn danh mục để tự động chuyển sang cột tương ứng.</p>
         </div>
 
         <!-- Controls: View Mode & Search -->
         <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <!-- Instant Search Box -->
           <div class="relative w-full sm:w-auto min-w-0 sm:min-w-[180px] flex-1">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-[#7FA3B0] absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input type="text" id="columnSearchInput" oninput="onColumnSearchChange()" placeholder="Tìm kiếm nhanh..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FCF5EF] rounded-xl border border-[#B8D8E0] focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] outline-none transition">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#9BA59D] absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="columnSearchInput" oninput="onColumnSearchChange()" placeholder="Tìm kiếm nhanh..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FFF0E9] rounded-xl border border-[#BABDB2] focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] outline-none transition">
           </div>
 
           <!-- Add manual transaction -->
-          <button onclick="openAddTransactionModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition shadow-2xs">
+          <button onclick="openAddTransactionModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition shadow-2xs">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
             <span>Thêm GD</span>
           </button>
 
           <!-- View Switcher -->
-          <div class="flex items-center bg-[#E6F1F4] p-0.5 rounded-xl border border-[#B8D8E0] text-xs">
-            <button onclick="switchMainView('columns')" id="btnViewColumns" class="btn-switch-columns px-2.5 py-1 rounded-lg font-bold bg-[#FFFDFB] text-[#1E3D47] shadow-2xs transition flex items-center gap-1.5">
-              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+          <div class="flex items-center bg-[#F2E4DC] p-0.5 rounded-xl border border-[#BABDB2] text-xs">
+            <button onclick="switchMainView('columns')" id="btnViewColumns" class="btn-switch-columns px-2.5 py-1 rounded-lg font-bold bg-[#FFF9F6] text-[#352116] shadow-2xs transition flex items-center gap-1.5">
+              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
               <span>3 Cột</span>
             </button>
-            <button onclick="switchMainView('table')" id="btnViewTable" class="btn-switch-table px-2.5 py-1 rounded-lg font-semibold text-[#527987] hover:text-[#1E3D47] transition flex items-center gap-1.5">
-              <i data-lucide="table" class="w-3.5 h-3.5 text-[#527987]"></i>
+            <button onclick="switchMainView('table')" id="btnViewTable" class="btn-switch-table px-2.5 py-1 rounded-lg font-semibold text-[#6F7C6B] hover:text-[#352116] transition flex items-center gap-1.5">
+              <i data-lucide="table" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
               <span>Dạng Bảng</span>
             </button>
           </div>
@@ -746,14 +746,14 @@
       </div>
 
       <!-- Mobile Kanban Column Switcher (Visible on Phones < 768px only) -->
-      <div class="md:hidden flex items-center bg-[#E6F1F4] p-1 rounded-2xl border border-[#B8D8E0] mb-4" id="mobileKanbanTabSwitcher">
-        <button onclick="switchMobileKanbanCol('unclassified')" id="mColBtn_unclassified" class="flex-1 py-2 text-xs font-bold rounded-xl transition bg-[#6DB5CA] text-[#FFFDFB] shadow-xs cursor-pointer">
-          Chưa duyệt <span id="mColBadge_unclassified" class="text-[10px] px-1.5 py-0.5 rounded-full bg-[#FF7235] text-white ml-1">0</span>
+      <div class="md:hidden flex items-center bg-[#F2E4DC] p-1 rounded-2xl border border-[#BABDB2] mb-4" id="mobileKanbanTabSwitcher">
+        <button onclick="switchMobileKanbanCol('unclassified')" id="mColBtn_unclassified" class="flex-1 py-2 text-xs font-bold rounded-xl transition bg-[#3E5247] text-[#FFF9F6] shadow-xs cursor-pointer">
+          Chưa duyệt <span id="mColBadge_unclassified" class="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E7A366] text-white ml-1">0</span>
         </button>
-        <button onclick="switchMobileKanbanCol('categorized')" id="mColBtn_categorized" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-[#527987] hover:text-[#1E3D47] cursor-pointer">
+        <button onclick="switchMobileKanbanCol('categorized')" id="mColBtn_categorized" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-[#6F7C6B] hover:text-[#352116] cursor-pointer">
           Đã phân loại
         </button>
-        <button onclick="switchMobileKanbanCol('other')" id="mColBtn_other" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-[#527987] hover:text-[#1E3D47] cursor-pointer">
+        <button onclick="switchMobileKanbanCol('other')" id="mColBtn_other" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-[#6F7C6B] hover:text-[#352116] cursor-pointer">
           Mục khác
         </button>
       </div>
@@ -762,19 +762,19 @@
       <div id="kanbanGrid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
         <!-- CỘT 1: ĐÃ PHÂN LOẠI -->
-        <div id="kanbanCol_categorized" class="bg-[#FCF5EF] rounded-2xl border border-[#B8D8E0] p-4 flex flex-col kanban-column-body shadow-2xs hidden md:flex">
+        <div id="kanbanCol_categorized" class="bg-[#FFF9F6] rounded-2xl border border-[#BABDB2] p-4 flex flex-col kanban-column-body shadow-2xs hidden md:flex">
           <!-- Column Header -->
-          <div class="pb-3 border-b border-[#B8D8E0] shrink-0 space-y-2">
+          <div class="pb-3 border-b border-[#BABDB2] shrink-0 space-y-2">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#6DB5CA] shadow-xs flex items-center justify-center text-[#FFFDFB] text-[9px] font-bold">✓</span>
-                <h4 class="font-extrabold text-xs text-[#1E3D47] tracking-wide uppercase">ĐÃ PHÂN LOẠI</h4>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#6F7C6B] shadow-xs flex items-center justify-center text-[#FFF9F6] text-[9px] font-bold">✓</span>
+                <h4 class="font-extrabold text-xs text-[#352116] tracking-wide uppercase">ĐÃ PHÂN LOẠI</h4>
               </div>
-              <span id="colCountCategorized" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#EBF5F8] text-[#529BB0] border border-[#B8D8E0]">0 giao dịch</span>
+              <span id="colCountCategorized" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#EEF1ED] text-[#3E5247] border border-[#CFD5CE]">0 giao dịch</span>
             </div>
-            <div class="flex items-center justify-between text-xs bg-[#FFFDFB] border border-[#B8D8E0] rounded-xl px-3 py-1.5 shadow-2xs">
-              <span class="text-[#527987] font-semibold text-[11px]">Tổng tiền chi tiêu:</span>
-              <span id="colAmountCategorized" class="font-extrabold text-[#1E3D47] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
+            <div class="flex items-center justify-between text-xs bg-[#FFF9F6] border border-[#BABDB2] rounded-xl px-3 py-1.5 shadow-2xs">
+              <span class="text-[#6F7C6B] font-semibold text-[11px]">Tổng tiền chi tiêu:</span>
+              <span id="colAmountCategorized" class="font-extrabold text-[#352116] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
             </div>
           </div>
 
@@ -785,19 +785,19 @@
         </div>
 
         <!-- CỘT 2: CHƯA PHÂN LOẠI (< 65%) -->
-        <div id="kanbanCol_unclassified" class="bg-[#FCF5EF] rounded-2xl border border-[#FF7235]/80 p-4 flex flex-col kanban-column-body shadow-xs flex">
+        <div id="kanbanCol_unclassified" class="bg-[#FFF9F6] rounded-2xl border border-[#E7A366]/80 p-4 flex flex-col kanban-column-body shadow-xs flex">
           <!-- Column Header -->
-          <div class="pb-3 border-b border-[#FF7235]/50 shrink-0 space-y-2">
+          <div class="pb-3 border-b border-[#E7A366]/50 shrink-0 space-y-2">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#FF7235] shadow-xs animate-pulse flex items-center justify-center text-[#FFFDFB] text-[9px] font-bold">!</span>
-                <h4 class="font-extrabold text-xs text-[#D95318] tracking-wide uppercase">CHƯA PHÂN LOẠI (&lt; 65%)</h4>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#E7A366] shadow-xs animate-pulse flex items-center justify-center text-[#FFF9F6] text-[9px] font-bold">!</span>
+                <h4 class="font-extrabold text-xs text-[#9E4405] tracking-wide uppercase">CHƯA PHÂN LOẠI (&lt; 65%)</h4>
               </div>
-              <span id="colCountUnclassified" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#FFF3EC] text-[#D95318] border border-[#FFBFA3]">0 cần chọn</span>
+              <span id="colCountUnclassified" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#FCF0E3] text-[#9E4405] border border-[#E7A366]">0 cần chọn</span>
             </div>
-            <div class="flex items-center justify-between text-xs bg-[#FFF3EC] border border-[#FFBFA3] rounded-xl px-3 py-1.5 shadow-2xs">
-              <span class="text-[#D95318] font-semibold text-[11px]">Tổng tiền cần phân loại:</span>
-              <span id="colAmountUnclassified" class="font-extrabold text-[#D95318] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
+            <div class="flex items-center justify-between text-xs bg-[#FCF0E3] border border-[#E7A366] rounded-xl px-3 py-1.5 shadow-2xs">
+              <span class="text-[#9E4405] font-semibold text-[11px]">Tổng tiền cần phân loại:</span>
+              <span id="colAmountUnclassified" class="font-extrabold text-[#9E4405] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
             </div>
           </div>
 
@@ -808,19 +808,19 @@
         </div>
 
         <!-- CỘT 3: KHÁC -->
-        <div id="kanbanCol_other" class="bg-[#FCF5EF] rounded-2xl border border-[#B8D8E0] p-4 flex flex-col kanban-column-body shadow-2xs hidden md:flex">
+        <div id="kanbanCol_other" class="bg-[#FFF0E9] rounded-2xl border border-[#BABDB2] p-4 flex flex-col kanban-column-body shadow-2xs hidden md:flex">
           <!-- Column Header -->
-          <div class="pb-3 border-b border-[#B8D8E0] shrink-0 space-y-2">
+          <div class="pb-3 border-b border-[#BABDB2] shrink-0 space-y-2">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="w-3.5 h-3.5 rounded-full bg-[#527987] shadow-xs flex items-center justify-center text-[#FFFDFB] text-[9px] font-bold">•</span>
-                <h4 class="font-extrabold text-xs text-[#3A5F6D] tracking-wide uppercase">MỤC KHÁC</h4>
+                <span class="w-3.5 h-3.5 rounded-full bg-[#6F7C6B] shadow-xs flex items-center justify-center text-[#FFF9F6] text-[9px] font-bold">•</span>
+                <h4 class="font-extrabold text-xs text-[#3E5247] tracking-wide uppercase">MỤC KHÁC</h4>
               </div>
-              <span id="colCountOther" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#E6F1F4] text-[#3A5F6D] border border-[#B8D8E0]">0 giao dịch</span>
+              <span id="colCountOther" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#F2E4DC] text-[#3E5247] border border-[#BABDB2]">0 giao dịch</span>
             </div>
-            <div class="flex items-center justify-between text-xs bg-[#FFFDFB] border border-[#B8D8E0] rounded-xl px-3 py-1.5 shadow-2xs">
-              <span class="text-[#527987] font-semibold text-[11px]">Tổng tiền mục khác:</span>
-              <span id="colAmountOther" class="font-extrabold text-[#1E3D47] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
+            <div class="flex items-center justify-between text-xs bg-[#FFF9F6] border border-[#BABDB2] rounded-xl px-3 py-1.5 shadow-2xs">
+              <span class="text-[#6F7C6B] font-semibold text-[11px]">Tổng tiền mục khác:</span>
+              <span id="colAmountOther" class="font-extrabold text-[#352116] tabular-nums text-xs sm:text-[13px]">0 ₫</span>
             </div>
           </div>
 
@@ -835,46 +835,46 @@
     </div>
 
     <!-- ================= FULL TABLE VIEW (OPTIONAL ALTERNATIVE VIEW) ================= -->
-    <div id="tableViewContainer" class="hidden bg-[#FFFDFB] rounded-2xl border border-[#B8D8E0] shadow-2xs overflow-hidden">
+    <div id="tableViewContainer" class="hidden bg-[#FFF9F6] rounded-2xl border border-[#BABDB2] shadow-2xs overflow-hidden">
       
       <!-- Table Controls Header -->
-      <div class="p-4 border-b border-[#B8D8E0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="p-4 border-b border-[#BABDB2] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div class="flex items-center gap-2">
-            <h3 class="font-extrabold text-base sm:text-lg text-[#1E3D47] tracking-tight">Bảng Toàn Bộ Giao Dịch</h3>
-            <span id="tableCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-[#E6F1F4] text-[#1E3D47] font-bold border border-[#B8D8E0]">0 mục</span>
+            <h3 class="font-extrabold text-base sm:text-lg text-[#352116] tracking-tight">Bảng Toàn Bộ Giao Dịch</h3>
+            <span id="tableCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-[#F2E4DC] text-[#352116] font-bold border border-[#BABDB2]">0 mục</span>
           </div>
-          <p class="text-xs text-[#527987]">Xem dạng danh sách phẳng truyền thống với phân trang.</p>
+          <p class="text-xs text-[#6F7C6B]">Xem dạng danh sách phẳng truyền thống với phân trang.</p>
         </div>
 
         <!-- Filter Controls & View Switcher -->
         <div class="flex flex-wrap items-center gap-2">
           <!-- Instant Search Box -->
           <div class="relative min-w-[180px]">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-[#7FA3B0] absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input type="text" id="searchInput" oninput="onSearchChange()" placeholder="Tìm nội dung..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FCF5EF] rounded-xl border border-[#B8D8E0] focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] outline-none transition">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#9BA59D] absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="searchInput" oninput="onSearchChange()" placeholder="Tìm nội dung..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-[#FFF0E9] rounded-xl border border-[#BABDB2] focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] outline-none transition">
           </div>
 
           <!-- Type filter -->
-          <select id="typeFilter" onchange="onFilterChange()" class="py-1.5 px-2.5 text-xs bg-[#FCF5EF] rounded-xl border border-[#B8D8E0] font-semibold text-[#1E3D47] outline-none cursor-pointer">
+          <select id="typeFilter" onchange="onFilterChange()" class="py-1.5 px-2.5 text-xs bg-[#FFF0E9] rounded-xl border border-[#BABDB2] font-semibold text-[#352116] outline-none cursor-pointer">
             <option value="all">Tất cả loại</option>
             <option value="expense">Chi tiêu</option>
             <option value="income">Thu nhập</option>
           </select>
 
           <!-- Category filter -->
-          <select id="categoryFilter" onchange="onFilterChange()" class="py-1.5 px-2.5 text-xs bg-[#FCF5EF] rounded-xl border border-[#B8D8E0] font-semibold text-[#1E3D47] outline-none cursor-pointer">
+          <select id="categoryFilter" onchange="onFilterChange()" class="py-1.5 px-2.5 text-xs bg-[#FFF0E9] rounded-xl border border-[#BABDB2] font-semibold text-[#352116] outline-none cursor-pointer">
             <option value="all">Tất cả danh mục</option>
           </select>
 
           <!-- View Switcher in Table View -->
-          <div class="flex items-center bg-[#E6F1F4] p-0.5 rounded-xl border border-[#B8D8E0] text-xs">
-            <button onclick="switchMainView('columns')" id="btnViewColumnsTbl" class="btn-switch-columns px-2.5 py-1 rounded-lg font-semibold text-[#527987] hover:text-[#1E3D47] transition flex items-center gap-1.5">
-              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-[#527987]"></i>
+          <div class="flex items-center bg-[#F2E4DC] p-0.5 rounded-xl border border-[#BABDB2] text-xs">
+            <button onclick="switchMainView('columns')" id="btnViewColumnsTbl" class="btn-switch-columns px-2.5 py-1 rounded-lg font-semibold text-[#6F7C6B] hover:text-[#352116] transition flex items-center gap-1.5">
+              <i data-lucide="columns-3" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
               <span>3 Cột</span>
             </button>
-            <button onclick="switchMainView('table')" id="btnViewTableTbl" class="btn-switch-table px-2.5 py-1 rounded-lg font-bold bg-[#FFFDFB] text-[#1E3D47] shadow-2xs transition flex items-center gap-1.5">
-              <i data-lucide="table" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+            <button onclick="switchMainView('table')" id="btnViewTableTbl" class="btn-switch-table px-2.5 py-1 rounded-lg font-bold bg-[#FFF9F6] text-[#352116] shadow-2xs transition flex items-center gap-1.5">
+              <i data-lucide="table" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
               <span>Dạng Bảng</span>
             </button>
           </div>
@@ -885,7 +885,7 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left text-xs border-collapse">
           <thead>
-            <tr class="bg-[#FCF5EF] border-b border-[#B8D8E0] text-[#527987] font-bold uppercase tracking-wider text-[10px]">
+            <tr class="bg-[#FFF0E9] border-b border-[#BABDB2] text-[#6F7C6B] font-bold uppercase tracking-wider text-[10px]">
               <th class="py-3 px-4 w-28">Ngày</th>
               <th class="py-3 px-4">Nội Dung Giao Dịch</th>
               <th class="py-3 px-4 w-48">Danh Mục</th>
@@ -893,17 +893,17 @@
               <th class="py-3 px-4 text-center w-14"></th>
             </tr>
           </thead>
-          <tbody id="transactionTableBody" class="divide-y divide-[#E6F1F4]">
+          <tbody id="transactionTableBody" class="divide-y divide-[#F2E4DC]">
             <!-- Dynamic Rows -->
           </tbody>
         </table>
       </div>
 
       <!-- Table Footer & Pagination -->
-      <div class="p-3.5 border-t border-[#B8D8E0] bg-[#FCF5EF]/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-        <div class="flex items-center gap-2 text-[#527987]">
+      <div class="p-3.5 border-t border-[#BABDB2] bg-[#FFF0E9]/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 text-[#6F7C6B]">
           <span>Hiển thị</span>
-          <select id="pageSizeSelect" onchange="onPageSizeChange()" class="bg-[#FFFDFB] border border-[#B8D8E0] rounded-lg px-2 py-1 font-semibold text-[#1E3D47] outline-none">
+          <select id="pageSizeSelect" onchange="onPageSizeChange()" class="bg-[#FFF9F6] border border-[#BABDB2] rounded-lg px-2 py-1 font-semibold text-[#352116] outline-none">
             <option value="15">15 dòng</option>
             <option value="25" selected>25 dòng</option>
             <option value="50">50 dòng</option>
@@ -912,11 +912,11 @@
         </div>
 
         <div class="flex items-center gap-1.5" id="paginationButtons">
-          <button onclick="changePage(-1)" id="prevPageBtn" class="px-2.5 py-1 rounded-lg border border-[#B8D8E0] bg-[#FFFDFB] font-semibold text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] disabled:opacity-40 disabled:cursor-not-allowed transition">
+          <button onclick="changePage(-1)" id="prevPageBtn" class="px-2.5 py-1 rounded-lg border border-[#BABDB2] bg-[#FFF9F6] font-semibold text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] disabled:opacity-40 disabled:cursor-not-allowed transition">
             Trước
           </button>
-          <span id="pageNumbersContainer" class="flex items-center gap-1 font-bold text-[#1E3D47] px-2"></span>
-          <button onclick="changePage(1)" id="nextPageBtn" class="px-2.5 py-1 rounded-lg border border-[#B8D8E0] bg-[#FFFDFB] font-semibold text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] disabled:opacity-40 disabled:cursor-not-allowed transition">
+          <span id="pageNumbersContainer" class="flex items-center gap-1 font-bold text-[#352116] px-2"></span>
+          <button onclick="changePage(1)" id="nextPageBtn" class="px-2.5 py-1 rounded-lg border border-[#BABDB2] bg-[#FFF9F6] font-semibold text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] disabled:opacity-40 disabled:cursor-not-allowed transition">
             Sau
           </button>
         </div>
@@ -931,45 +931,45 @@
       <!-- 3 KPI Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
         <!-- Today Completion -->
-        <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover flex flex-col justify-between">
+        <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover flex flex-col justify-between">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Tỷ Lệ Xong Hôm Nay</span>
-            <div class="w-10 h-10 rounded-xl bg-[#EBF5F8] border border-[#B8D8E0] text-[#6DB5CA] flex items-center justify-center">
+            <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Tỷ Lệ Xong Hôm Nay</span>
+            <div class="w-10 h-10 rounded-xl bg-[#EEF1ED] border border-[#CFD5CE] text-[#6F7C6B] flex items-center justify-center">
               <i data-lucide="check-circle-2" class="w-5 h-5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-[28px] font-extrabold text-[#6DB5CA] tabular-nums tracking-tight my-1" id="todoKpiTodayRate">0%</div>
+          <div class="text-2xl sm:text-[28px] font-extrabold text-[#6F7C6B] tabular-nums tracking-tight my-1" id="todoKpiTodayRate">0%</div>
           <div class="mt-3 space-y-1.5">
-            <div class="flex items-center justify-between text-xs text-[#527987] font-semibold">
+            <div class="flex items-center justify-between text-xs text-[#6F7C6B] font-semibold">
               <span id="todoKpiTodayCount">0 / 0 việc hôm nay</span>
             </div>
-            <div class="w-full bg-[#E6F1F4] rounded-full h-1.5 overflow-hidden">
-              <div id="todoKpiProgressBar" class="bg-[#6DB5CA] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            <div class="w-full bg-[#F2E4DC] rounded-full h-1.5 overflow-hidden">
+              <div id="todoKpiProgressBar" class="bg-[#6F7C6B] h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
           </div>
         </div>
 
         <!-- Urgent Tasks -->
-        <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover flex flex-col justify-between">
+        <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover flex flex-col justify-between">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Việc Cần Làm Gấp</span>
-            <div class="w-10 h-10 rounded-xl bg-[#FFF1EB] border border-[#B8D8E0] text-[#FF7235] flex items-center justify-center">
+            <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Việc Cần Làm Gấp</span>
+            <div class="w-10 h-10 rounded-xl bg-[#FCEEED] border border-[#BABDB2] text-[#D05D0A] flex items-center justify-center">
               <i data-lucide="alert-circle" class="w-5 h-5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-[28px] font-extrabold text-[#FF7235] tabular-nums tracking-tight my-1" id="todoKpiUrgentCount">0</div>
+          <div class="text-2xl sm:text-[28px] font-extrabold text-[#D05D0A] tabular-nums tracking-tight my-1" id="todoKpiUrgentCount">0</div>
           
         </div>
 
         <!-- Week Completed Velocity -->
-        <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover flex flex-col justify-between">
+        <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover flex flex-col justify-between">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Năng Suất 7 Ngày Qua</span>
-            <div class="w-10 h-10 rounded-xl bg-[#FFF3EC] border border-[#B8D8E0] text-[#FF7235] flex items-center justify-center">
+            <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Năng Suất 7 Ngày Qua</span>
+            <div class="w-10 h-10 rounded-xl bg-[#FCF0E3] border border-[#BABDB2] text-[#E7A366] flex items-center justify-center">
               <i data-lucide="trending-up" class="w-5 h-5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-[28px] font-extrabold text-[#1E3D47] tabular-nums tracking-tight my-1" id="todoKpiWeekDone">0 việc</div>
+          <div class="text-2xl sm:text-[28px] font-extrabold text-[#352116] tabular-nums tracking-tight my-1" id="todoKpiWeekDone">0 việc</div>
           
         </div>
       </div>
@@ -977,11 +977,11 @@
       <!-- Tracking Charts Section (Chart.js) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <!-- Bar Chart: 7-day velocity -->
-        <div class="lg:col-span-8 bg-[#FFFDFB] p-5 rounded-2xl border border-[#B8D8E0] shadow-2xs flex flex-col justify-between">
+        <div class="lg:col-span-8 bg-[#FFF9F6] p-5 rounded-2xl border border-[#BABDB2] shadow-2xs flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
             <div class="flex items-center gap-2">
-              <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
-              <span class="text-[10px] font-bold text-[#527987] bg-[#E6F1F4] px-2 py-0.5 rounded-lg border border-[#B8D8E0]">7 ngày qua • Cột đôi</span>
+              <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
+              <span class="text-[10px] font-bold text-[#6F7C6B] bg-[#F2E4DC] px-2 py-0.5 rounded-lg border border-[#BABDB2]">7 ngày qua • Cột đôi</span>
             </div>
           </div>
           <div class="relative h-64 mt-2">
@@ -990,9 +990,9 @@
         </div>
 
         <!-- Donut: Category breakdown -->
-        <div class="lg:col-span-4 bg-[#FFFDFB] p-5 rounded-2xl border border-[#B8D8E0] shadow-2xs flex flex-col justify-between">
+        <div class="lg:col-span-4 bg-[#FFF9F6] p-5 rounded-2xl border border-[#BABDB2] shadow-2xs flex flex-col justify-between">
           <div class="mb-2">
-            <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Phân Bổ Theo Nhóm</h3>
+            <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Phân Bổ Theo Nhóm</h3>
             
           </div>
           <div class="relative h-64 flex items-center justify-center">
@@ -1002,50 +1002,50 @@
       </div>
 
       <!-- Quick Add & Task Board Area -->
-      <div class="bg-[#FFFDFB] rounded-3xl border border-[#B8D8E0] p-5 sm:p-6 shadow-xs space-y-5">
+      <div class="bg-[#FFF9F6] rounded-3xl border border-[#BABDB2] p-5 sm:p-6 shadow-xs space-y-5">
         <!-- Quick Add Input Bar -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#FCF5EF] p-2 rounded-2xl border border-[#B8D8E0]">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#FFF0E9] p-2 rounded-2xl border border-[#BABDB2]">
           <div class="flex items-center gap-2 flex-1 px-3">
-            <i data-lucide="plus" class="w-4 h-4 text-[#527987] shrink-0"></i>
-            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới... (Gõ tiêu đề và nhấn Enter)" class="w-full bg-transparent border-none text-xs font-semibold text-[#1E3D47] outline-none placeholder-[#7FA3B0]">
+            <i data-lucide="plus" class="w-4 h-4 text-[#6F7C6B] shrink-0"></i>
+            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới... (Gõ tiêu đề và nhấn Enter)" class="w-full bg-transparent border-none text-xs font-semibold text-[#352116] outline-none placeholder-[#9BA59D]">
           </div>
           <div class="flex items-center gap-2 shrink-0 flex-wrap">
-            <select id="todoQuickPriority" class="bg-[#FFFDFB] border border-[#B8D8E0] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#1E3D47] outline-none cursor-pointer">
+            <select id="todoQuickPriority" class="bg-[#FFF9F6] border border-[#BABDB2] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#352116] outline-none cursor-pointer">
               <option value="urgent">Khẩn cấp 🔴</option>
               <option value="high">Ưu tiên cao 🟡</option>
               <option value="normal" selected>Bình thường 🟢</option>
               <option value="low">Thấp ⚪</option>
             </select>
-            <select id="todoQuickCategory" class="bg-[#FFFDFB] border border-[#B8D8E0] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#1E3D47] outline-none cursor-pointer">
+            <select id="todoQuickCategory" class="bg-[#FFF9F6] border border-[#BABDB2] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#352116] outline-none cursor-pointer">
               <option value="Công việc">Công việc</option>
               <option value="Học tập">Học tập</option>
               <option value="Tài chính">Tài chính</option>
               <option value="Sức khỏe">Sức khỏe</option>
               <option value="Cá nhân">Cá nhân</option>
             </select>
-            <input type="date" id="todoQuickDate" class="bg-[#FFFDFB] border border-[#B8D8E0] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#1E3D47] outline-none cursor-pointer">
-            <button onclick="quickAddTodo(null)" class="px-4 py-1.5 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] text-xs font-bold transition shadow-xs cursor-pointer">
+            <input type="date" id="todoQuickDate" class="bg-[#FFF9F6] border border-[#BABDB2] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#352116] outline-none cursor-pointer">
+            <button onclick="quickAddTodo(null)" class="px-4 py-1.5 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] text-xs font-bold transition shadow-xs cursor-pointer">
               + Thêm
             </button>
           </div>
         </div>
 
         <!-- Filter Pills & View Switcher -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-b border-[#B8D8E0]/50 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-b border-[#BABDB2]/50 pb-4">
           <div class="flex items-center gap-1.5 flex-wrap">
-            <button onclick="setTodoFilter('all')" id="todoFilterBtn_all" class="px-3 py-1 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] shadow-2xs cursor-pointer">Tất cả</button>
-            <button onclick="setTodoFilter('today')" id="todoFilterBtn_today" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] border border-[#B8D8E0] cursor-pointer">Hôm nay</button>
-            <button onclick="setTodoFilter('week')" id="todoFilterBtn_week" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] border border-[#B8D8E0] cursor-pointer">Tuần này</button>
-            <button onclick="setTodoFilter('urgent')" id="todoFilterBtn_urgent" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] border border-[#B8D8E0] cursor-pointer">Khẩn cấp</button>
-            <button onclick="setTodoFilter('completed')" id="todoFilterBtn_completed" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] border border-[#B8D8E0] cursor-pointer">Đã hoàn thành</button>
+            <button onclick="setTodoFilter('all')" id="todoFilterBtn_all" class="px-3 py-1 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] shadow-2xs cursor-pointer">Tất cả</button>
+            <button onclick="setTodoFilter('today')" id="todoFilterBtn_today" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] border border-[#BABDB2] cursor-pointer">Hôm nay</button>
+            <button onclick="setTodoFilter('week')" id="todoFilterBtn_week" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] border border-[#BABDB2] cursor-pointer">Tuần này</button>
+            <button onclick="setTodoFilter('urgent')" id="todoFilterBtn_urgent" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] border border-[#BABDB2] cursor-pointer">Khẩn cấp</button>
+            <button onclick="setTodoFilter('completed')" id="todoFilterBtn_completed" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] border border-[#BABDB2] cursor-pointer">Đã hoàn thành</button>
           </div>
 
           <!-- View Switcher -->
-          <div class="inline-flex items-center bg-[#E6F1F4] p-1 rounded-xl border border-[#B8D8E0]">
-            <button onclick="setTodoView('list')" id="todoViewListBtn" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FFFDFB] text-[#1E3D47] shadow-2xs cursor-pointer">
+          <div class="inline-flex items-center bg-[#F2E4DC] p-1 rounded-xl border border-[#BABDB2]">
+            <button onclick="setTodoView('list')" id="todoViewListBtn" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FFF9F6] text-[#352116] shadow-2xs cursor-pointer">
               <i data-lucide="list" class="w-3.5 h-3.5 inline mr-1"></i> Danh sách
             </button>
-            <button onclick="setTodoView('kanban')" id="todoViewKanbanBtn" class="px-2.5 py-1 text-xs font-semibold text-[#527987] hover:text-[#1E3D47] cursor-pointer">
+            <button onclick="setTodoView('kanban')" id="todoViewKanbanBtn" class="px-2.5 py-1 text-xs font-semibold text-[#6F7C6B] hover:text-[#352116] cursor-pointer">
               <i data-lucide="columns-3" class="w-3.5 h-3.5 inline mr-1"></i> Bảng Kanban
             </button>
           </div>
@@ -1058,20 +1058,20 @@
 
         <!-- Kanban View Container -->
         <div id="todoKanbanContainer" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-[#FCF5EF] p-4 rounded-2xl border border-[#B8D8E0] space-y-3">
-            <div class="flex items-center justify-between font-extrabold text-xs text-[#1E3D47] border-b border-[#B8D8E0] pb-2">
+          <div class="bg-[#FFF0E9] p-4 rounded-2xl border border-[#BABDB2] space-y-3">
+            <div class="flex items-center justify-between font-extrabold text-xs text-[#352116] border-b border-[#BABDB2] pb-2">
               <span>📋 Cần làm (Pending)</span>
             </div>
             <div id="kanbanColPending" class="space-y-2"></div>
           </div>
-          <div class="bg-[#FFF3EC] p-4 rounded-2xl border border-[#B8D8E0] space-y-3">
-            <div class="flex items-center justify-between font-extrabold text-xs text-[#FF7235] border-b border-[#B8D8E0] pb-2">
+          <div class="bg-[#FCF0E3] p-4 rounded-2xl border border-[#BABDB2] space-y-3">
+            <div class="flex items-center justify-between font-extrabold text-xs text-[#E7A366] border-b border-[#BABDB2] pb-2">
               <span>⚡ Đang làm (In Progress)</span>
             </div>
             <div id="kanbanColInProgress" class="space-y-2"></div>
           </div>
-          <div class="bg-[#EBF5F8] p-4 rounded-2xl border border-[#B8D8E0] space-y-3">
-            <div class="flex items-center justify-between font-extrabold text-xs text-[#6DB5CA] border-b border-[#B8D8E0] pb-2">
+          <div class="bg-[#EEF1ED] p-4 rounded-2xl border border-[#BABDB2] space-y-3">
+            <div class="flex items-center justify-between font-extrabold text-xs text-[#6F7C6B] border-b border-[#BABDB2] pb-2">
               <span>✅ Đã hoàn thành (Done)</span>
             </div>
             <div id="kanbanColCompleted" class="space-y-2"></div>
@@ -1084,82 +1084,82 @@
     <section id="section-habits" class="space-y-6 hidden">
       <!-- 3 KPI Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
-        <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover flex flex-col justify-between">
+        <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover flex flex-col justify-between">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Chuỗi Kỷ Luật Dài Nhất</span>
-            <div class="w-10 h-10 rounded-xl bg-[#FFF3EC] border border-[#B8D8E0] text-[#FF7235] flex items-center justify-center">
-              <i data-lucide="flame" class="w-5 h-5 fill-[#FF7235]"></i>
+            <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Chuỗi Kỷ Luật Dài Nhất</span>
+            <div class="w-10 h-10 rounded-xl bg-[#FCF0E3] border border-[#BABDB2] text-[#D05D0A] flex items-center justify-center">
+              <i data-lucide="flame" class="w-5 h-5 fill-[#D05D0A]"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-[28px] font-extrabold text-[#FF7235] tabular-nums tracking-tight my-1" id="habitKpiMaxStreak">0 ngày</div>
+          <div class="text-2xl sm:text-[28px] font-extrabold text-[#D05D0A] tabular-nums tracking-tight my-1" id="habitKpiMaxStreak">0 ngày</div>
           
         </div>
 
-        <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover flex flex-col justify-between">
+        <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover flex flex-col justify-between">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Check-in Hôm Nay</span>
-            <div class="w-10 h-10 rounded-xl bg-[#EBF5F8] border border-[#B8D8E0] text-[#6DB5CA] flex items-center justify-center">
+            <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Check-in Hôm Nay</span>
+            <div class="w-10 h-10 rounded-xl bg-[#EEF1ED] border border-[#CFD5CE] text-[#6F7C6B] flex items-center justify-center">
               <i data-lucide="calendar-check" class="w-5 h-5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-[28px] font-extrabold text-[#6DB5CA] tabular-nums tracking-tight my-1" id="habitKpiTodayDone">0 / 0</div>
+          <div class="text-2xl sm:text-[28px] font-extrabold text-[#6F7C6B] tabular-nums tracking-tight my-1" id="habitKpiTodayDone">0 / 0</div>
           
         </div>
 
-        <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-2xl border border-[#B8D8E0] shadow-2xs card-hover flex flex-col justify-between">
+        <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-2xl border border-[#BABDB2] shadow-2xs card-hover flex flex-col justify-between">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#527987] uppercase tracking-wider">Điểm Kiên Trì (7 Ngày)</span>
-            <div class="w-10 h-10 rounded-xl bg-[#E6F1F4] border border-[#B8D8E0] text-[#2B677A] flex items-center justify-center">
+            <span class="text-xs font-bold text-[#6F7C6B] uppercase tracking-wider">Điểm Kiên Trì (7 Ngày)</span>
+            <div class="w-10 h-10 rounded-xl bg-[#F2E4DC] border border-[#BABDB2] text-[#3E5247] flex items-center justify-center">
               <i data-lucide="activity" class="w-5 h-5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-[28px] font-extrabold text-[#1E3D47] tabular-nums tracking-tight my-1" id="habitKpiConsistency">0%</div>
+          <div class="text-2xl sm:text-[28px] font-extrabold text-[#352116] tabular-nums tracking-tight my-1" id="habitKpiConsistency">0%</div>
           
         </div>
       </div>
 
       <!-- Month Navigation Controller for Habits (Xem các tháng cũ & hiện cả tháng) -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFDFB] p-4 rounded-3xl border border-[#B8D8E0] shadow-2xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFF9F6] p-4 rounded-3xl border border-[#BABDB2] shadow-2xs">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-[#EBF5F8] text-[#6DB5CA] flex items-center justify-center border border-[#B8D8E0] shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-[#EEF1ED] text-[#6F7C6B] flex items-center justify-center border border-[#CFD5CE] shrink-0">
             <i data-lucide="calendar" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-sm text-[#1E3D47] tracking-tight">Lịch Theo Dõi Cả Tháng & Tháng Cũ</h3>
+            <h3 class="font-extrabold text-sm text-[#352116] tracking-tight">Lịch Theo Dõi Cả Tháng & Tháng Cũ</h3>
             
           </div>
         </div>
 
         <div class="flex items-center gap-2 flex-wrap">
           <!-- Month Stepper -->
-          <div class="flex items-center gap-1 bg-[#E6F1F4] p-1 rounded-2xl border border-[#B8D8E0] shadow-2xs relative">
-            <button onclick="stepHabitMonth(-1)" class="p-1.5 rounded-xl hover:bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] transition cursor-pointer" title="Tháng trước">
+          <div class="flex items-center gap-1 bg-[#F2E4DC] p-1 rounded-2xl border border-[#BABDB2] shadow-2xs relative">
+            <button onclick="stepHabitMonth(-1)" class="p-1.5 rounded-xl hover:bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] transition cursor-pointer" title="Tháng trước">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
             </button>
             
             <div class="relative">
-              <button onclick="toggleHabitMonthDropdown(event)" id="habitMonthDropdownBtn" class="flex items-center gap-1.5 px-3 py-1 text-xs font-extrabold text-[#1E3D47] hover:bg-[#FFFDFB] rounded-xl transition cursor-pointer">
-                <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+              <button onclick="toggleHabitMonthDropdown(event)" id="habitMonthDropdownBtn" class="flex items-center gap-1.5 px-3 py-1 text-xs font-extrabold text-[#352116] hover:bg-[#FFF9F6] rounded-xl transition cursor-pointer">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
                 <span id="habitMonthDropdownLabel">Tháng 11/2026</span>
-                <i data-lucide="chevron-down" class="w-3 h-3 text-[#7FA3B0]"></i>
+                <i data-lucide="chevron-down" class="w-3 h-3 text-[#9BA59D]"></i>
               </button>
-              <div id="habitMonthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#FFFDFB] rounded-2xl shadow-xl border border-[#B8D8E0] p-1.5 z-50 text-xs max-h-60 overflow-y-auto dropdown-enter">
+              <div id="habitMonthDropdownMenu" class="hidden absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#FFF9F6] rounded-2xl shadow-xl border border-[#BABDB2] p-1.5 z-50 text-xs max-h-60 overflow-y-auto dropdown-enter">
                 <!-- Populated dynamically via life_hub.js -->
               </div>
             </div>
 
-            <button onclick="stepHabitMonth(1)" class="p-1.5 rounded-xl hover:bg-[#FFFDFB] text-[#527987] hover:text-[#1E3D47] transition cursor-pointer" title="Tháng sau">
+            <button onclick="stepHabitMonth(1)" class="p-1.5 rounded-xl hover:bg-[#FFF9F6] text-[#6F7C6B] hover:text-[#352116] transition cursor-pointer" title="Tháng sau">
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
 
           <!-- Quick Jump Current Month -->
-          <button onclick="jumpHabitCurrentMonth()" class="px-3 py-1.5 rounded-xl bg-[#FFFDFB] hover:bg-[#E6F1F4] text-[#1E3D47] text-xs font-bold border border-[#B8D8E0] shadow-2xs transition cursor-pointer">
+          <button onclick="jumpHabitCurrentMonth()" class="px-3 py-1.5 rounded-xl bg-[#FFF9F6] hover:bg-[#F2E4DC] text-[#352116] text-xs font-bold border border-[#BABDB2] shadow-2xs transition cursor-pointer">
             Tháng hiện tại
           </button>
 
           <!-- Add Habit button -->
-          <button onclick="quickAddHabit()" class="animate-shine inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] text-xs font-bold shadow-xs cursor-pointer tap-spring">
+          <button onclick="quickAddHabit()" class="animate-shine inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] text-xs font-bold shadow-xs cursor-pointer tap-spring">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Thêm thói quen</span>
           </button>
@@ -1167,19 +1167,19 @@
       </div>
 
             <!-- Biểu Đồ Miền (Area Chart): Thống kê số thói quen đã hoàn thành theo ngày trong tháng -->
-      <div class="bg-[#FFFDFB] p-5 sm:p-6 rounded-3xl border border-[#B8D8E0] shadow-2xs space-y-3">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#B8D8E0]/50 pb-3">
+      <div class="bg-[#FFF9F6] p-5 sm:p-6 rounded-3xl border border-[#BABDB2] shadow-2xs space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#BABDB2]/50 pb-3">
           <div>
             <div class="flex items-center gap-2">
-              <div class="w-8 h-8 rounded-xl bg-[#EBF5F8] text-[#6DB5CA] flex items-center justify-center border border-[#B8D8E0]">
+              <div class="w-8 h-8 rounded-xl bg-[#EEF1ED] text-[#6F7C6B] flex items-center justify-center border border-[#CFD5CE]">
                 <i data-lucide="activity" class="w-4 h-4"></i>
               </div>
-              <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight" id="habitAreaChartTitle">Biểu Đồ Miền: Xu Hướng Hoàn Thành Thói Quen</h3>
+              <h3 class="font-extrabold text-base text-[#352116] tracking-tight" id="habitAreaChartTitle">Biểu Đồ Miền: Xu Hướng Hoàn Thành Thói Quen</h3>
             </div>
-            <p class="text-xs text-[#527987] mt-1" id="habitAreaChartSubtitle">Số lượng thói quen bạn đã check-in mỗi ngày xuyên suốt cả tháng</p>
+            <p class="text-xs text-[#6F7C6B] mt-1" id="habitAreaChartSubtitle">Số lượng thói quen bạn đã check-in mỗi ngày xuyên suốt cả tháng</p>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[11px] font-bold text-[#6DB5CA] bg-[#EBF5F8] px-3 py-1 rounded-full border border-[#B8D8E0] flex items-center gap-1.5" id="habitAreaChartBadge">
+            <span class="text-[11px] font-bold text-[#6F7C6B] bg-[#EEF1ED] px-3 py-1 rounded-full border border-[#CFD5CE] flex items-center gap-1.5" id="habitAreaChartBadge">
               <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> <span id="habitAvgBadgeText">Đang tải dữ liệu...</span>
             </span>
           </div>
@@ -1192,7 +1192,7 @@
       <!-- Habit Board Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="font-extrabold text-lg text-[#1E3D47] tracking-tight">Lịch Thói Quen Cả Tháng</h3>
+          <h3 class="font-extrabold text-lg text-[#352116] tracking-tight">Lịch Thói Quen Cả Tháng</h3>
         </div>
       </div>
 
@@ -1206,12 +1206,12 @@
     <section id="section-notebook" class="space-y-6 hidden">
       <!-- Minimalist Segmented Pill Switcher (Nhật ký | Ghi chú) -->
       <div class="flex items-center justify-center -mt-1 mb-2">
-        <div class="inline-flex p-1 bg-[#E6F1F4] rounded-2xl border border-[#B8D8E0] gap-1 shadow-2xs">
-          <button onclick="switchNotebookSubTab('journal')" id="subtabBtnJournal" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFFDFB] text-[#6DB5CA] shadow-2xs border border-[#B8D8E0]/80">
-            <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+        <div class="inline-flex p-1 bg-[#F2E4DC] rounded-2xl border border-[#BABDB2] gap-1 shadow-2xs">
+          <button onclick="switchNotebookSubTab('journal')" id="subtabBtnJournal" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFF9F6] text-[#3E5247] shadow-2xs border border-[#BABDB2]/80">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
             <span>Nhật ký</span>
           </button>
-          <button onclick="switchNotebookSubTab('notes')" id="subtabBtnNotes" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#527987] hover:text-[#1E3D47]">
+          <button onclick="switchNotebookSubTab('notes')" id="subtabBtnNotes" class="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#6F7C6B] hover:text-[#352116]">
             <i data-lucide="sticky-note" class="w-3.5 h-3.5"></i>
             <span>Ghi chú</span>
           </button>
@@ -1222,64 +1222,64 @@
       <div id="notebookJournalView" class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- Main Journal Card -->
-          <div class="lg:col-span-8 bg-[#FFFDFB] rounded-2xl border border-[#B8D8E0] p-5 sm:p-6 shadow-xs space-y-4">
+          <div class="lg:col-span-8 bg-[#FFF9F6] rounded-2xl border border-[#BABDB2] p-5 sm:p-6 shadow-xs space-y-4">
             <!-- Date & Mood Header -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#B8D8E0]/60 pb-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#BABDB2]/60 pb-3">
               <div class="flex items-center gap-2 flex-wrap">
-                <div class="flex items-center gap-1 bg-[#FCF5EF] p-1 rounded-xl border border-[#B8D8E0]">
-                  <button onclick="stepJournalDate(-1)" class="p-1 hover:bg-[#FFFDFB] rounded-lg text-[#527987] hover:text-[#1E3D47] transition cursor-pointer" title="Hôm trước">
+                <div class="flex items-center gap-1 bg-[#FFF0E9] p-1 rounded-xl border border-[#BABDB2]">
+                  <button onclick="stepJournalDate(-1)" class="p-1 hover:bg-[#FFF9F6] rounded-lg text-[#6F7C6B] hover:text-[#352116] transition cursor-pointer" title="Hôm trước">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
                   </button>
-                  <input type="date" id="journalDateInput" onchange="loadJournal(this.value)" class="bg-transparent border-none text-xs font-bold text-[#1E3D47] outline-none cursor-pointer px-1">
-                  <button onclick="stepJournalDate(1)" class="p-1 hover:bg-[#FFFDFB] rounded-lg text-[#527987] hover:text-[#1E3D47] transition cursor-pointer" title="Hôm sau">
+                  <input type="date" id="journalDateInput" onchange="loadJournal(this.value)" class="bg-transparent border-none text-xs font-bold text-[#352116] outline-none cursor-pointer px-1">
+                  <button onclick="stepJournalDate(1)" class="p-1 hover:bg-[#FFF9F6] rounded-lg text-[#6F7C6B] hover:text-[#352116] transition cursor-pointer" title="Hôm sau">
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                   </button>
                 </div>
-                <button onclick="jumpJournalToday()" class="px-2.5 py-1 text-xs font-bold rounded-xl bg-[#B8D8E0]/60 hover:bg-[#B8D8E0] text-[#1E3D47] transition cursor-pointer">
+                <button onclick="jumpJournalToday()" class="px-2.5 py-1 text-xs font-bold rounded-xl bg-[#BABDB2]/60 hover:bg-[#BABDB2] text-[#352116] transition cursor-pointer">
                   Hôm nay
                 </button>
-                <span id="journalSaveStatus" class="text-[11px] text-[#6DB5CA] font-semibold hidden sm:inline ml-1"></span>
+                <span id="journalSaveStatus" class="text-[11px] text-[#6F7C6B] font-semibold hidden sm:inline ml-1"></span>
               </div>
 
               <!-- Mood Selectors (5 equal cols on mobile, flexible on sm) -->
               <div class="grid grid-cols-5 gap-1 w-full sm:w-auto sm:flex sm:items-center">
-                <button onclick="setJournalMood('great')" id="moodBtn_great" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#B8D8E0] bg-[#FFFDFB] hover:bg-[#EBF5F8] transition cursor-pointer text-center truncate" title="Rất tốt">😄 Tốt</button>
-                <button onclick="setJournalMood('good')" id="moodBtn_good" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#B8D8E0] bg-[#FFFDFB] hover:bg-[#EBF5F8] transition cursor-pointer text-center truncate" title="Vui vẻ">😊 Vui</button>
-                <button onclick="setJournalMood('neutral')" id="moodBtn_neutral" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#B8D8E0] bg-[#FFFDFB] hover:bg-[#EBF5F8] transition cursor-pointer text-center truncate" title="Bình thường">😐 Ổn</button>
-                <button onclick="setJournalMood('tired')" id="moodBtn_tired" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#B8D8E0] bg-[#FFFDFB] hover:bg-[#EBF5F8] transition cursor-pointer text-center truncate" title="Mệt mỏi">🥱 Mệt</button>
-                <button onclick="setJournalMood('stressed')" id="moodBtn_stressed" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#B8D8E0] bg-[#FFFDFB] hover:bg-[#EBF5F8] transition cursor-pointer text-center truncate" title="Áp lực">😰 Lo</button>
+                <button onclick="setJournalMood('great')" id="moodBtn_great" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#BABDB2] bg-[#FFF9F6] hover:bg-[#EEF1ED] transition cursor-pointer text-center truncate" title="Rất tốt">😄 Tốt</button>
+                <button onclick="setJournalMood('good')" id="moodBtn_good" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#BABDB2] bg-[#FFF9F6] hover:bg-[#EEF1ED] transition cursor-pointer text-center truncate" title="Vui vẻ">😊 Vui</button>
+                <button onclick="setJournalMood('neutral')" id="moodBtn_neutral" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#BABDB2] bg-[#FFF9F6] hover:bg-[#EEF1ED] transition cursor-pointer text-center truncate" title="Bình thường">😐 Ổn</button>
+                <button onclick="setJournalMood('tired')" id="moodBtn_tired" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#BABDB2] bg-[#FFF9F6] hover:bg-[#EEF1ED] transition cursor-pointer text-center truncate" title="Mệt mỏi">🥱 Mệt</button>
+                <button onclick="setJournalMood('stressed')" id="moodBtn_stressed" class="px-1.5 py-1 text-[11px] sm:text-xs font-semibold rounded-xl border border-[#BABDB2] bg-[#FFF9F6] hover:bg-[#EEF1ED] transition cursor-pointer text-center truncate" title="Áp lực">😰 Lo</button>
               </div>
             </div>
 
             <!-- Title -->
             <div>
-              <input type="text" id="journalTitleInput" placeholder="Tiêu đề ngày hôm nay..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3.5 py-2 text-xs font-bold text-[#1E3D47] outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] transition">
+              <input type="text" id="journalTitleInput" placeholder="Tiêu đề ngày hôm nay..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3.5 py-2 text-xs font-bold text-[#352116] outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] transition">
             </div>
 
             <!-- Gratitude Prompt -->
-            <div class="bg-[#FFF3EC] p-3.5 rounded-xl border border-[#B8D8E0]/80 space-y-1">
-              <label class="block text-xs font-extrabold text-[#D95318] flex items-center gap-1.5">
-                <i data-lucide="heart" class="w-3.5 h-3.5 text-[#FF7235] fill-[#FF7235]"></i> Lòng biết ơn
+            <div class="bg-[#FCF0E3] p-3.5 rounded-xl border border-[#BABDB2]/80 space-y-1">
+              <label class="block text-xs font-extrabold text-[#9E4405] flex items-center gap-1.5">
+                <i data-lucide="heart" class="w-3.5 h-3.5 text-[#E7A366] fill-[#E7A366]"></i> Lòng biết ơn
               </label>
-              <textarea id="journalGratitudeInput" rows="2" placeholder="Điều bạn cảm thấy may mắn, biết ơn hôm nay..." class="w-full bg-transparent border-none text-xs text-[#1E3D47] outline-none resize-none placeholder-[#7FA3B0] font-medium leading-relaxed"></textarea>
+              <textarea id="journalGratitudeInput" rows="2" placeholder="Điều bạn cảm thấy may mắn, biết ơn hôm nay..." class="w-full bg-transparent border-none text-xs text-[#352116] outline-none resize-none placeholder-[#9BA59D] font-medium leading-relaxed"></textarea>
             </div>
 
             <!-- Improvement Prompt -->
-            <div class="bg-[#EBF5F8] p-3.5 rounded-xl border border-[#B8D8E0] space-y-1">
-              <label class="block text-xs font-extrabold text-[#6DB5CA] flex items-center gap-1.5">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#6DB5CA]"></i> Bài học & Cải thiện
+            <div class="bg-[#EEF1ED] p-3.5 rounded-xl border border-[#CFD5CE] space-y-1">
+              <label class="block text-xs font-extrabold text-[#3E5247] flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#6F7C6B]"></i> Bài học & Cải thiện
               </label>
-              <textarea id="journalImprovementInput" rows="2" placeholder="Bài học hoặc điều cần cải thiện..." class="w-full bg-transparent border-none text-xs text-[#1E3D47] outline-none resize-none placeholder-[#7FA3B0] font-medium leading-relaxed"></textarea>
+              <textarea id="journalImprovementInput" rows="2" placeholder="Bài học hoặc điều cần cải thiện..." class="w-full bg-transparent border-none text-xs text-[#352116] outline-none resize-none placeholder-[#9BA59D] font-medium leading-relaxed"></textarea>
             </div>
 
             <!-- Freeform Content -->
             <div>
-              <textarea id="journalContentInput" rows="6" placeholder="Ghi chép tự do suy nghĩ trong ngày..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl p-3.5 text-xs font-medium text-[#1E3D47] outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] transition leading-relaxed"></textarea>
+              <textarea id="journalContentInput" rows="6" placeholder="Ghi chép tự do suy nghĩ trong ngày..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl p-3.5 text-xs font-medium text-[#352116] outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] transition leading-relaxed"></textarea>
             </div>
 
             <!-- Save Button -->
-            <div class="flex items-center justify-end pt-1 border-t border-[#B8D8E0]/50">
-              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] text-xs font-bold shadow-sm transition cursor-pointer">
+            <div class="flex items-center justify-end pt-1 border-t border-[#BABDB2]/50">
+              <button onclick="saveCurrentJournal()" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] text-xs font-bold shadow-sm transition cursor-pointer">
                 <i data-lucide="save" class="w-3.5 h-3.5"></i>
                 <span>Lưu nhật ký</span>
               </button>
@@ -1288,7 +1288,7 @@
 
           <!-- History Sidebar -->
           <div class="lg:col-span-4 space-y-3">
-            <h4 class="font-bold text-xs text-[#527987] uppercase tracking-wider">Lịch Sử Nhật Ký</h4>
+            <h4 class="font-bold text-xs text-[#6F7C6B] uppercase tracking-wider">Lịch Sử Nhật Ký</h4>
             <div id="journalHistoryList" class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
               <!-- Rendered via life_hub.js -->
             </div>
@@ -1299,22 +1299,22 @@
       <!-- VIEW 2: NOTES (Ghi chú) -->
       <div id="notebookNotesView" class="space-y-5 hidden">
         <!-- Search & Category Filters -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFDFB] p-3.5 rounded-2xl border border-[#B8D8E0] shadow-2xs">
-          <div class="flex items-center gap-2 flex-1 max-w-md bg-[#FCF5EF] px-3 py-1.5 rounded-xl border border-[#B8D8E0]">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-[#527987]"></i>
-            <input type="text" oninput="searchNotes(this.value)" placeholder="Tìm kiếm ghi chú..." class="w-full bg-transparent border-none text-xs font-semibold text-[#1E3D47] outline-none placeholder-[#7FA3B0]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFF9F6] p-3.5 rounded-2xl border border-[#BABDB2] shadow-2xs">
+          <div class="flex items-center gap-2 flex-1 max-w-md bg-[#FFF0E9] px-3 py-1.5 rounded-xl border border-[#BABDB2]">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
+            <input type="text" oninput="searchNotes(this.value)" placeholder="Tìm kiếm ghi chú..." class="w-full bg-transparent border-none text-xs font-semibold text-[#352116] outline-none placeholder-[#9BA59D]">
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
-            <div class="flex items-center gap-1 bg-[#E6F1F4] p-1 rounded-xl border border-[#B8D8E0]">
-              <button onclick="setNoteFilter('all')" id="noteFilterBtn_all" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#6DB5CA] text-[#FFFDFB] shadow-2xs cursor-pointer">Tất cả</button>
-              <button onclick="setNoteFilter('Ý tưởng')" id="noteFilterBtn_Ý tưởng" class="px-2.5 py-1 text-xs font-semibold text-[#527987] hover:text-[#1E3D47] cursor-pointer">Ý tưởng</button>
-              <button onclick="setNoteFilter('Công việc')" id="noteFilterBtn_Công việc" class="px-2.5 py-1 text-xs font-semibold text-[#527987] hover:text-[#1E3D47] cursor-pointer">Công việc</button>
-              <button onclick="setNoteFilter('Học tập')" id="noteFilterBtn_Học tập" class="px-2.5 py-1 text-xs font-semibold text-[#527987] hover:text-[#1E3D47] cursor-pointer">Học tập</button>
-              <button onclick="setNoteFilter('Tài chính')" id="noteFilterBtn_Tài chính" class="px-2.5 py-1 text-xs font-semibold text-[#527987] hover:text-[#1E3D47] cursor-pointer">Tài chính</button>
+            <div class="flex items-center gap-1 bg-[#F2E4DC] p-1 rounded-xl border border-[#BABDB2]">
+              <button onclick="setNoteFilter('all')" id="noteFilterBtn_all" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-[#3E5247] text-[#FFF9F6] shadow-2xs cursor-pointer">Tất cả</button>
+              <button onclick="setNoteFilter('Ý tưởng')" id="noteFilterBtn_Ý tưởng" class="px-2.5 py-1 text-xs font-semibold text-[#6F7C6B] hover:text-[#352116] cursor-pointer">Ý tưởng</button>
+              <button onclick="setNoteFilter('Công việc')" id="noteFilterBtn_Công việc" class="px-2.5 py-1 text-xs font-semibold text-[#6F7C6B] hover:text-[#352116] cursor-pointer">Công việc</button>
+              <button onclick="setNoteFilter('Học tập')" id="noteFilterBtn_Học tập" class="px-2.5 py-1 text-xs font-semibold text-[#6F7C6B] hover:text-[#352116] cursor-pointer">Học tập</button>
+              <button onclick="setNoteFilter('Tài chính')" id="noteFilterBtn_Tài chính" class="px-2.5 py-1 text-xs font-semibold text-[#6F7C6B] hover:text-[#352116] cursor-pointer">Tài chính</button>
             </div>
 
-            <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] text-xs font-bold shadow-xs transition cursor-pointer">
+            <button onclick="openNoteModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] text-xs font-bold shadow-xs transition cursor-pointer">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
               <span>Tạo ghi chú</span>
             </button>
@@ -1333,49 +1333,49 @@
 </div>
 
   <!-- ================= UPLOAD STATEMENT MODAL ================= -->
-  <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="uploadModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-[#EBF5F8] text-[#6DB5CA] flex items-center justify-center border border-[#B8D8E0]">
+          <div class="w-8 h-8 rounded-xl bg-[#EEF1ED] text-[#6F7C6B] flex items-center justify-center border border-[#CFD5CE]">
             <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Tải Lên Sao Kê Ngân Hàng</h3>
-            <p class="text-xs text-[#527987]">Lưu vào D:\app\finance • Hỗ trợ Excel, CSV, PDF</p>
+            <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Tải Lên Sao Kê Ngân Hàng</h3>
+            <p class="text-xs text-[#6F7C6B]">Lưu vào D:\app\finance • Hỗ trợ Excel, CSV, PDF</p>
           </div>
         </div>
-        <button onclick="closeUploadModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition">
+        <button onclick="closeUploadModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <!-- Drag and drop zone -->
-      <div id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#B8D8E0] hover:border-[#6DB5CA] rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer bg-[#FCF5EF] hover:bg-[#EBF5F8] transition text-center group">
+      <div id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-[#BABDB2] hover:border-[#6F7C6B] rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer bg-[#FFF0E9] hover:bg-[#EEF1ED] transition text-center group">
         <input type="file" id="fileInput" onchange="handleFileSelect(event)" accept=".xlsx,.xls,.csv,.pdf" class="hidden">
-        <div class="w-12 h-12 rounded-2xl bg-[#FFFDFB] shadow-xs border border-[#B8D8E0] flex items-center justify-center text-[#6DB5CA] group-hover:scale-110 transition duration-300 mb-2">
+        <div class="w-12 h-12 rounded-2xl bg-[#FFF9F6] shadow-xs border border-[#BABDB2] flex items-center justify-center text-[#6F7C6B] group-hover:scale-110 transition duration-300 mb-2">
           <i data-lucide="upload-cloud" class="w-6 h-6"></i>
         </div>
-        <p class="text-xs font-bold text-[#1E3D47]">Kéo thả file sao kê vào đây hoặc <span class="text-[#6DB5CA] underline">chọn từ máy tính</span></p>
-        <p class="text-[11px] text-[#527987] mt-1">Hỗ trợ VCB, Techcombank, MB, VPBank, ACB, ViettelPay, v.v.</p>
-        <div id="selectedFileName" class="hidden mt-3 text-xs font-bold text-[#529BB0] bg-[#EBF5F8] border border-[#B8D8E0] px-3 py-1.5 rounded-xl flex items-center gap-2">
+        <p class="text-xs font-bold text-[#352116]">Kéo thả file sao kê vào đây hoặc <span class="text-[#6F7C6B] underline">chọn từ máy tính</span></p>
+        <p class="text-[11px] text-[#6F7C6B] mt-1">Hỗ trợ VCB, Techcombank, MB, VPBank, ACB, ViettelPay, v.v.</p>
+        <div id="selectedFileName" class="hidden mt-3 text-xs font-bold text-[#3E5247] bg-[#EEF1ED] border border-[#CFD5CE] px-3 py-1.5 rounded-xl flex items-center gap-2">
           <i data-lucide="check" class="w-3.5 h-3.5"></i>
           <span id="selectedFileNameText"></span>
         </div>
       </div>
 
       <!-- Smart Deduplication Note -->
-      <div class="bg-[#EBF5F8] border border-[#B8D8E0] rounded-xl p-3 flex items-start gap-2 text-xs text-[#6DB5CA]">
-        <i data-lucide="shield-check" class="w-4 h-4 text-[#6DB5CA] shrink-0 mt-0.5"></i>
+      <div class="bg-[#EEF1ED] border border-[#CFD5CE] rounded-xl p-3 flex items-start gap-2 text-xs text-[#3E5247]">
+        <i data-lucide="shield-check" class="w-4 h-4 text-[#6F7C6B] shrink-0 mt-0.5"></i>
         <span><strong>Tự động khử trùng lặp thông minh:</strong> Khi bạn tải sao kê 60 ngày hoặc các kỳ gối đầu nhau, hệ thống sẽ tự động đối soát và loại bỏ các giao dịch đã ghi nhận từ trước.</span>
       </div>
 
       <!-- Action buttons -->
       <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeUploadModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#B8D8E0] text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition">
+        <button onclick="closeUploadModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#BABDB2] text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition">
           Hủy bỏ
         </button>
-        <button id="uploadSubmitBtn" onclick="submitUploadStatement()" disabled class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1.5 shadow-sm">
+        <button id="uploadSubmitBtn" onclick="submitUploadStatement()" disabled class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center gap-1.5 shadow-sm">
           <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
           <span>Xử lý & Phân loại</span>
         </button>
@@ -1384,62 +1384,62 @@
   </div>
 
   <!-- ================= SETTINGS MODAL ================= -->
-  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-[#E6F1F4] text-[#1E3D47] flex items-center justify-center border border-[#B8D8E0]">
+          <div class="w-8 h-8 rounded-xl bg-[#F2E4DC] text-[#352116] flex items-center justify-center border border-[#BABDB2]">
             <i data-lucide="settings" class="w-4 h-4"></i>
           </div>
-          <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Cấu Hình AI Phân Loại</h3>
+          <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Cấu Hình AI Phân Loại</h3>
         </div>
-        <button onclick="closeSettingsModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition">
+        <button onclick="closeSettingsModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Mô Hình AI (LLM)</label>
-          <select id="settingsProvider" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+          <label class="block font-bold text-[#352116] mb-1">Mô Hình AI (LLM)</label>
+          <select id="settingsProvider" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
             <option value="gemini">Google Gemini (Miễn phí & Tối ưu)</option>
             <option value="openai">OpenAI ChatGPT (GPT-4o-mini)</option>
           </select>
         </div>
 
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">API Key</label>
-          <input type="password" id="settingsApiKey" placeholder="Nhập API Key nếu muốn dùng AI đám mây" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
-          <p class="text-[11px] text-[#527987] mt-1">Dữ liệu được lưu tại: <strong class="text-[#1E3D47] font-mono">D:\app\finance\expense_data.db</strong></p>
+          <label class="block font-bold text-[#352116] mb-1">API Key</label>
+          <input type="password" id="settingsApiKey" placeholder="Nhập API Key nếu muốn dùng AI đám mây" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
+          <p class="text-[11px] text-[#6F7C6B] mt-1">Dữ liệu được lưu tại: <strong class="text-[#352116] font-mono">D:\app\finance\expense_data.db</strong></p>
         </div>
 
         <!-- Google Cloud Run Sync Section -->
-        <div class="pt-3 border-t border-[#B8D8E0]/60 space-y-2">
+        <div class="pt-3 border-t border-[#BABDB2]/60 space-y-2">
           <div class="flex items-center justify-between">
-            <label class="block font-bold text-[#6DB5CA] flex items-center gap-1.5">
-              <i data-lucide="cloud" class="w-4 h-4 text-[#6DB5CA]"></i>
+            <label class="block font-bold text-[#3E5247] flex items-center gap-1.5">
+              <i data-lucide="cloud" class="w-4 h-4 text-[#6F7C6B]"></i>
               <span>Đồng Bộ Google Cloud Run (2 chiều)</span>
             </label>
-            <span id="syncLastTimeBadge" class="text-[10px] text-[#527987] font-medium">Chưa đồng bộ</span>
+            <span id="syncLastTimeBadge" class="text-[10px] text-[#6F7C6B] font-medium">Chưa đồng bộ</span>
           </div>
           <div class="flex items-center gap-2">
-            <input type="url" id="settingsCloudUrl" placeholder="https://life-hub-xxxx.a.run.app" class="flex-1 bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
-            <button onclick="triggerCloudSyncNow()" id="btnTriggerSync" class="px-3 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-white hover:bg-[#529BB0] transition flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs">
+            <input type="url" id="settingsCloudUrl" placeholder="https://life-hub-xxxx.a.run.app" class="flex-1 bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
+            <button onclick="triggerCloudSyncNow()" id="btnTriggerSync" class="px-3 py-2 text-xs font-bold rounded-xl bg-[#6F7C6B] text-white hover:bg-[#3E5247] transition flex items-center gap-1.5 cursor-pointer shrink-0 shadow-2xs">
               <i data-lucide="refresh-cw" id="syncSpinIcon" class="w-3.5 h-3.5"></i>
               <span>Đồng bộ ngay</span>
             </button>
           </div>
-          <p class="text-[10px] text-[#527987] leading-relaxed">
+          <p class="text-[10px] text-[#6F7C6B] leading-relaxed">
             Nhập đường link Cloud Run sau khi triển khai. Nhấn <strong>Đồng bộ ngay</strong> để kéo mọi dữ liệu bạn nhập trên iPhone về máy tính và ngược lại!
           </p>
         </div>
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#B8D8E0] text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition">
+        <button onclick="closeSettingsModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#BABDB2] text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition">
           Đóng
         </button>
-        <button onclick="saveSettings()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition shadow-sm">
+        <button onclick="saveSettings()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition shadow-sm">
           Lưu cài đặt
         </button>
       </div>
@@ -1447,47 +1447,47 @@
   </div>
 
   <!-- ================= MOBILE CONNECT MODAL ================= -->
-  <div id="mobileConnectModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 max-h-[90vh] overflow-y-auto modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="mobileConnectModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 max-h-[90vh] overflow-y-auto modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-[#6DB5CA]/15 border border-[#6DB5CA]/30 text-[#6DB5CA] flex items-center justify-center">
+          <div class="w-9 h-9 rounded-xl bg-[#6F7C6B]/15 border border-[#6F7C6B]/30 text-[#6F7C6B] flex items-center justify-center">
             <i data-lucide="smartphone" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Kết Nối iPhone & iPad</h3>
-            <p class="text-[11px] text-[#527987]">Mở ứng dụng trên điện thoại qua Wi-Fi</p>
+            <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Kết Nối iPhone & iPad</h3>
+            <p class="text-[11px] text-[#6F7C6B]">Mở ứng dụng trên điện thoại qua Wi-Fi</p>
           </div>
         </div>
-        <button onclick="closeMobileConnectModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition cursor-pointer">
+        <button onclick="closeMobileConnectModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition cursor-pointer">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <!-- QR Code & Link Container -->
       <div class="text-center py-2 space-y-3">
-        <div class="inline-block p-3 rounded-2xl bg-white border border-[#B8D8E0] shadow-xs">
+        <div class="inline-block p-3 rounded-2xl bg-white border border-[#BABDB2] shadow-xs">
           <img id="mobileQrImg" src="" alt="Mã QR kết nối điện thoại" class="w-48 h-48 mx-auto rounded-xl">
         </div>
         <div class="space-y-1">
-          <p class="text-xs font-bold text-[#1E3D47]">Quét mã QR bằng Camera iPhone / iPad</p>
-          <p class="text-[11px] text-[#527987]">Hoặc truy cập trực tiếp bằng trình duyệt Safari:</p>
+          <p class="text-xs font-bold text-[#352116]">Quét mã QR bằng Camera iPhone / iPad</p>
+          <p class="text-[11px] text-[#6F7C6B]">Hoặc truy cập trực tiếp bằng trình duyệt Safari:</p>
         </div>
-        <div class="flex items-center gap-2 bg-[#FCF5EF] p-2 rounded-xl border border-[#B8D8E0]">
-          <input type="text" id="mobileConnectUrlInput" readonly class="bg-transparent text-xs font-bold text-[#6DB5CA] flex-1 outline-none px-2 select-all">
-          <button onclick="copyMobileUrl()" id="mobileCopyBtn" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition cursor-pointer shrink-0">
+        <div class="flex items-center gap-2 bg-[#FFF0E9] p-2 rounded-xl border border-[#BABDB2]">
+          <input type="text" id="mobileConnectUrlInput" readonly class="bg-transparent text-xs font-bold text-[#6F7C6B] flex-1 outline-none px-2 select-all">
+          <button onclick="copyMobileUrl()" id="mobileCopyBtn" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition cursor-pointer shrink-0">
             Sao chép
           </button>
         </div>
       </div>
 
       <!-- 3-Step Setup Instructions -->
-      <div class="bg-[#EBF5F8] p-4 rounded-2xl border border-[#B8D8E0] space-y-2 text-xs text-[#1E3D47]">
-        <h4 class="font-bold text-[#6DB5CA] flex items-center gap-1.5">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#6DB5CA]"></i>
+      <div class="bg-[#EEF1ED] p-4 rounded-2xl border border-[#CFD5CE] space-y-2 text-xs text-[#352116]">
+        <h4 class="font-bold text-[#3E5247] flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#6F7C6B]"></i>
           <span>Cách cài thành ứng dụng toàn màn hình trên iPhone / iPad:</span>
         </h4>
-        <ol class="space-y-1.5 text-[11px] text-[#3A5F6D] list-decimal list-inside leading-relaxed">
+        <ol class="space-y-1.5 text-[11px] text-[#3E5247] list-decimal list-inside leading-relaxed">
           <li>Đảm bảo điện thoại đang kết nối <strong>cùng Wi-Fi</strong> với laptop.</li>
           <li>Mở link bằng <strong>Safari</strong> trên iPhone/iPad.</li>
           <li>Bấm nút <strong>Chia sẻ (Share)</strong> ở thanh dưới Safari -> Chọn <strong>"Thêm vào MH chính" (Add to Home Screen)</strong>.</li>
@@ -1495,13 +1495,13 @@
       </div>
 
       <!-- Cloud 24/7 notice -->
-      <div class="bg-[#FFF3EC] p-3 rounded-2xl border border-[#FFD6C4] text-[11px] text-[#D95318] leading-relaxed flex items-start gap-2">
-        <i data-lucide="info" class="w-4 h-4 text-[#FF7235] shrink-0 mt-0.5"></i>
+      <div class="bg-[#FCF0E3] p-3 rounded-2xl border border-[#F5D7B8] text-[11px] text-[#9E4405] leading-relaxed flex items-start gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-[#E7A366] shrink-0 mt-0.5"></i>
         <span><strong>Lưu ý:</strong> Khi kết nối qua Wi-Fi nội bộ, laptop đóng vai trò máy chủ nên cần mở máy. Nếu bạn muốn dùng 24/7 ở bất kỳ đâu ngay cả khi <strong>laptop tắt nguồn</strong>, chúng tôi có thể thiết lập đưa dữ liệu lên Cloud (Render/Railway) miễn phí cho bạn.</span>
       </div>
 
       <div class="flex justify-end pt-1">
-        <button onclick="closeMobileConnectModal()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition cursor-pointer">
+        <button onclick="closeMobileConnectModal()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition cursor-pointer">
           Đã hiểu
         </button>
       </div>
@@ -1509,54 +1509,54 @@
   </div>
 
   <!-- ================= ADD TRANSACTION MODAL ================= -->
-  <div id="addTransactionModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="addTransactionModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-[#E6F1F4] text-[#1E3D47] flex items-center justify-center border border-[#B8D8E0]">
+          <div class="w-8 h-8 rounded-xl bg-[#F2E4DC] text-[#352116] flex items-center justify-center border border-[#BABDB2]">
             <i data-lucide="plus" class="w-4 h-4"></i>
           </div>
-          <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight">Thêm Giao Dịch Thủ Công</h3>
+          <h3 class="font-extrabold text-base text-[#352116] tracking-tight">Thêm Giao Dịch Thủ Công</h3>
         </div>
-        <button onclick="closeAddTransactionModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition">
+        <button onclick="closeAddTransactionModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Ngày giao dịch</label>
-          <input type="date" id="transDate" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
+          <label class="block font-bold text-[#352116] mb-1">Ngày giao dịch</label>
+          <input type="date" id="transDate" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
         </div>
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Mô tả giao dịch</label>
-          <input type="text" id="transDesc" placeholder="VD: Ăn bún chả, Mua đồ WinMart..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
+          <label class="block font-bold text-[#352116] mb-1">Mô tả giao dịch</label>
+          <input type="text" id="transDesc" placeholder="VD: Ăn bún chả, Mua đồ WinMart..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Số tiền (VNĐ)</label>
-            <input type="number" id="transAmount" placeholder="50000" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
+            <label class="block font-bold text-[#352116] mb-1">Số tiền (VNĐ)</label>
+            <input type="number" id="transAmount" placeholder="50000" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
           </div>
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Loại</label>
-            <select id="transType" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Loại</label>
+            <select id="transType" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
               <option value="expense">Chi tiêu (-)</option>
               <option value="income">Thu nhập (+)</option>
             </select>
           </div>
         </div>
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Danh mục</label>
-          <select id="transCategory" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+          <label class="block font-bold text-[#352116] mb-1">Danh mục</label>
+          <select id="transCategory" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
           </select>
         </div>
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-2">
-        <button onclick="closeAddTransactionModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#B8D8E0] text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition">
+        <button onclick="closeAddTransactionModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#BABDB2] text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition">
           Hủy bỏ
         </button>
-        <button onclick="saveManualTransaction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition shadow-sm">
+        <button onclick="saveManualTransaction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition shadow-sm">
           Thêm mới
         </button>
       </div>
@@ -1564,19 +1564,19 @@
   </div>
 
   <!-- ================= TO-DO MODAL (CREATE / EDIT) ================= -->
-  <div id="todoModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="todoModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-[#EBF5F8] text-[#6DB5CA] flex items-center justify-center border border-[#B8D8E0]">
+          <div class="w-8 h-8 rounded-xl bg-[#EEF1ED] text-[#3E5247] flex items-center justify-center border border-[#CFD5CE]">
             <i data-lucide="check-square" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight" id="todoModalHeader">Công Việc Mới</h3>
-            <p class="text-xs text-[#527987]">Lên lịch & thiết lập ưu tiên</p>
+            <h3 class="font-extrabold text-base text-[#352116] tracking-tight" id="todoModalHeader">Công Việc Mới</h3>
+            <p class="text-xs text-[#6F7C6B]">Lên lịch & thiết lập ưu tiên</p>
           </div>
         </div>
-        <button onclick="closeTodoModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition">
+        <button onclick="closeTodoModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1585,23 +1585,23 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Tên công việc <span class="text-[#FF7235]">*</span></label>
-          <input type="text" id="todoModalTitle" placeholder="VD: Hoàn thành bài tập, Gặp đối tác..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
+          <label class="block font-bold text-[#352116] mb-1">Tên công việc <span class="text-[#D05D0A]">*</span></label>
+          <input type="text" id="todoModalTitle" placeholder="VD: Hoàn thành bài tập, Gặp đối tác..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
         </div>
 
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Mô tả chi tiết</label>
-          <textarea id="todoModalDesc" rows="2" placeholder="Ghi chú thêm về yêu cầu, checklist hoặc link tài liệu..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition resize-none"></textarea>
+          <label class="block font-bold text-[#352116] mb-1">Mô tả chi tiết</label>
+          <textarea id="todoModalDesc" rows="2" placeholder="Ghi chú thêm về yêu cầu, checklist hoặc link tài liệu..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition resize-none"></textarea>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Hạn hoàn thành</label>
-            <input type="date" id="todoModalDueDate" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47]">
+            <label class="block font-bold text-[#352116] mb-1">Hạn hoàn thành</label>
+            <input type="date" id="todoModalDueDate" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116]">
           </div>
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Mức độ ưu tiên</label>
-            <select id="todoModalPriority" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-bold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Mức độ ưu tiên</label>
+            <select id="todoModalPriority" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-bold text-[#352116] outline-none">
               <option value="urgent">🔴 Khẩn cấp</option>
               <option value="high">🟠 Ưu tiên cao</option>
               <option value="normal" selected>🟢 Bình thường</option>
@@ -1612,8 +1612,8 @@
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Danh mục</label>
-            <select id="todoModalCategory" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Danh mục</label>
+            <select id="todoModalCategory" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
               <option value="Công việc">Công việc</option>
               <option value="Học tập">Học tập</option>
               <option value="Tài chính">Tài chính</option>
@@ -1622,17 +1622,17 @@
             </select>
           </div>
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Ước tính Pomodoro (25p)</label>
-            <input type="number" id="todoModalPomoEst" min="1" max="20" value="1" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-bold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Ước tính Pomodoro (25p)</label>
+            <input type="number" id="todoModalPomoEst" min="1" max="20" value="1" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-bold text-[#352116] outline-none">
           </div>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#B8D8E0]/60">
-        <button onclick="closeTodoModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#B8D8E0] text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition cursor-pointer">
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#BABDB2]/60">
+        <button onclick="closeTodoModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#BABDB2] text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition cursor-pointer">
           Hủy bỏ
         </button>
-        <button onclick="saveTodoModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition shadow-sm cursor-pointer">
+        <button onclick="saveTodoModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition shadow-sm cursor-pointer">
           Lưu công việc
         </button>
       </div>
@@ -1640,19 +1640,19 @@
   </div>
 
   <!-- ================= NOTE MODAL (CREATE / EDIT) ================= -->
-  <div id="noteModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="noteModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-[#E6F1F4] text-[#2B677A] flex items-center justify-center border border-[#B8D8E0]">
+          <div class="w-8 h-8 rounded-xl bg-[#F2E4DC] text-[#3E5247] flex items-center justify-center border border-[#BABDB2]">
             <i data-lucide="sticky-note" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight" id="noteModalHeader">Ghi Chú Mới</h3>
-            <p class="text-xs text-[#527987]">Lưu trữ tri thức & ý tưởng (Second Brain)</p>
+            <h3 class="font-extrabold text-base text-[#352116] tracking-tight" id="noteModalHeader">Ghi Chú Mới</h3>
+            <p class="text-xs text-[#6F7C6B]">Lưu trữ tri thức & ý tưởng (Second Brain)</p>
           </div>
         </div>
-        <button onclick="closeNoteModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition">
+        <button onclick="closeNoteModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1661,14 +1661,14 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Tiêu đề ghi chú <span class="text-[#FF7235]">*</span></label>
-          <input type="text" id="noteModalTitle" placeholder="VD: Quy tắc đầu tư, Kỹ thuật Pomodoro..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
+          <label class="block font-bold text-[#352116] mb-1">Tiêu đề ghi chú <span class="text-[#D05D0A]">*</span></label>
+          <input type="text" id="noteModalTitle" placeholder="VD: Quy tắc đầu tư, Kỹ thuật Pomodoro..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Chủ đề / Danh mục</label>
-            <select id="noteModalCategory" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Chủ đề / Danh mục</label>
+            <select id="noteModalCategory" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
               <option value="Ý tưởng">Ý tưởng</option>
               <option value="Công việc">Công việc</option>
               <option value="Học tập">Học tập</option>
@@ -1678,23 +1678,23 @@
           </div>
           <div class="flex items-end pb-1.5">
             <label class="flex items-center gap-2 cursor-pointer select-none">
-              <input type="checkbox" id="noteModalIsPinned" class="rounded accent-[#6DB5CA] w-4 h-4 cursor-pointer">
-              <span class="text-xs font-bold text-[#1E3D47]">Ghim lên đầu trang</span>
+              <input type="checkbox" id="noteModalIsPinned" class="rounded accent-[#6F7C6B] w-4 h-4 cursor-pointer">
+              <span class="text-xs font-bold text-[#352116]">Ghim lên đầu trang</span>
             </label>
           </div>
         </div>
 
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Nội dung ghi chú</label>
-          <textarea id="noteModalContent" rows="6" placeholder="Viết nội dung, gạch đầu dòng, công thức hoặc đoạn văn bản cần nhớ..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl p-3 text-xs outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition resize-none leading-relaxed"></textarea>
+          <label class="block font-bold text-[#352116] mb-1">Nội dung ghi chú</label>
+          <textarea id="noteModalContent" rows="6" placeholder="Viết nội dung, gạch đầu dòng, công thức hoặc đoạn văn bản cần nhớ..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl p-3 text-xs outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition resize-none leading-relaxed"></textarea>
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#B8D8E0]/60">
-        <button onclick="closeNoteModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#B8D8E0] text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition cursor-pointer">
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#BABDB2]/60">
+        <button onclick="closeNoteModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#BABDB2] text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition cursor-pointer">
           Hủy bỏ
         </button>
-        <button onclick="saveNoteModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition shadow-sm cursor-pointer">
+        <button onclick="saveNoteModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition shadow-sm cursor-pointer">
           Lưu ghi chú
         </button>
       </div>
@@ -1702,19 +1702,19 @@
   </div>
 
   <!-- ================= HABIT MODAL (CREATE / EDIT) ================= -->
-  <div id="habitModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#1E3D47]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDFB] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#B8D8E0] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
-      <div class="flex items-center justify-between border-b border-[#B8D8E0]/70 pb-3">
+  <div id="habitModal" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#352116]/45 backdrop-blur-sm p-0 sm:p-4 modal-overlay-animate">
+    <div class="bg-[#FFF9F6] rounded-t-[28px] sm:rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#BABDB2] relative space-y-4 modal-dialog-content modal-content-animate modal-dialog-bottomsheet"><div class="sheet-handle md:hidden"></div>
+      <div class="flex items-center justify-between border-b border-[#BABDB2]/70 pb-3">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-[#E6F1F4] text-[#6DB5CA] flex items-center justify-center border border-[#B8D8E0]">
+          <div class="w-8 h-8 rounded-xl bg-[#F2E4DC] text-[#6F7C6B] flex items-center justify-center border border-[#BABDB2]">
             <i data-lucide="sparkles" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-extrabold text-base text-[#1E3D47] tracking-tight" id="habitModalHeader">Thói Quen Mới</h3>
-            <p class="text-xs text-[#527987]">Thiết lập kỷ luật & thói quen nguyên tử</p>
+            <h3 class="font-extrabold text-base text-[#352116] tracking-tight" id="habitModalHeader">Thói Quen Mới</h3>
+            <p class="text-xs text-[#6F7C6B]">Thiết lập kỷ luật & thói quen nguyên tử</p>
           </div>
         </div>
-        <button onclick="closeHabitModal()" class="text-[#7FA3B0] hover:text-[#1E3D47] p-1.5 rounded-xl hover:bg-[#E6F1F4] transition">
+        <button onclick="closeHabitModal()" class="text-[#9BA59D] hover:text-[#352116] p-1.5 rounded-xl hover:bg-[#F2E4DC] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -1723,14 +1723,14 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block font-bold text-[#1E3D47] mb-1">Tên thói quen <span class="text-[#FF7235]">*</span></label>
-          <input type="text" id="habitModalName" placeholder="VD: Uống 2L nước, Đọc sách 30p, Đi ngủ trước 23h..." class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFFDFB] focus:border-[#6DB5CA] text-[#1E3D47] transition">
+          <label class="block font-bold text-[#352116] mb-1">Tên thói quen <span class="text-[#D05D0A]">*</span></label>
+          <input type="text" id="habitModalName" placeholder="VD: Uống 2L nước, Đọc sách 30p, Đi ngủ trước 23h..." class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-bold outline-none focus:bg-[#FFF9F6] focus:border-[#6F7C6B] text-[#352116] transition">
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Biểu tượng</label>
-            <select id="habitModalIcon" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Biểu tượng</label>
+            <select id="habitModalIcon" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
               <option value="sparkles">✨ Tinh hoa (Sparkles)</option>
               <option value="book-open">📖 Đọc sách (Book)</option>
               <option value="dumbbell">💪 Thể thao / Gym</option>
@@ -1742,8 +1742,8 @@
             </select>
           </div>
           <div>
-            <label class="block font-bold text-[#1E3D47] mb-1">Mục tiêu (ngày / tuần)</label>
-            <select id="habitModalTargetDays" class="w-full bg-[#FCF5EF] border border-[#B8D8E0] rounded-xl px-3 py-2 text-xs font-semibold text-[#1E3D47] outline-none">
+            <label class="block font-bold text-[#352116] mb-1">Mục tiêu (ngày / tuần)</label>
+            <select id="habitModalTargetDays" class="w-full bg-[#FFF0E9] border border-[#BABDB2] rounded-xl px-3 py-2 text-xs font-semibold text-[#352116] outline-none">
               <option value="7">7 ngày / tuần (Hàng ngày)</option>
               <option value="6">6 ngày / tuần</option>
               <option value="5">5 ngày / tuần (Thứ 2 - Thứ 6)</option>
@@ -1754,11 +1754,11 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#B8D8E0]/60">
-        <button onclick="closeHabitModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#B8D8E0] text-[#527987] hover:text-[#1E3D47] hover:bg-[#E6F1F4] transition cursor-pointer">
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#BABDB2]/60">
+        <button onclick="closeHabitModal()" class="px-4 py-2 text-xs font-bold rounded-xl border border-[#BABDB2] text-[#6F7C6B] hover:text-[#352116] hover:bg-[#F2E4DC] transition cursor-pointer">
           Hủy bỏ
         </button>
-        <button onclick="saveHabitModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#6DB5CA] text-[#FFFDFB] hover:bg-[#529BB0] transition shadow-sm cursor-pointer">
+        <button onclick="saveHabitModalAction()" class="px-5 py-2 text-xs font-bold rounded-xl bg-[#3E5247] text-[#FFF9F6] hover:bg-[#2F4037] transition shadow-sm cursor-pointer">
           Lưu thói quen
         </button>
       </div>
@@ -1766,30 +1766,30 @@
   </div>
 
   <!-- Global Floating Category Picker Dropdown (Soft Vintage Style, identical to 'Thao tác') -->
-  <div id="globalCategoryPicker" class="hidden fixed bg-[#FFFDFB] rounded-2xl shadow-xl border border-[#B8D8E0] p-1.5 z-50 dropdown-enter text-xs max-h-72 w-56 overflow-y-auto">
+  <div id="globalCategoryPicker" style="overscroll-behavior: contain;" class="hidden fixed bg-[#FFF9F6] rounded-2xl shadow-xl border border-[#BABDB2] p-1.5 z-50 dropdown-enter text-xs max-h-72 w-56 overflow-y-auto">
     <!-- Populated dynamically -->
   </div>
 
   <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait - 5 Standard Tabs) ================= -->
-  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDFB]/95 backdrop-blur-md border-t border-[#B8D8E0] px-1.5 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem] select-none">
+  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFF9F6]/95 backdrop-blur-md border-t border-[#BABDB2] px-1.5 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem] select-none">
     <div id="bottomNavPill" class="bottom-nav-pill opacity-0"></div>
-    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#6DB5CA] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
+    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#3E5247] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
       <span>Tổng quan</span>
     </button>
-    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#527987] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
+    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#6F7C6B] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="wallet" class="w-4 h-4"></i>
       <span>Tài chính</span>
     </button>
-    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#527987] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
+    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#6F7C6B] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="check-square" class="w-4 h-4"></i>
       <span>Việc làm</span>
     </button>
-    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#527987] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
+    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#6F7C6B] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="flame" class="w-4 h-4"></i>
       <span>Thói quen</span>
     </button>
-    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#527987] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
+    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#6F7C6B] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="book-open" class="w-4 h-4"></i>
       <span>Sổ tay</span>
     </button>
@@ -1799,7 +1799,7 @@
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
 
   <!-- Application Logic -->
-  <script src="/static/js/app.js?v=2.16.0"></script>
-  <script src="/static/js/life_hub.js?v=2.16.0"></script>
+  <script src="/static/js/app.js?v=2.17.0"></script>
+  <script src="/static/js/life_hub.js?v=2.17.0"></script>
 </body>
 </html>

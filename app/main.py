@@ -278,7 +278,7 @@ def sync_habit_toggle_delta(payload: HabitToggleDelta):
         c.execute("SELECT id FROM habits WHERE name = ?", (payload.habit_name,))
         row = c.fetchone()
         if not row:
-            c.execute("INSERT INTO habits (name, icon, color, target_days) VALUES (?, 'sparkles', '#6DB5CA', 7)", (payload.habit_name,))
+            c.execute("INSERT INTO habits (name, icon, color, target_days) VALUES (?, 'sparkles', '#6F7C6B', 7)", (payload.habit_name,))
             habit_id = c.lastrowid
         else:
             habit_id = row["id"]
@@ -525,7 +525,7 @@ def get_stats_categories(month: Optional[str] = Query(None), type: str = "expens
         query = f"""
             SELECT 
                 t.category,
-                COALESCE(c.color, '#527987') as color,
+                COALESCE(c.color, '#6F7C6B') as color,
                 COALESCE(c.icon, 'tag') as icon,
                 SUM(t.amount) as total_amount,
                 COUNT(t.id) as count
@@ -604,7 +604,7 @@ def get_transactions(
             t.id, t.statement_id, t.date, t.month, t.week, t.type,
             t.amount, t.category, t.description, t.raw_description,
             t.ref_no, t.balance, t.ai_confidence, t.is_manual_category,
-            COALESCE(c.color, '#527987') as color,
+            COALESCE(c.color, '#6F7C6B') as color,
             COALESCE(c.icon, 'tag') as icon
         FROM transactions t
         LEFT JOIN categories c ON t.category = c.name
@@ -704,7 +704,7 @@ def update_transaction_category(trans_id: int, payload: CategoryUpdate):
 
     # Re-fetch updated row with category color & icon
     c.execute("""
-        SELECT t.*, COALESCE(c.color, '#527987') as color, COALESCE(c.icon, 'tag') as icon
+        SELECT t.*, COALESCE(c.color, '#6F7C6B') as color, COALESCE(c.icon, 'tag') as icon
         FROM transactions t
         LEFT JOIN categories c ON t.category = c.name
         WHERE t.id = ?
@@ -764,7 +764,7 @@ def get_transaction_columns(
             t.id, t.statement_id, t.date, t.month, t.week, t.type,
             t.amount, t.category, t.description, t.raw_description,
             t.ref_no, t.balance, t.ai_confidence, t.is_manual_category,
-            COALESCE(c.color, '#527987') as color,
+            COALESCE(c.color, '#6F7C6B') as color,
             COALESCE(c.icon, 'tag') as icon
         FROM transactions t
         LEFT JOIN categories c ON t.category = c.name
@@ -1946,7 +1946,7 @@ def create_habit(item: HabitCreate):
     c.execute("""
         INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at)
         VALUES (?, ?, ?, ?, 0, 0, CURRENT_TIMESTAMP)
-    """, (item.name, item.icon or "sparkles", item.color or "#6DB5CA", item.target_days or 7))
+    """, (item.name, item.icon or "sparkles", item.color or "#6F7C6B", item.target_days or 7))
     new_id = c.lastrowid
     conn.commit()
     c.execute("SELECT * FROM habits WHERE id = ?", (new_id,))
@@ -2142,7 +2142,7 @@ def create_note(item: NoteCreate):
     c.execute("""
         INSERT INTO notes (title, content, category, is_pinned, color, updated_at)
         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    """, (item.title, item.content or "", item.category or "Ý tưởng", item.is_pinned or 0, item.color or "#FFFDFB"))
+    """, (item.title, item.content or "", item.category or "Ý tưởng", item.is_pinned or 0, item.color or "#FFF9F6"))
     new_id = c.lastrowid
     conn.commit()
     c.execute("SELECT * FROM notes WHERE id = ?", (new_id,))
@@ -2471,7 +2471,7 @@ def import_sync_data(payload: dict):
             row = c.fetchone()
             if not row:
                 c.execute("INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                          (name, h.get("icon", "flame"), h.get("color", "#6DB5CA"), h.get("target_days", 7), h.get("streak", 0), h.get("best_streak", 0),
+                          (name, h.get("icon", "flame"), h.get("color", "#6F7C6B"), h.get("target_days", 7), h.get("streak", 0), h.get("best_streak", 0),
                            h.get("updated_at") or datetime.datetime.now().isoformat()))
                 changes_count += 1
             else:
@@ -2542,7 +2542,7 @@ def import_sync_data(payload: dict):
             row = c.fetchone()
             if not row:
                 c.execute("INSERT INTO notes (title, content, category, is_pinned, color, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-                          (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#6DB5CA"),
+                          (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#6F7C6B"),
                            n.get("updated_at") or datetime.datetime.now().isoformat()))
                 changes_count += 1
             else:
@@ -2553,7 +2553,7 @@ def import_sync_data(payload: dict):
                 if (n.get("content") != row["content"] or n.get("category") != row["category"] or
                     n.get("is_pinned", 0) != row["is_pinned"]):
                     c.execute("UPDATE notes SET content = ?, category = ?, is_pinned = ?, color = ?, updated_at = ? WHERE title = ?",
-                              (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#6DB5CA"),
+                              (n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#6F7C6B"),
                                rem_up or datetime.datetime.now().isoformat(), title))
                     changes_count += 1
 

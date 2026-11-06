@@ -23,22 +23,22 @@ else:
 
 DEFAULT_CATEGORIES = [
     # Expense categories (Vintage Palette Design System)
-    {"name": "Ăn uống", "type": "expense", "color": "#FF7235", "icon": "utensils"},
-    {"name": "Mua sắm", "type": "expense", "color": "#FF7235", "icon": "shopping-bag"},
-    {"name": "Di chuyển", "type": "expense", "color": "#6DB5CA", "icon": "car"},
-    {"name": "Hóa đơn & Tiện ích", "type": "expense", "color": "#FF7235", "icon": "zap"},
-    {"name": "Nhà ở & Sinh hoạt", "type": "expense", "color": "#FF7235", "icon": "home"},
-    {"name": "Sức khỏe & Y tế", "type": "expense", "color": "#E05A20", "icon": "heart-pulse"},
-    {"name": "Giáo dục & Học tập", "type": "expense", "color": "#2B677A", "icon": "book-open"},
-    {"name": "Giải trí & Du lịch", "type": "expense", "color": "#6DB5CA", "icon": "film"},
-    {"name": "Gia đình & Cá nhân", "type": "expense", "color": "#1E3D47", "icon": "users"},
-    {"name": "Đầu tư & Tiết kiệm", "type": "expense", "color": "#2B677A", "icon": "trending-up"},
-    {"name": "Chưa phân loại", "type": "expense", "color": "#FF7235", "icon": "help-circle"},
-    {"name": "Khác", "type": "expense", "color": "#7FA3B0", "icon": "circle-ellipsis"},
+    {"name": "Ăn uống", "type": "expense", "color": "#D05D0A", "icon": "utensils"},
+    {"name": "Mua sắm", "type": "expense", "color": "#D05D0A", "icon": "shopping-bag"},
+    {"name": "Di chuyển", "type": "expense", "color": "#6F7C6B", "icon": "car"},
+    {"name": "Hóa đơn & Tiện ích", "type": "expense", "color": "#E7A366", "icon": "zap"},
+    {"name": "Nhà ở & Sinh hoạt", "type": "expense", "color": "#D05D0A", "icon": "home"},
+    {"name": "Sức khỏe & Y tế", "type": "expense", "color": "#B34E06", "icon": "heart-pulse"},
+    {"name": "Giáo dục & Học tập", "type": "expense", "color": "#3E5247", "icon": "book-open"},
+    {"name": "Giải trí & Du lịch", "type": "expense", "color": "#6F7C6B", "icon": "film"},
+    {"name": "Gia đình & Cá nhân", "type": "expense", "color": "#3E5247", "icon": "users"},
+    {"name": "Đầu tư & Tiết kiệm", "type": "expense", "color": "#3E5247", "icon": "trending-up"},
+    {"name": "Chưa phân loại", "type": "expense", "color": "#E7A366", "icon": "help-circle"},
+    {"name": "Khác", "type": "expense", "color": "#9BA59D", "icon": "circle-ellipsis"},
     # Income categories
-    {"name": "Lương & Thu nhập", "type": "income", "color": "#6DB5CA", "icon": "wallet"},
-    {"name": "Thưởng & Hoa hồng", "type": "income", "color": "#FF7235", "icon": "gift"},
-    {"name": "Thu nhập khác", "type": "income", "color": "#2B677A", "icon": "arrow-down-left"},
+    {"name": "Lương & Thu nhập", "type": "income", "color": "#6F7C6B", "icon": "wallet"},
+    {"name": "Thưởng & Hoa hồng", "type": "income", "color": "#E7A366", "icon": "gift"},
+    {"name": "Thu nhập khác", "type": "income", "color": "#3E5247", "icon": "arrow-down-left"},
 ]
 
 def get_db_connection():
@@ -95,7 +95,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE NOT NULL,
         type TEXT NOT NULL CHECK (type IN ('expense', 'income')),
-        color TEXT DEFAULT '#6DB5CA',
+        color TEXT DEFAULT '#3E5247',
         icon TEXT DEFAULT 'tag'
     )
     """)
@@ -179,7 +179,7 @@ def init_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         icon TEXT DEFAULT 'sparkles',
-        color TEXT DEFAULT '#6DB5CA',
+        color TEXT DEFAULT '#6F7C6B',
         target_days INTEGER DEFAULT 7,
         streak INTEGER DEFAULT 0,
         best_streak INTEGER DEFAULT 0,
@@ -224,7 +224,7 @@ def init_db():
         content TEXT DEFAULT '',
         category TEXT DEFAULT 'Ý tưởng',
         is_pinned INTEGER DEFAULT 0,
-        color TEXT DEFAULT '#FFFDFB',
+        color TEXT DEFAULT '#FFF9F6',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
@@ -295,7 +295,7 @@ def _seed_initial_life_hub_data(cursor):
                 habit_id_map = {}
                 for h in seed_data.get("habits", []):
                     cursor.execute("INSERT INTO habits (name, icon, color, streak, best_streak) VALUES (?, ?, ?, ?, ?)",
-                                   (h.get("name"), h.get("icon", "flame"), h.get("color", "#6DB5CA"), h.get("streak", 0), h.get("best_streak", 0)))
+                                   (h.get("name"), h.get("icon", "flame"), h.get("color", "#6F7C6B"), h.get("streak", 0), h.get("best_streak", 0)))
                     habit_id_map[h.get("id")] = cursor.lastrowid
 
                 # Habit logs
@@ -327,7 +327,7 @@ def _seed_initial_life_hub_data(cursor):
                 # Notes
                 for n in seed_data.get("notes", []):
                     cursor.execute("INSERT INTO notes (title, content, category, is_pinned, color) VALUES (?, ?, ?, ?, ?)",
-                                   (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#6DB5CA")))
+                                   (n.get("title"), n.get("content"), n.get("category"), n.get("is_pinned", 0), n.get("color", "#6F7C6B")))
                 return
             except Exception as e:
                 import logging
