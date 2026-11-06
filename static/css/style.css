@@ -263,34 +263,29 @@ html, body {
 }
 
 /* ==========================================================================
-   APPLE iOS 26 LIQUID GLASS TAB BAR (Ported from zakisheriff/Liquid-Glass)
+   APPLE iOS 26 LIQUID GLASS TAB BAR (120fps Mobile GPU Optimized Edition)
    ========================================================================== */
 :root {
   --lg-fg: #6F7C6B;
   --lg-fg-muted: rgba(111, 124, 107, 0.65);
   --lg-accent: #3E5247;
   --lg-track-active: #3E5247;
-  --lg-fill: rgba(255, 249, 246, 0.56);
-  --lg-navigation-fill: rgba(255, 249, 246, 0.52);
-  --lg-blur: 14px;
-  --lg-saturate: 1.95;
+  --lg-fill: rgba(255, 249, 246, 0.62);
+  --lg-navigation-fill: rgba(255, 249, 246, 0.58);
+  --lg-blur: 18px;
+  --lg-saturate: 1.9;
   --lg-brightness: 1.04;
-  --lg-edge: rgba(255, 255, 255, 0.72);
-  --lg-shadow: 0 12px 32px rgba(53, 33, 22, 0.15), 0 2px 6px rgba(62, 82, 71, 0.08);
+  --lg-edge: rgba(255, 255, 255, 0.78);
+  --lg-shadow: 0 12px 30px rgba(53, 33, 22, 0.14), 0 2px 6px rgba(62, 82, 71, 0.08);
   --lg-rim-opacity: 1;
-  --lg-glow: rgba(255, 255, 255, 0.68);
+  --lg-glow: rgba(255, 255, 255, 0.72);
   --lg-tab-selection: rgba(62, 82, 71, 0.12);
-  --lg-selection-lens-fill: rgba(255, 255, 255, 0.22);
-  --lg-selection-lens-edge: rgba(62, 82, 71, 0.28);
-  --lg-selection-lens-bevel: inset 0 3px 7px rgba(53, 33, 22, 0.09), inset 0 -1.5px 2.5px rgba(255, 255, 255, 0.9);
-  --lg-selection-lens-brightness: 1.06;
 }
 
 .app-bottom-nav.lg-track {
   --lg-pad: 4px;
   --lg-item-h: 56px;
   --lg-item-w: 56px;
-  --lg-lift: 0;
   position: fixed !important;
   bottom: max(env(safe-area-inset-bottom, 0px), 12px) !important;
   left: max(env(safe-area-inset-left, 0px), 14px) !important;
@@ -307,6 +302,7 @@ html, body {
   -webkit-user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
   transform-origin: center !important;
+  will-change: transform;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -317,49 +313,44 @@ html, body {
   box-sizing: border-box;
   background-color: var(--lg-glass-fill, var(--lg-fill));
   -webkit-backdrop-filter: blur(var(--lg-glass-blur, var(--lg-blur))) saturate(var(--lg-saturate));
-  backdrop-filter: var(--lg-filter, ) blur(var(--lg-glass-blur, var(--lg-blur))) saturate(var(--lg-saturate)) brightness(var(--lg-brightness));
+  backdrop-filter: blur(var(--lg-glass-blur, var(--lg-blur))) saturate(var(--lg-saturate)) brightness(var(--lg-brightness));
   box-shadow: var(--lg-glass-shadow, var(--lg-shadow)), inset 0 0 0 1px var(--lg-edge);
-  transition: background-color 260ms ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-[data-lg-refract] {
-  --lg-filter: var(--lg-refraction);
-}
-
-/* Baked specular rim: thin bright line, hottest on the diagonal corners */
+/* Baked Snell's law specular rim: thin bright line, hottest on diagonal corners */
 .lg-glass::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background-image: var(--lg-rim, linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.7) 100%));
+  background-image: var(--lg-rim, linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.75) 100%));
   background-size: 100% 100%;
   opacity: var(--lg-rim-opacity);
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
-/* Light bloom under the finger */
-.lg-glass::after {
-  content: '';
+/* Pure GPU-composited light bloom under the finger (translated via translate3d) */
+.lg-glass__bloom {
   position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 85% 85% at var(--lg-x, 50%) var(--lg-y, 50%),
-    var(--lg-glow),
-    transparent
-  );
+  top: -10%;
+  bottom: -10%;
+  left: 0;
+  width: 180px;
+  border-radius: 999px;
+  background: radial-gradient(ellipse 50% 60% at 50% 50%, var(--lg-glow), transparent 75%);
   opacity: 0;
-  transition: opacity 360ms ease;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transition: opacity 220ms ease;
   z-index: 0;
 }
 
-.lg-glass[data-pressed]::after {
-  opacity: 1;
-  transition-duration: 80ms;
+.lg-glass[data-pressed] .lg-glass__bloom,
+.lg-track[data-lifted] .lg-glass__bloom {
+  opacity: 0.85;
+  transition-duration: 70ms;
 }
 
 .lg-track__glass {
@@ -367,26 +358,21 @@ html, body {
   position: absolute !important;
   inset: 0 !important;
   border-radius: inherit !important;
+  overflow: hidden !important;
   pointer-events: none !important;
   z-index: 0 !important;
 }
 
-.lg-track[data-lifted] .lg-track__glass::after {
-  opacity: 0.78;
-  transition-duration: 120ms;
-}
-
 .lg-track__item {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
   height: var(--lg-item-h);
   min-width: 0;
-  padding: 0 6px 2px 6px;
+  padding: 0 4px 2px 4px;
   margin: 0;
   border: 0;
   border-radius: 999px;
@@ -398,7 +384,18 @@ html, body {
   white-space: nowrap;
   cursor: pointer;
   -webkit-touch-callout: none;
-  transition: color 0.15s ease;
+  transition: color 0.12s ease;
+}
+
+.lg-track__item-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .lg-track__item[aria-selected='true'] {
@@ -443,114 +440,48 @@ html, body {
   height: calc(100% - var(--lg-pad) * 2);
   border-radius: 999px;
   pointer-events: none;
-  transform: translateX(calc(100% * var(--lg-index)));
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
 }
 
-/* The selection: a flat pill at rest, a clear refracting lens when lifted */
+/* The Lifted Liquid Glass Droplet Lens (Pre-rasterized 3D bevel, zero per-frame shadow repaint) */
 .lg-track__lens.lg-glass {
-  z-index: 1;
-  background-color: color-mix(in srgb, var(--lg-selection-lens-fill) calc(var(--lg-lift) * 100%), transparent);
+  z-index: 2;
+  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 249, 246, 0.34) 48%,
+    rgba(238, 241, 237, 0.56) 100%
+  );
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   box-shadow:
-    0 calc(var(--lg-lift) * 10px) calc(var(--lg-lift) * 28px) rgba(53, 33, 22, calc(var(--lg-lift) * 0.22)),
-    inset 0 0 0 1px color-mix(in srgb, var(--lg-selection-lens-edge) calc(var(--lg-lift) * 55%), transparent),
-    var(--lg-selection-lens-bevel);
+    0 10px 26px rgba(53, 33, 22, 0.20),
+    0 2px 6px rgba(62, 82, 71, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.88),
+    inset 0 3px 7px rgba(53, 33, 22, 0.08),
+    inset 0 -2px 4px rgba(255, 255, 255, 0.92);
   transition: none;
 }
 
 .lg-track__lens.lg-glass::before {
-  opacity: calc(var(--lg-lift) * 0.85);
+  opacity: 0.95;
   z-index: 2;
 }
 
-.lg-track__lens.lg-glass::after {
-  display: none;
-}
-
-/* The resting selection pill */
+/* The Resting Selection Pill */
 .lg-track__select {
   z-index: 1;
-  background: var(--lg-tab-selection);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.8);
-  opacity: calc(1 - var(--lg-lift) * 2.2);
-}
-
-.lg-track__lens {
-  opacity: 0;
-}
-
-.lg-track[data-lifted] .lg-track__lens.lg-glass {
-  z-index: 4;
-}
-
-.lg-track[data-lifted] .lg-track__lens.lg-glass[data-lg-refract] {
-  -webkit-backdrop-filter: var(--lg-filter, ) blur(0.4px) saturate(1.6) brightness(var(--lg-selection-lens-brightness));
-  backdrop-filter: var(--lg-filter, ) blur(0.4px) saturate(1.6) brightness(var(--lg-selection-lens-brightness));
-}
-
-/* Live magnified mirror inside the lifted lens (Safari & Chrome) */
-.lg-glass > .lg-mirror {
-  position: absolute !important;
-  inset: 0;
-  z-index: 0 !important;
-  pointer-events: none;
-  border-radius: inherit;
-  overflow: hidden;
-  -webkit-mask-image: var(--lg-inner-mask);
-  mask-image: var(--lg-inner-mask);
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-}
-
-.lg-mirror__viewport {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.lg-mirror__zoom {
-  position: absolute;
-  inset: 0;
-  transform-origin: center;
-}
-
-.lg-mirror * {
-  transition: none !important;
-  animation: none !important;
-}
-
-.lg-mirror .lg-glass {
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-.lg-mirror .lg-glass::after {
-  display: none;
-}
-
-.lg-track[data-lg-copy] > .lg-track__item,
-.lg-track[data-lg-copy] .lg-nav__label,
-.lg-track[data-lg-copy] .lg-nav__icon,
-.lg-track[data-lg-copy] .lg-nav__icon svg {
-  color: var(--lg-track-active) !important;
-  font-weight: 700 !important;
-}
-
-[data-lg-copy] > :is(.lg-track__glass, .lg-track__select) {
-  visibility: hidden !important;
-}
-
-.lg-track[data-lifted]:not([data-lg-copy]) > .lg-track__item :is(.lg-nav__label, .lg-nav__icon) {
-  -webkit-mask: var(--lg-content-hide, none);
-  mask: var(--lg-content-hide, none);
-  -webkit-mask-composite: source-out, source-over, source-over, source-over;
-  mask-composite: subtract, add, add, add;
-}
-
-.lg-track:not([data-lifted]) .lg-track__lens > .lg-mirror {
-  visibility: hidden;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.82) 0%,
+    rgba(238, 241, 237, 0.70) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    0 2px 8px rgba(62, 82, 71, 0.10);
 }
 
 @media (max-width: 768px) {
