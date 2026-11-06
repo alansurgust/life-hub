@@ -1,18 +1,17 @@
 /**
  * Apple iOS 26 Liquid Glass Navigation Engine — WebGL Optical Shader Edition (120fps Mobile & Desktop)
- * Matches the iOS 26 App Store / zakisheriff Liquid-Glass video frame-for-frame:
- * - Real-time WebGL Snell's law rim-bending shader (bevel curvature + interior magnification)
- * - 3-channel RGB chromatic dispersion throwing vivid cyan/green/blue/violet prism fringes at the curved rim
- * - Iridescent specular rim arc & Fresnel glass sheen
- * - True capsule cutout (--lg-content-hide) on the underlying bar so icons half-inside the lens split cleanly
- * - Closed-form damped harmonic springs + velocity-driven jelly stretch/squash + rubber-band overscroll
- * - Zero DOM cloning, zero MutationObserver, zero SVG filter lag (< 0.1ms GPU shader execution per frame)
+ * Matches the real iOS 26 App Store tab bar video frame-for-frame:
+ * - Undistorted 1.075x magnified center + Snell's law meniscus bevel rim (outer ~20px) that curves & stretches icons/labels without folding
+ * - 5-ray spectral prism dispersion (Red/Magenta, Yellow/Gold, Active Blue #007AFF, Cyan/Mint, Violet) at the curved bevel
+ * - Analytical bar-edge refraction: bends the bar's top & bottom edges into curved meniscus arcs with rainbow caustics inside the overhanging droplet
+ * - Crisp water-droplet perimeter meniscus (dark outer refraction hairline + bright specular inner rim + subtle bevel shadow) visible on any background
+ * - True capsule cutout (--lg-content-hide) + all underlying DOM tabs forced dark (#1C1C1E) while lifted so split icons are black outside and blue/rainbow inside
  */
 (function (global) {
   'use strict';
 
   // =========================================================================
-  // 1. CLOSED-FORM DAMPED HARMONIC SPRINGS (spring.ts)
+  // 1. CLOSED-FORM DAMPED HARMONIC SPRINGS
   // =========================================================================
   const activeSprings = new Set();
   let springFrame = 0;
@@ -126,16 +125,16 @@
 
   const SPRINGS = {
     press: springFrom(0.22, 0.86),
-    release: springFrom(0.42, 0.5),
-    drag: springFrom(0.12, 0.92),
-    snap: springFrom(0.38, 0.72),
-    lift: springFrom(0.24, 0.78),
-    settle: springFrom(0.45, 0.46),
-    jelly: springFrom(0.3, 0.28)
+    release: springFrom(0.42, 0.52),
+    drag: springFrom(0.10, 0.90),
+    snap: springFrom(0.36, 0.74),
+    lift: springFrom(0.22, 0.80),
+    settle: springFrom(0.44, 0.52),
+    jelly: springFrom(0.28, 0.26)
   };
 
-  const WOBBLE = springFrom(0.3, 0.22);
-  const WOBBLE_REACH = 0.18;
+  const WOBBLE = springFrom(0.28, 0.22);
+  const WOBBLE_REACH = 0.21;
 
   function createJelly(onUpdate, max, speed) {
     const spring = createSpring(0, SPRINGS.jelly, (value) => onUpdate(value));
@@ -161,15 +160,15 @@
   function haptic() {
     try {
       if (typeof window.triggerHaptic === 'function') {
-        window.triggerHaptic(14);
+        window.triggerHaptic(12);
       } else if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        navigator.vibrate(12);
+        navigator.vibrate(10);
       }
     } catch (_) {}
   }
 
   // =========================================================================
-  // 2. SYNCHRONOUS VECTOR SVG + LABEL RASTERIZER FOR BAR TEXTURE
+  // 2. UNSCALED 0.0PX-EXACT VECTOR SVG + LABEL RASTERIZER
   // =========================================================================
   function drawSvgChildren(ctx, parentEl) {
     const children = parentEl.children;
@@ -213,7 +212,7 @@
         ctx.lineTo(x2, y2);
         ctx.stroke();
       } else if (tag === 'polyline' || tag === 'polygon') {
-        const pts = (el.getAttribute('points') || '').trim().split(/[\s,]+/).map( parseFloat );
+        const pts = (el.getAttribute('points') || '').trim().split(/[\s,]+/).map(parseFloat);
         if (pts.length >= 4) {
           ctx.beginPath();
           ctx.moveTo(pts[0], pts[1]);
@@ -235,15 +234,11 @@
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    // Draw subtle top & bottom bar rim lines so when the lens overhangs the bar, the bar's border bends into arcs too!
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
-    ctx.lineWidth = 1.2;
-    ctx.beginPath();
-    ctx.roundRect(0.6, 0.6, barWidth - 1.2, barHeight - 1.2, barHeight / 2);
-    ctx.stroke();
-
-    // Draw each tab's icon & label in pure white (the WebGL shader tints the central ray to the active color and splits R/B into rainbow prism fringes)
+    // Measure unscaled coordinates so even if bar is mid-swell, glyph positions match 0.0px with DOM buttons
     const barRect = bar.getBoundingClientRect();
+    const scaleX = barRect.width > 0 ? barRect.width / barWidth : 1;
+    const scaleY = barRect.height > 0 ? barRect.height / barHeight : 1;
+
     for (let i = 0; i < buttons.length; i++) {
       const btn = buttons[i];
       const svgEl = btn.querySelector('svg');
@@ -253,16 +248,16 @@
 
       if (svgEl) {
         const svgRect = svgEl.getBoundingClientRect();
-        const iconW = svgRect.width || 20;
-        const iconH = svgRect.height || 20;
-        const iconX = barRect.width > 0 ? (svgRect.left - barRect.left) : (cx - iconW / 2);
-        const iconY = barRect.height > 0 ? (svgRect.top - barRect.top) : (cy - 18);
+        const iconW = (svgRect.width / scaleX) || 21;
+        const iconH = (svgRect.height / scaleY) || 21;
+        const iconX = barRect.width > 0 ? (svgRect.left - barRect.left) / scaleX : (cx - iconW / 2);
+        const iconY = barRect.height > 0 ? (svgRect.top - barRect.top) / scaleY : (cy - 18);
 
         ctx.save();
         ctx.translate(iconX, iconY);
         ctx.scale(iconW / 24, iconH / 24);
         ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 2.25;
+        ctx.lineWidth = 2.35;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         drawSvgChildren(ctx, svgEl);
@@ -271,9 +266,12 @@
 
       if (labelEl) {
         const lblRect = labelEl.getBoundingClientRect();
-        const lblY = barRect.height > 0 ? (lblRect.top - barRect.top + lblRect.height / 2) : (cy + 13);
+        const cs = getComputedStyle(labelEl);
+        const lblY = barRect.height > 0
+          ? (lblRect.top - barRect.top + lblRect.height * 0.54) / scaleY
+          : (cy + 13);
         ctx.save();
-        ctx.font = '700 10px -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Segoe UI", Roboto, sans-serif';
+        ctx.font = `700 ${cs.fontSize || '10px'} ${cs.fontFamily || '-apple-system, BlinkMacSystemFont, sans-serif'}`;
         ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -286,7 +284,7 @@
   }
 
   // =========================================================================
-  // 3. WEBGL LIQUID GLASS DROPLET SHADER (Exact match to video frames)
+  // 3. WEBGL LIQUID GLASS WATER-DROPLET SHADER (Exact iOS 26 Video Match)
   // =========================================================================
   function createWebGLLensRenderer(canvas) {
     const gl = canvas.getContext('webgl', {
@@ -307,7 +305,6 @@
       }
     `;
 
-    // Fragment shader implementing Snell's law rim-stretch + 3-ray RGB prism dispersion + iridescent specular rim
     const fsSource = `
       precision highp float;
       uniform sampler2D uTex;
@@ -322,6 +319,15 @@
         vec2 uv = barPos / uBarSize;
         if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return 0.0;
         return texture2D(uTex, uv).a;
+      }
+
+      // Signed distance to the underlying tab bar pill (negative inside bar, 0 at bar border, positive outside)
+      float barSDF(vec2 barPos) {
+        vec2 halfBar = uBarSize * 0.5;
+        vec2 p = barPos - halfBar;
+        float r = min(halfBar.x, halfBar.y);
+        vec2 q = abs(p) - (halfBar - r);
+        return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
       }
 
       void main() {
@@ -341,66 +347,119 @@
           : (q.x > q.y ? vec2(sign(local.x), 0.0) : vec2(0.0, sign(local.y)));
 
         float depth = max(-dist, 0.0);
-        float bevel = radius * 0.78;
+
+        // 1. Anisotropic Snell's law meniscus bevel:
+        // - Left/right semicircular caps have a wide 25px bevel that curves & stretches icons and labels into liquid arcs
+        // - Top/bottom straight overhang edges have an 11.5px bevel that bends the bar's top/bottom borders (at depth=7px)
+        //   into crisp meniscus crescents while keeping the text label (at depth=16px) 100% sharp and unclipped!
+        float nx2 = normal.x * normal.x;
+        float bevel = mix(11.5, min(radius * 0.72, 25.0), nx2);
         float t = clamp(depth / bevel, 0.0, 1.0);
         float edge = 1.0 - t;
 
-        // Quadratic Snell's-law rim stretch: pulls & curves icons/letters outward to the droplet rim
-        float bend = radius * 0.92 * pow(edge, 2.0) * uLift;
-        float zoom = 1.0 + 0.08 * uLift;
+        // Smooth inward sample pull (stretches icons/text outward to the curved rim without folding backwards)
+        float bend = bevel * 0.64 * pow(edge, 2.1) * uLift;
+        float zoom = 1.0 + 0.07 * uLift;
 
-        // Sample inward along normal so glyphs inside the lens stretch outward toward the rim
         vec2 baseRay = uLensCenter + local / zoom - normal * bend;
 
-        // Chromatic dispersion split across R, G, B rays at the curved rim
-        float split = bend * 0.24 + 2.2 * pow(edge, 1.6) * uLift;
-        float aR = sampleAlpha(baseRay - normal * split);
+        // 2. Tight Water-Drop RGB Prism Dispersion (bound tightly to bent glyph strokes, zero floating halo)
+        float split = (bend * 0.16 + 1.15 * pow(edge, 2.0)) * uLift;
+        float aR = sampleAlpha(baseRay - normal * split * 1.15);
+        float aY = sampleAlpha(baseRay - normal * split * 0.55);
         float aG = sampleAlpha(baseRay);
-        float aB = sampleAlpha(baseRay + normal * split);
+        float aC = sampleAlpha(baseRay + normal * split * 0.55);
+        float aB = sampleAlpha(baseRay + normal * split * 1.15);
 
-        // Rainbow prism fringes where R and B rays bend past the G core (exact iOS 26 water-drop dispersion)
-        float warmEdge = max(0.0, aR - aG * 0.75) * clamp(edge * 1.45, 0.0, 1.0);
-        float coolEdge = max(0.0, aB - aG * 0.75) * clamp(edge * 1.45, 0.0, 1.0);
+        float rimWeight = clamp(pow(edge, 0.9) * 1.45, 0.0, 1.0);
+        float fringeR = max(0.0, aR - aG * 0.72) * rimWeight;
+        float fringeY = max(0.0, aY - aG * 0.62) * rimWeight;
+        float fringeC = max(0.0, aC - aG * 0.62) * rimWeight;
+        float fringeB = max(0.0, aB - aG * 0.72) * rimWeight;
 
-        // Vivid prism fringe colors: violet/magenta/blue on warm ray, cyan/emerald/green on cool ray
-        vec3 warmColor = vec3(0.56, 0.22, 0.96);
-        vec3 coolColor = vec3(0.06, 0.88, 0.72);
+        // True iOS 26 prism dispersion colors tightly hugging the refracted strokes:
+        vec3 colMagenta = vec3(0.96, 0.20, 0.48);
+        vec3 colYellow  = vec3(1.00, 0.80, 0.08);
+        vec3 colCyan    = vec3(0.00, 0.86, 0.76);
+        vec3 colViolet  = vec3(0.32, 0.30, 0.98);
 
-        // Core glyph color: blends toward electric cyan/blue shimmer near the high-refraction rim
-        vec3 rimShimmer = mix(uActiveColor, vec3(0.08, 0.62, 0.98), clamp(edge * 0.65, 0.0, 1.0));
-        float glyphAlpha = clamp(max(aG, max(aR, aB) * 0.92), 0.0, 1.0);
+        vec3 coreCol = mix(uActiveColor, vec3(0.04, 0.58, 1.0), clamp(edge * 0.5, 0.0, 1.0));
 
-        vec3 glyphCol = rimShimmer * aG + warmColor * warmEdge * 1.15 + coolColor * coolEdge * 1.15;
-        float totalGlyphA = clamp(aG + warmEdge * 0.95 + coolEdge * 0.95, 0.0, 1.0);
-        if (totalGlyphA > 0.001) {
-          glyphCol /= totalGlyphA;
-        }
+        vec3 glyphPremul =
+          coreCol * aG +
+          colYellow * fringeY * 0.90 +
+          colMagenta * fringeR * 0.88 +
+          colCyan * fringeC * 0.90 +
+          colViolet * fringeB * 0.88;
 
-        // Glass body Fresnel + Iridescent Specular Rim (top-left & bottom-right diagonal catchlights)
-        float fresnel = pow(edge, 3.2) * 0.22 * uLift;
-        float lightDir = abs(dot(normal, normalize(vec2(-0.65, -0.76))));
-        float light = 0.25 + 0.75 * pow(lightDir, 2.4);
+        float totalGlyphA = clamp(
+          aG + (fringeY + fringeR + fringeC + fringeB) * 0.68,
+          0.0,
+          1.0
+        );
+        glyphPremul = min(glyphPremul, vec3(totalGlyphA));
 
-        // Iridescent hue around the rim contour
-        float angle = atan(normal.y, normal.x);
-        vec3 rimIridescence = vec3(
-          0.84 + 0.16 * cos(angle),
-          0.84 + 0.16 * cos(angle - 2.09),
-          0.88 + 0.12 * cos(angle + 2.09)
+        // 3. Analytical Bar Top/Bottom Border Meniscus Crescent & Subtle Rainbow Caustic
+        // Inside the 7px top/bottom overhang, the bar's top and bottom edges bend into a crisp glass meniscus arc
+        float bDistR = barSDF(baseRay - normal * (split * 0.9 + 0.6));
+        float bDistG = barSDF(baseRay);
+        float bDistB = barSDF(baseRay + normal * (split * 0.9 + 0.6));
+
+        float overhangZone = clamp((1.0 - nx2 * 0.65) * edge, 0.0, 1.0);
+        float barLineR = exp(-pow(bDistR / 0.95, 2.0)) * overhangZone * uLift;
+        float barLineG = exp(-pow(bDistG / 0.95, 2.0)) * overhangZone * uLift;
+        float barLineB = exp(-pow(bDistB / 0.95, 2.0)) * overhangZone * uLift;
+
+        // Subtle glass tint difference between inside-bar and outside-bar overhang crescent
+        float outsideBar = smoothstep(-0.8, 0.8, bDistG) * uLift;
+        float crescentShade = outsideBar * 0.045;
+
+        vec3 barCausticPremul =
+          vec3(0.95, 0.52, 0.22) * max(0.0, barLineR - barLineG * 0.55) * 0.36 +
+          vec3(0.10, 0.82, 0.68) * max(0.0, barLineB - barLineG * 0.55) * 0.36 +
+          vec3(0.18, 0.20, 0.24) * barLineG * 0.22 +
+          vec3(0.12, 0.15, 0.20) * crescentShade;
+        float barCausticA = clamp(
+          barLineG * 0.22 +
+          max(0.0, barLineR - barLineG * 0.55) * 0.32 +
+          max(0.0, barLineB - barLineG * 0.55) * 0.32 +
+          crescentShade,
+          0.0,
+          0.55
         );
 
-        float rimLine = exp(-pow((depth - 0.85) / 0.85, 2.0)) * (0.38 + 0.62 * light) * uLift;
-        float innerBevel = exp(-pow((depth - 3.2) / 2.2, 2.0)) * light * 0.14 * uLift;
+        // 4. Physical Water-Droplet Meniscus Perimeter (crisp on white, cream, and colorful backdrops)
+        float lightDir = abs(dot(normal, normalize(vec2(-0.62, -0.78))));
+        float light = 0.30 + 0.70 * pow(lightDir, 2.2);
 
-        float glassAlpha = clamp(fresnel + rimLine * 0.92 + innerBevel, 0.0, 1.0);
-        vec3 glassCol = rimIridescence;
+        // Outer dark refraction hairline right at dist ~ -0.45px
+        float outerDarkLine = exp(-pow((depth - 0.45) / 0.52, 2.0)) * 0.26 * uLift;
+        // Inner bright white specular highlight ring at depth ~ 1.4px
+        float innerSpecLine = exp(-pow((depth - 1.40) / 0.82, 2.0)) * (0.55 + 0.45 * light) * uLift;
+        // Soft inner meniscus depth band at depth ~ 3.2px
+        float meniscusBand = exp(-pow((depth - 3.2) / 1.6, 2.0)) * 0.08 * uLift;
 
-        // Composite glyph over glass droplet (premultiplied alpha output)
-        float maskAA = 1.0 - smoothstep(-0.6, 0.6, dist);
-        vec3 premulGlass = glassCol * glassAlpha;
-        vec3 premulGlyph = glyphCol * totalGlyphA;
-        vec3 outPremul = (premulGlyph + premulGlass * (1.0 - totalGlyphA)) * maskAA;
-        float outAlpha = (totalGlyphA + glassAlpha * (1.0 - totalGlyphA)) * maskAA;
+        // Subtle iridescent tint along the specular rim
+        float angle = atan(normal.y, normal.x);
+        vec3 specTint = vec3(
+          0.95 + 0.05 * cos(angle),
+          0.96 + 0.04 * cos(angle - 2.09),
+          0.98 + 0.02 * cos(angle + 2.09)
+        );
+
+        vec3 rimPremul =
+          vec3(0.08, 0.10, 0.14) * outerDarkLine +
+          specTint * innerSpecLine +
+          vec3(0.14, 0.18, 0.24) * meniscusBand +
+          barCausticPremul;
+
+        float rimAlpha = clamp(outerDarkLine + innerSpecLine + meniscusBand + barCausticA, 0.0, 1.0);
+        rimPremul = min(rimPremul, vec3(rimAlpha));
+
+        // 5. Composite Glyph over Glass Rim & Meniscus (Premultiplied Alpha)
+        float maskAA = 1.0 - smoothstep(-0.55, 0.55, dist);
+        vec3 outPremul = (glyphPremul + rimPremul * (1.0 - totalGlyphA)) * maskAA;
+        float outAlpha = (totalGlyphA + rimAlpha * (1.0 - totalGlyphA)) * maskAA;
 
         gl_FragColor = vec4(outPremul, outAlpha);
       }
@@ -448,8 +507,8 @@
     const uActiveColor = gl.getUniformLocation(prog, 'uActiveColor');
     const uLift = gl.getUniformLocation(prog, 'uLift');
 
-    // Active tab color in RGB (0..1): Deep Forest Sage (#3E5247 -> 0.243, 0.322, 0.278)
-    gl.uniform3f(uActiveColor, 0.243, 0.322, 0.278);
+    // Vibrant iOS 26 Active Blue (#007AFF -> 0.0, 0.478, 1.0) matching the reference video
+    gl.uniform3f(uActiveColor, 0.0, 0.478, 1.0);
 
     return {
       uploadTexture(sourceCanvas, barW, barH) {
@@ -486,7 +545,6 @@
     const select = document.getElementById('bottomNavPill');
     if (!bar || !glass || !lens || !select) return null;
 
-    // Create GPU-composited light bloom inside bar glass
     let bloom = glass.querySelector('.lg-glass__bloom');
     if (!bloom) {
       bloom = document.createElement('span');
@@ -494,7 +552,6 @@
       glass.appendChild(bloom);
     }
 
-    // Create WebGL canvas inside .lg-track__lens
     lens.innerHTML = '';
     const glCanvas = document.createElement('canvas');
     glCanvas.className = 'lg-lens__canvas';
@@ -505,8 +562,7 @@
     const tabs = ['dashboard', 'finance', 'todos', 'habits', 'notebook'];
     const count = tabs.length;
     const overhang = 14;
-    // Wide droplet spread (0.44) matching the video so the lens spans across neighbouring tab rims during drag
-    const spread = 0.44;
+    const spread = 0.42;
     const swellAmount = 8;
 
     const buttons = Array.from(bar.querySelectorAll(':scope > [data-lg-item]'));
@@ -530,14 +586,6 @@
     let suppressClick = false;
     let dragging = false;
     const maskedButtons = new Set();
-
-    const preview = (index) => {
-      if (index === undefined) delete bar.dataset.previewing;
-      else bar.dataset.previewing = '';
-      for (let i = 0; i < buttons.length; i++) {
-        buttons[i].toggleAttribute('data-lg-preview', i === index);
-      }
-    };
 
     const refreshTexture = () => {
       if (!barWidth || !barHeight || !glRenderer) return;
@@ -598,15 +646,14 @@
       const swell = state.swell;
 
       const kx = ((slot + (W - slot) * liftVal) / W) * (1 + squash);
-      const ky = ((height + (H - height) * liftVal) / H) * (1 - squash * 0.6);
+      const ky = ((height + (H - height) * liftVal) / H) * (1 - squash * 0.55);
       const growX = 1 + (swellAmount / Math.max(barWidth, 1)) * swell;
       const growY = 1 + 0.015 * swell;
 
-      // 1. Move & scale the Liquid Glass lens & resting pill
       lens.style.transform = `translate3d(${xVal.toFixed(2)}px, 0, 0) scale(${kx.toFixed(4)}, ${ky.toFixed(4)})`;
-      lens.style.opacity = String(clamp(liftVal * 3.8, 0, 1));
+      lens.style.opacity = String(clamp(liftVal * 4.2, 0, 1));
       select.style.transform = `translate3d(${xVal.toFixed(2)}px, 0, 0)`;
-      select.style.opacity = String(clamp(1 - liftVal * 2.2, 0, 1));
+      select.style.opacity = String(clamp(1 - liftVal * 2.6, 0, 1));
       bar.style.transform = swell > 0.001 ? `scale3d(${growX.toFixed(4)}, ${growY.toFixed(4)}, 1)` : 'none';
 
       if (liftClamped <= 0.02 && !gesture) {
@@ -615,23 +662,23 @@
         return;
       }
 
+      bar.dataset.lifted = '';
       const lensCenterX = pad + slot / 2 + xVal;
       const lensCenterY = padY + height / 2;
       const scaledW = W * kx;
       const scaledH = H * ky;
 
-      // 2. Render WebGL Snell's law rim-bending + rainbow prism dispersion for the current lens position
       if (glRenderer) {
         if (!textureReady) refreshTexture();
         glRenderer.render(lensCenterX, lensCenterY, scaledW, scaledH, liftClamped);
       }
 
-      // 3. Cut out the exact capsule footprint on the 1-2 underlying buttons so icons split cleanly at the lens rim
+      // Cut out the exact capsule footprint on overlapped DOM buttons underneath
       const hy = scaledH / 2;
       const hx = scaledH / 2;
       const run = Math.max(0, (scaledW - scaledH) / 2);
-      const lensHalfSpan = run + hx + slot * 0.52;
-      const fade = clamp(liftVal * 3.5, 0, 1);
+      const lensHalfSpan = run + hx + slot * 0.55;
+      const fade = clamp(liftVal * 4.0, 0, 1);
       const solid = `rgb(0 0 0 / ${fade.toFixed(3)})`;
 
       for (let i = 0; i < count; i++) {
@@ -642,9 +689,9 @@
           const ccy = height / 2;
           buttons[i].style.setProperty('--lg-content-hide', [
             'linear-gradient(#000, #000)',
-            `radial-gradient(ellipse ${hx.toFixed(1)}px ${hy.toFixed(1)}px at ${(ccx - run).toFixed(1)}px ${ccy.toFixed(1)}px, ${solid} calc(100% - 1px), transparent 100%)`,
-            `radial-gradient(ellipse ${hx.toFixed(1)}px ${hy.toFixed(1)}px at ${(ccx + run).toFixed(1)}px ${ccy.toFixed(1)}px, ${solid} calc(100% - 1px), transparent 100%)`,
-            `linear-gradient(${solid}, ${solid}) ${(ccx - run).toFixed(1)}px ${(ccy - hy).toFixed(1)}px / ${(run * 2).toFixed(1)}px ${(hy * 2).toFixed(1)}px no-repeat`
+            `radial-gradient(ellipse ${hx.toFixed(1)}px ${hy.toFixed(1)}px at ${(ccx - run).toFixed(1)}px ${ccy.toFixed(1)}px, ${solid} calc(100% - 0.8px), transparent 100%)`,
+            `radial-gradient(ellipse ${hx.toFixed(1)}px ${hy.toFixed(1)}px at ${(ccx + run).toFixed(1)}px ${ccy.toFixed(1)}px, ${solid} calc(100% - 0.8px), transparent 100%)`,
+            `linear-gradient(${solid}, ${solid}) ${(ccx - run - 0.5).toFixed(1)}px ${(ccy - hy).toFixed(1)}px / ${(run * 2 + 1).toFixed(1)}px ${(hy * 2).toFixed(1)}px no-repeat`
           ].join(', '));
           maskedButtons.add(i);
         } else if (maskedButtons.has(i)) {
@@ -657,11 +704,11 @@
     const jelly = createJelly((value) => {
       state.squash = value;
       paint();
-    }, 0.14, 1500);
+    }, 0.16, 1350);
 
     const xSpring = createSpring(0, SPRINGS.snap, (value, velocity) => {
       state.x = value;
-      jelly.feed(velocity, dragging ? WOBBLE_REACH : undefined);
+      jelly.feed(velocity, WOBBLE_REACH);
       paint();
     });
 
@@ -723,7 +770,7 @@
       clearTimeout(dropTimer);
       if (!slot || !textureReady) measure();
       dragging = false;
-      jelly.tune(SPRINGS.jelly);
+      jelly.tune(WOBBLE);
       const box = bar.getBoundingClientRect();
       gesture = {
         id: event.pointerId,
@@ -737,7 +784,6 @@
       };
       suppressClick = false;
       bar.dataset.lifted = '';
-      preview(index);
       glass.dataset.pressed = '';
       updateLight(event.clientX, box);
       haptic();
@@ -752,7 +798,7 @@
 
     const onMove = (event) => {
       if (!gesture || event.pointerId !== gesture.id) return;
-      if (!gesture.moved && Math.abs(event.clientX - gesture.startX) > 3) {
+      if (!gesture.moved && Math.abs(event.clientX - gesture.startX) > 2.5) {
         gesture.moved = true;
         try {
           bar.setPointerCapture(event.pointerId);
@@ -770,7 +816,6 @@
       const hovered = clamp(Math.round(at / slot), 0, count - 1);
       if (hovered !== gesture.hovered) {
         gesture.hovered = hovered;
-        preview(hovered);
         haptic();
       }
     };
@@ -781,7 +826,6 @@
       const at = moved ? positionFromClientX(event.clientX) : gesture.anchor;
       const index = clamp(Math.round(at / slot), 0, count - 1);
       gesture = null;
-      preview();
       delete glass.dataset.pressed;
       try {
         if (bar.hasPointerCapture && bar.hasPointerCapture(event.pointerId)) {
@@ -789,13 +833,13 @@
         }
       } catch (_) {}
 
-      const inside = event.clientY >= box.top - 42 && event.clientY <= box.bottom + 42;
+      const inside = event.clientY >= box.top - 44 && event.clientY <= box.bottom + 44;
       const drop = () => {
         liftSpring.tune(SPRINGS.settle);
         liftSpring.set(0);
       };
-      // Hold lift for 240ms on quick taps so the lens inflates and refracts intermediate tabs as it glides (like Frame 165)
-      const hold = commit && !moved ? Math.max(0, 240 - (performance.now() - startedAt)) : 0;
+      // Keep the water droplet inflated for 280ms on quick taps so it glides across tabs as a clear refracting droplet (like F160 -> F164 -> F174)
+      const hold = commit && !moved ? Math.max(0, 280 - (performance.now() - startedAt)) : 0;
       if (hold) dropTimer = window.setTimeout(drop, hold);
       else drop();
 
@@ -823,7 +867,6 @@
         return;
       }
       gesture = null;
-      preview();
       delete glass.dataset.pressed;
       liftSpring.tune(SPRINGS.settle);
       liftSpring.set(0);
@@ -860,6 +903,20 @@
       }
     });
 
+    // Re-rasterize automatically if Lucide icons finish replacing <i data-lucide> after initial mount
+    const iconObserver = new MutationObserver(() => {
+      if (bar.querySelector('svg')) {
+        refreshTexture();
+      }
+    });
+    iconObserver.observe(bar, { childList: true, subtree: true });
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        refreshTexture();
+      });
+    }
+
     measure();
     if (slot) xSpring.set(current * slot, true);
     bar.dataset.ready = '';
@@ -891,9 +948,9 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(initLiquidGlassNav, 50);
+      setTimeout(initLiquidGlassNav, 40);
     });
   } else {
-    setTimeout(initLiquidGlassNav, 50);
+    setTimeout(initLiquidGlassNav, 40);
   }
 })(window);

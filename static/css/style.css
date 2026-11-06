@@ -263,23 +263,23 @@ html, body {
 }
 
 /* ==========================================================================
-   APPLE iOS 26 LIQUID GLASS TAB BAR (Exact zakisheriff/Liquid-Glass Demo Optics + 120fps Mobile Engine)
+   APPLE iOS 26 LIQUID GLASS TAB BAR (Exact iOS 26 App Store Video Optics + 120fps WebGL Engine)
    ========================================================================== */
 :root {
-  --lg-fg: #6F7C6B;
-  --lg-fg-muted: rgba(111, 124, 107, 0.65);
-  --lg-accent: #3E5247;
-  --lg-track-active: #3E5247;
-  --lg-fill: rgba(255, 249, 246, 0.60);
-  --lg-navigation-fill: rgba(255, 249, 246, 0.56);
+  --lg-fg: #1C1C1E;
+  --lg-fg-muted: rgba(28, 28, 30, 0.65);
+  --lg-accent: #007AFF;
+  --lg-track-active: #007AFF;
+  --lg-fill: rgba(255, 255, 255, 0.66);
+  --lg-navigation-fill: rgba(255, 255, 255, 0.62);
   --lg-blur: 18px;
   --lg-saturate: 1.9;
   --lg-brightness: 1.04;
-  --lg-edge: rgba(255, 255, 255, 0.78);
-  --lg-shadow: 0 12px 30px rgba(53, 33, 22, 0.14), 0 2px 6px rgba(62, 82, 71, 0.08);
+  --lg-edge: rgba(0, 0, 0, 0.08);
+  --lg-shadow: 0 8px 28px rgba(0, 0, 0, 0.10), 0 1px 3px rgba(0, 0, 0, 0.06);
   --lg-rim-opacity: 1;
-  --lg-glow: rgba(255, 255, 255, 0.72);
-  --lg-tab-selection: rgba(62, 82, 71, 0.12);
+  --lg-glow: rgba(255, 255, 255, 0.65);
+  --lg-tab-selection: rgba(0, 0, 0, 0.068);
 }
 
 .app-bottom-nav.lg-track:not([data-lg-copy]) {
@@ -308,38 +308,32 @@ html, body {
   box-shadow: none !important;
 }
 
-.lg-track[data-lg-copy] {
-  --lg-pad: 4px;
-  --lg-item-h: 56px;
-  --lg-item-w: 56px;
-  display: grid !important;
-  grid-auto-flow: column !important;
-  grid-auto-columns: minmax(var(--lg-item-w), 1fr) !important;
-  padding: var(--lg-pad) !important;
-  border-radius: 999px !important;
-  pointer-events: none !important;
-  will-change: transform;
-}
-
 .lg-glass {
   position: relative;
   box-sizing: border-box;
   background-color: var(--lg-glass-fill, var(--lg-fill));
-  -webkit-backdrop-filter: blur(var(--lg-glass-blur, var(--lg-blur))) saturate(var(--lg-saturate));
+  -webkit-backdrop-filter: blur(var(--lg-glass-blur, var(--lg-blur))) saturate(var(--lg-saturate)) brightness(var(--lg-brightness));
   backdrop-filter: blur(var(--lg-glass-blur, var(--lg-blur))) saturate(var(--lg-saturate)) brightness(var(--lg-brightness));
-  box-shadow: var(--lg-glass-shadow, var(--lg-shadow)), inset 0 0 0 1px var(--lg-edge);
+  box-shadow:
+    var(--lg-glass-shadow, var(--lg-shadow)),
+    inset 0 0 0 0.75px var(--lg-edge),
+    inset 0 1px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.45);
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Baked Snell's law specular rim: thin bright line, hottest on diagonal corners */
-.lg-glass::before {
+/* True 1px hollow specular rim ring (never covers or fogs the interior) */
+.lg-track__glass.lg-glass::before {
   content: '';
   position: absolute;
   inset: 0;
+  padding: 1px;
   border-radius: inherit;
-  background-image: var(--lg-rim, linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0.75) 100%));
-  background-size: 100% 100%;
-  opacity: var(--lg-rim-opacity);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.85) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
   pointer-events: none;
   z-index: 2;
 }
@@ -362,7 +356,7 @@ html, body {
 
 .lg-glass[data-pressed] .lg-glass__bloom,
 .lg-track[data-lifted] .lg-glass__bloom {
-  opacity: 0.85;
+  opacity: 0.75;
   transition-duration: 70ms;
 }
 
@@ -383,6 +377,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   height: var(--lg-item-h);
   min-width: 0;
   padding: 0 4px 2px 4px;
@@ -397,46 +392,34 @@ html, body {
   white-space: nowrap;
   cursor: pointer;
   -webkit-touch-callout: none;
-  transition: color 0.12s ease;
+  transition: color 0.08s ease;
 }
 
-.lg-track__item-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.lg-track__item[aria-selected='true'] {
+/* At rest, the selected tab has the vibrant active color */
+.lg-track:not([data-lifted]) > .lg-track__item[aria-selected='true'] {
   color: var(--lg-track-active);
   font-weight: 700;
 }
 
-.lg-track[data-previewing] .lg-track__item {
-  color: var(--lg-fg);
-  font-weight: 600;
-}
-
-.lg-track[data-previewing] .lg-track__item[data-lg-preview] {
-  color: var(--lg-track-active);
-  font-weight: 700;
+/* While the droplet lens is lifted, ALL underlying DOM tabs are dark (#1C1C1E) so any portion sticking outside the lens is dark while the portion inside the lens is vibrant blue (#007AFF) */
+.lg-track[data-lifted] > .lg-track__item {
+  color: var(--lg-fg) !important;
+  font-weight: 600 !important;
+  transition: none !important;
 }
 
 .lg-track--tabbar .lg-nav__icon {
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   pointer-events: none;
 }
 
 .lg-track--tabbar .lg-nav__icon svg {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
+  stroke-width: 2.25px;
 }
 
 .lg-track--tabbar .lg-nav__label {
@@ -457,26 +440,22 @@ html, body {
   transform: translate3d(0, 0, 0);
 }
 
-/* The Lifted Liquid Glass Droplet Lens (WebGL Optical Shader) */
+/* The Lifted Liquid Glass Water Droplet Lens (WebGL Optical Shader) */
 .lg-track__lens.lg-glass {
   z-index: 4;
   opacity: 0;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.08);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
+  -webkit-backdrop-filter: blur(1.5px) saturate(165%) brightness(1.03);
+  backdrop-filter: blur(1.5px) saturate(165%) brightness(1.03);
   box-shadow:
-    0 10px 26px rgba(53, 33, 22, 0.22),
-    0 2px 6px rgba(62, 82, 71, 0.14),
-    inset 0 0 0 0.75px rgba(255, 255, 255, 0.55),
-    inset 0 2px 6px rgba(53, 33, 22, 0.08),
-    inset 0 -1.5px 3px rgba(255, 255, 255, 0.88);
+    0 8px 24px rgba(0, 0, 0, 0.14),
+    0 2px 6px rgba(0, 0, 0, 0.08);
   transition: none;
 }
 
 .lg-track__lens.lg-glass::before {
-  opacity: 0.9;
-  z-index: 2;
+  display: none !important;
 }
 
 .lg-lens__canvas {
@@ -486,7 +465,7 @@ html, body {
   height: 100% !important;
   border-radius: inherit !important;
   pointer-events: none !important;
-  z-index: 1 !important;
+  z-index: 2 !important;
   display: block;
 }
 
@@ -502,8 +481,7 @@ html, body {
 .lg-track__select {
   z-index: 1;
   background: var(--lg-tab-selection);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.7);
 }
 
 @media (max-width: 768px) {
