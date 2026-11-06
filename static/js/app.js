@@ -35,7 +35,7 @@ window.switchMobileKanbanCol = function(colName) {
 
 // Global State
 let state = {
-  selectedMonth: 'all',
+  selectedMonth: null, // Auto-selects latest uploaded month on load
   availableMonths: [],
   selectedCategory: 'all',
   selectedType: 'all',
@@ -237,7 +237,8 @@ function switchMainView(mode) {
 // ----------------- 3-COLUMN KANBAN BOARD -----------------
 
 async function loadTransactionColumns() {
-  let url = `/api/transactions/columns?month=${encodeURIComponent(state.selectedMonth)}`;
+  const monthVal = state.selectedMonth || 'all';
+  let url = `/api/transactions/columns?month=${encodeURIComponent(monthVal)}`;
   if (state.columnSearchQuery) {
     url += `&search=${encodeURIComponent(state.columnSearchQuery)}`;
   }
@@ -524,8 +525,8 @@ async function renderActiveTrendChart() {
 function updateMonthDropdownUI() {
   const label = document.getElementById('monthDropdownLabel');
   if (label) {
-    if (state.selectedMonth === 'all') {
-      label.textContent = 'Toàn bộ thời gian';
+    if (!state.selectedMonth || state.selectedMonth === 'all') {
+      label.textContent = state.selectedMonth === 'all' ? 'Toàn bộ thời gian' : 'Đang tải...';
     } else {
       const parts = state.selectedMonth.split('-');
       if (parts.length === 2) {
@@ -590,7 +591,7 @@ function stepMonth(dir) {
   const months = state.availableMonths;
   if (!months || months.length === 0) return;
 
-  if (state.selectedMonth === 'all') {
+  if (!state.selectedMonth || state.selectedMonth === 'all') {
     if (dir < 0) {
       state.selectedMonth = months[0];
     } else {
@@ -744,11 +745,25 @@ async function loadCategories() {
 
 async function loadOverview() {
   try {
-    const url = `/api/stats/overview?month=${encodeURIComponent(state.selectedMonth)}`;
+    const monthParam = (state.selectedMonth && state.selectedMonth !== 'all') 
+      ? `?month=${encodeURIComponent(state.selectedMonth)}` 
+      : (state.selectedMonth === 'all' ? '?month=all' : '');
+    const url = `/api/stats/overview${monthParam}`;
     const res = await fetch(url);
     const data = await res.json();
 
     state.availableMonths = data.available_months || [];
+
+    // If selectedMonth not set yet, default to the latest month of the uploaded statement
+    if (!state.selectedMonth) {
+      if (data.selected_month && data.selected_month !== 'all') {
+        state.selectedMonth = data.selected_month;
+      } else if (state.availableMonths.length > 0) {
+        state.selectedMonth = state.availableMonths[0];
+      } else {
+        state.selectedMonth = 'all';
+      }
+    }
 
     // Update Soft Month Dropdown UI
     updateMonthDropdownUI();
@@ -824,7 +839,8 @@ async function renderCategoryPieChart() {
   legendEl.innerHTML = '';
 
   try {
-    const res = await fetch(`/api/stats/categories?month=${encodeURIComponent(state.selectedMonth)}&type=expense`);
+    const monthVal = state.selectedMonth || 'all';
+    const res = await fetch(`/api/stats/categories?month=${encodeURIComponent(monthVal)}&type=expense`);
     const data = await res.json();
     const breakdown = Array.isArray(data) ? data : (data.breakdown || []);
 
@@ -927,7 +943,8 @@ async function renderWeeklyChart() {
   const noDataEl = document.getElementById('weeklyNoData');
 
   try {
-    const res = await fetch(`/api/stats/weekly?month=${encodeURIComponent(state.selectedMonth)}`);
+    const monthVal = state.selectedMonth || '';
+    const res = await fetch(`/api/stats/weekly?month=${encodeURIComponent(monthVal)}`);
     const data = await res.json();
     const weeks = Array.isArray(data) ? data : (data.weeks || []);
 
@@ -1422,7 +1439,11 @@ async function submitUploadStatement() {
     showToast(msg, 'success');
 
     closeUploadModal();
-    state.selectedMonth = 'all';
+    if (data.latest_month) {
+      state.selectedMonth = data.latest_month;
+    } else {
+      state.selectedMonth = null;
+    }
     await refreshDashboard();
     if (window.scheduleAutoSync) window.scheduleAutoSync();
 
@@ -1444,7 +1465,7 @@ async function seedDemoData() {
     const res = await fetch('/api/seed-demo', { method: 'POST' });
     const data = await res.json();
     showToast(`Đã nạp ${data.count} giao dịch mẫu thành công!`, 'success');
-    state.selectedMonth = 'all';
+    state.selectedMonth = null;
     await refreshDashboard();
   } catch (err) {
     showToast(err.message, 'error');
@@ -1470,7 +1491,7 @@ async function resetAllData() {
     const res = await fetch('/api/reset-all', { method: 'POST' });
     const data = await res.json();
     showToast(data.message || 'Đã làm mới dữ liệu thành công!', 'info');
-    state.selectedMonth = 'all';
+    state.selectedMonth = null;
     await refreshDashboard();
   } catch (err) {
     showToast(err.message, 'error');

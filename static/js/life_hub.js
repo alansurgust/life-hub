@@ -668,6 +668,16 @@ function switchLifeTab(tabName) {
     } else if (tabName === 'finance') {
       setTimeout(() => {
         if (currentTransitionId !== tabSwitchTransitionId) return;
+        if (typeof state !== 'undefined') {
+          if (!state.selectedMonth && state.availableMonths && state.availableMonths.length > 0) {
+            state.selectedMonth = state.availableMonths[0];
+            if (typeof updateMonthDropdownUI === 'function') updateMonthDropdownUI();
+            if (typeof refreshDashboard === 'function') {
+              refreshDashboard();
+              return;
+            }
+          }
+        }
         if (typeof renderCategoryPieChart === 'function') renderCategoryPieChart();
         if (typeof renderActiveTrendChart === 'function') renderActiveTrendChart();
       }, 50);
