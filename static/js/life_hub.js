@@ -119,7 +119,7 @@ function triggerDopamineCheck(element, x, y) {
     y = rect.top + rect.height / 2;
   }
 
-  const colors = ['#5F7465', '#D39526', '#B14720', '#626037', '#C3651F', '#233329'];
+  const colors = ['#032D65', '#F9BD04', '#B8171F', '#032D65', '#B8171F', '#032D65'];
   for (let i = 0; i < 6; i++) {
     const angle = (i / 6) * 2 * Math.PI + (Math.random() * 0.4 - 0.2);
     const dist = 24 + Math.random() * 18;
@@ -210,12 +210,12 @@ document.addEventListener('click', (e) => {
 
 // Vintage Brand Category Palette
 const VINTAGE_CATEGORY_PALETTE = {
-  'Công việc': { color: '#233329', bg: '#EAE6DC', border: '#DECDB5', chartColor: '#233329', dot: 'bg-[#233329]' },
-  'Học tập': { color: '#B37812', bg: '#FDF6E2', border: '#DECDB5', chartColor: '#D39526', dot: 'bg-[#D39526]' },
-  'Sức khỏe': { color: '#425848', bg: '#EDF4F0', border: '#C5D6CA', chartColor: '#5F7465', dot: 'bg-[#5F7465]' },
-  'Cá nhân': { color: '#9C3916', bg: '#FDF3EE', border: '#E8C5B8', chartColor: '#B14720', dot: 'bg-[#B14720]' },
-  'Tài chính': { color: '#A85314', bg: '#FAEDE4', border: '#E8CBB5', chartColor: '#C3651F', dot: 'bg-[#C3651F]' },
-  'Khác': { color: '#4F4E29', bg: '#F4F3E8', border: '#D8D6BC', chartColor: '#626037', dot: 'bg-[#626037]' }
+  'Công việc': { color: '#032D65', bg: '#E4ECF7', border: '#CBD7E8', chartColor: '#032D65', dot: 'bg-[#032D65]' },
+  'Học tập': { color: '#032D65', bg: '#FFF8DB', border: '#FCE373', chartColor: '#F9BD04', dot: 'bg-[#F9BD04]' },
+  'Sức khỏe': { color: '#B8171F', bg: '#FDECEE', border: '#F5B7BA', chartColor: '#B8171F', dot: 'bg-[#B8171F]' },
+  'Cá nhân': { color: '#1E4E8C', bg: '#EBF1FA', border: '#B8D0EE', chartColor: '#1E4E8C', dot: 'bg-[#1E4E8C]' },
+  'Tài chính': { color: '#961219', bg: '#FDECEE', border: '#FAD4D6', chartColor: '#961219', dot: 'bg-[#961219]' },
+  'Khác': { color: '#4A658A', bg: '#EBF1FA', border: '#CBD7E8', chartColor: '#647F9E', dot: 'bg-[#647F9E]' }
 };
 
 function getCategoryBadgeHtml(catName) {
@@ -369,13 +369,13 @@ async function toggleHabitLogWithFeedback(event, habitId, date) {
   if (btn) {
     triggerDopamineCheck(btn, event?.clientX, event?.clientY);
     prevClass = btn.className;
-    const isDone = btn.classList.contains('bg-[#5F7465]');
+    const isDone = btn.classList.contains('bg-[#032D65]');
     if (isDone) {
-      btn.classList.remove('bg-[#5F7465]', 'text-white');
-      btn.classList.add('border', 'border-[#5F7465]', 'bg-[#FFFDF9]', 'text-[#5F7465]');
+      btn.classList.remove('bg-[#032D65]', 'text-white');
+      btn.classList.add('border', 'border-[#032D65]', 'bg-[#FDFDFF]', 'text-[#032D65]');
     } else {
-      btn.classList.remove('border', 'border-[#5F7465]', 'bg-[#FFFDF9]', 'text-[#5F7465]');
-      btn.classList.add('bg-[#5F7465]', 'text-white');
+      btn.classList.remove('border', 'border-[#032D65]', 'bg-[#FDFDFF]', 'text-[#032D65]');
+      btn.classList.add('bg-[#032D65]', 'text-white');
     }
   }
 
@@ -417,7 +417,7 @@ function renderHabitSkeletons() {
   const container = document.getElementById('habitListContainer');
   if (!container) return;
   container.innerHTML = [1, 2, 3].map(() => `
-    <div class="p-4 sm:p-5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs flex flex-col md:flex-row gap-4 items-stretch justify-between">
+    <div class="p-4 sm:p-5 rounded-2xl bg-[#FDFDFF] border border-[#CBD7E8]/70 shadow-xs flex flex-col md:flex-row gap-4 items-stretch justify-between">
       <div class="flex items-start gap-3.5 flex-1 min-w-0">
         <div class="w-10 h-10 rounded-2xl skeleton shrink-0"></div>
         <div class="space-y-2 flex-1 min-w-0">
@@ -435,7 +435,7 @@ function renderNotesSkeletons() {
   const container = document.getElementById('notesGridContainer');
   if (!container) return;
   container.innerHTML = [1, 2, 3, 4].map(() => `
-    <div class="p-4 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs space-y-3">
+    <div class="p-4 rounded-2xl bg-[#FDFDFF] border border-[#CBD7E8]/70 shadow-xs space-y-3">
       <div class="flex items-center justify-between">
         <div class="h-3.5 w-16 rounded-full skeleton"></div>
         <div class="h-3.5 w-12 rounded-md skeleton"></div>
@@ -445,7 +445,7 @@ function renderNotesSkeletons() {
         <div class="h-3 w-full rounded skeleton"></div>
         <div class="h-3 w-5/6 rounded skeleton"></div>
       </div>
-      <div class="pt-2 border-t border-[#DECDB5]/40 flex justify-between">
+      <div class="pt-2 border-t border-[#CBD7E8]/40 flex justify-between">
         <div class="h-2.5 w-20 rounded skeleton"></div>
         <div class="h-2.5 w-14 rounded skeleton"></div>
       </div>
@@ -457,7 +457,7 @@ function renderTodoSkeletons() {
   const container = document.getElementById('todoListItems') || document.getElementById('todoListContainer');
   if (!container) return;
   container.innerHTML = [1, 2, 3, 4].map(() => `
-    <div class="p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs flex items-start gap-3">
+    <div class="p-3.5 rounded-2xl bg-[#FDFDFF] border border-[#CBD7E8]/70 shadow-xs flex items-start gap-3">
       <div class="w-5 h-5 rounded-full skeleton shrink-0 mt-0.5"></div>
       <div class="space-y-2 flex-1">
         <div class="h-4 w-2/3 rounded-md skeleton"></div>
@@ -480,15 +480,15 @@ function switchNotebookSubTab(sub) {
   if (sub === 'journal') {
     if (jView) jView.classList.remove('hidden');
     if (nView) nView.classList.add('hidden');
-    if (jBtn) jBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFFDF9] text-[#233329] shadow-2xs border border-[#DECDB5]/80';
-    if (nBtn) nBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#786B60] hover:text-[#2B231D]';
+    if (jBtn) jBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FDFDFF] text-[#032D65] shadow-2xs border border-[#CBD7E8]/80';
+    if (nBtn) nBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#4A658A] hover:text-[#032D65]';
     loadJournal(lifeState.currentJournalDate);
     loadJournalHistory();
   } else {
     if (jView) jView.classList.add('hidden');
     if (nView) nView.classList.remove('hidden');
-    if (nBtn) nBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FFFDF9] text-[#233329] shadow-2xs border border-[#DECDB5]/80';
-    if (jBtn) jBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#786B60] hover:text-[#2B231D]';
+    if (nBtn) nBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer bg-[#FDFDFF] text-[#032D65] shadow-2xs border border-[#CBD7E8]/80';
+    if (jBtn) jBtn.className = 'flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-medium transition cursor-pointer text-[#4A658A] hover:text-[#032D65]';
     loadNotes();
   }
   if (window.lucide) lucide.createIcons();
@@ -531,29 +531,29 @@ function switchLifeTab(tabName) {
     const btn = document.getElementById(`navTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
     if (btn) {
       if (t === tabName) {
-        btn.className = 'relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#FFFDF9] bg-transparent tap-spring';
+        btn.className = 'relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#FDFDFF] bg-transparent tap-spring';
       } else {
-        btn.className = 'relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#786B60] hover:text-[#2B231D] hover:bg-[#E7DEC8]/40 bg-transparent tap-spring';
+        btn.className = 'relative z-10 w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition cursor-pointer text-[#4A658A] hover:text-[#032D65] hover:bg-[#DCE6F5]/40 bg-transparent tap-spring';
       }
     }
   });
 
   // Update sidebar badge styling to match active/inactive pill background
   const dashBadge = document.getElementById('sidebarDashBadge');
-  if (dashBadge) dashBadge.className = tabName === 'dashboard' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FFFDF9]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]';
+  if (dashBadge) dashBadge.className = tabName === 'dashboard' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FDFDFF]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#CBD7E8] text-[#032D65]';
   const todosBadge = document.getElementById('sidebarTodosBadge');
-  if (todosBadge) todosBadge.className = tabName === 'todos' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FFFDF9]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]';
+  if (todosBadge) todosBadge.className = tabName === 'todos' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FDFDFF]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#CBD7E8] text-[#032D65]';
   const habitsBadge = document.getElementById('sidebarHabitsBadge');
-  if (habitsBadge) habitsBadge.className = tabName === 'habits' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FFFDF9]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#DECDB5] text-[#2B231D]';
+  if (habitsBadge) habitsBadge.className = tabName === 'habits' ? 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-white/20 text-[#FDFDFF]' : 'text-[10px] px-2 py-0.5 rounded-full font-bold bg-[#CBD7E8] text-[#032D65]';
 
   // Update mobile bottom navigation bar active button (keep z-10 and tap-spring)
   tabs.forEach(t => {
     const mBtn = document.getElementById(`mobileNav_${t}`);
     if (mBtn) {
       if (t === tabName) {
-        mBtn.className = 'relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring';
+        mBtn.className = 'relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#032D65] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring';
       } else {
-        mBtn.className = 'relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring';
+        mBtn.className = 'relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#4A658A] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring';
       }
     }
   });
@@ -804,7 +804,7 @@ function renderDashboard(data) {
   const pulseExpenseSub = document.getElementById('dashPulseExpenseSub');
   if (pulseBalance && data.finance) {
     animateNumberValue(pulseBalance, data.finance.balance, 700, v => formatVND(v));
-    pulseBalance.className = `text-sm font-extrabold mt-2 truncate ${data.finance.balance >= 0 ? 'text-[#5F7465]' : 'text-[#B14720]'}`;
+    pulseBalance.className = `text-sm font-extrabold mt-2 truncate ${data.finance.balance >= 0 ? 'text-[#032D65]' : 'text-[#B8171F]'}`;
   }
   if (pulseExpenseSub && data.finance) {
     pulseExpenseSub.textContent = `Chi ${formatVND(data.finance.total_expense)} (${data.finance.month_label})`;
@@ -851,18 +851,18 @@ function renderDashboard(data) {
   if (todoContainer && data.todos) {
     if (!data.todos.top_todos || data.todos.top_todos.length === 0) {
       todoContainer.innerHTML = `
-        <div class="text-center py-6 px-4 bg-[#F7F2E8] rounded-xl border border-[#DECDB5]/60">
-          <i data-lucide="check-circle-2" class="w-7 h-7 text-[#5F7465] mx-auto mb-1.5 opacity-80"></i>
-          <p class="text-xs font-bold text-[#2B231D]">Tuyệt vời! Không còn việc tồn đọng</p>
-          <p class="text-[11px] text-[#786B60] mt-0.5">Bạn có thể thêm việc mới ở ô bên dưới</p>
+        <div class="text-center py-6 px-4 bg-[#F0F4FA] rounded-xl border border-[#CBD7E8]/60">
+          <i data-lucide="check-circle-2" class="w-7 h-7 text-[#032D65] mx-auto mb-1.5 opacity-80"></i>
+          <p class="text-xs font-bold text-[#032D65]">Tuyệt vời! Không còn việc tồn đọng</p>
+          <p class="text-[11px] text-[#4A658A] mt-0.5">Bạn có thể thêm việc mới ở ô bên dưới</p>
         </div>
       `;
     } else {
       const priorityMap = {
-        urgent: { label: 'Khẩn cấp', class: 'bg-[#FDF3EE] text-[#B14720] border-[#F4DDD2]' },
-        high: { label: 'Cao', class: 'bg-[#FDF6E2] text-[#D39526] border-[#F4E6C3]' },
-        normal: { label: 'Bình thường', class: 'bg-[#EFE7D8] text-[#626037] border-[#DECDB5]' },
-        low: { label: 'Thấp', class: 'bg-[#F0F5F2] text-[#5F7465] border-[#D7E4DB]' }
+        urgent: { label: 'Khẩn cấp', class: 'bg-[#FDECEE] text-[#B8171F] border-[#FAD4D6]' },
+        high: { label: 'Cao', class: 'bg-[#FFF8DB] text-[#F9BD04] border-[#FEEB99]' },
+        normal: { label: 'Bình thường', class: 'bg-[#E4ECF7] text-[#032D65] border-[#CBD7E8]' },
+        low: { label: 'Thấp', class: 'bg-[#EBF1FA] text-[#032D65] border-[#CFE0F5]' }
       };
 
       const allTopTodos = data.todos.top_todos || [];
@@ -873,34 +873,34 @@ function renderDashboard(data) {
         const pInfo = priorityMap[t.priority] || priorityMap.normal;
         const isOverdue = t.due_date && t.due_date < data.today_str;
         return `
-          <div class="p-3 rounded-xl bg-[#F7F2E8]/60 hover:bg-[#F7F2E8] border border-[#DECDB5]/70 transition shadow-2xs group flex items-start justify-between gap-2.5">
+          <div class="p-3 rounded-xl bg-[#F0F4FA]/60 hover:bg-[#F0F4FA] border border-[#CBD7E8]/70 transition shadow-2xs group flex items-start justify-between gap-2.5">
             <div class="flex items-start gap-2.5 min-w-0 flex-1">
-              <button onclick="toggleTodoFromDash(${t.id})" title="Đánh dấu hoàn thành" class="mt-0.5 w-5 h-5 rounded-full border-2 border-[#5F7465] hover:bg-[#5F7465] text-white flex items-center justify-center shrink-0 transition cursor-pointer hover:scale-105 active:scale-95">
+              <button onclick="toggleTodoFromDash(${t.id})" title="Đánh dấu hoàn thành" class="mt-0.5 w-5 h-5 rounded-full border-2 border-[#032D65] hover:bg-[#032D65] text-white flex items-center justify-center shrink-0 transition cursor-pointer hover:scale-105 active:scale-95">
                 <i data-lucide="check" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition"></i>
               </button>
               <div class="min-w-0 flex-1 space-y-1">
-                <p class="text-xs sm:text-[13px] font-bold text-[#2B231D] leading-snug break-words">${escapeHtml(t.title)}</p>
-                <div class="flex items-center gap-1.5 text-[11px] text-[#786B60]">
+                <p class="text-xs sm:text-[13px] font-bold text-[#032D65] leading-snug break-words">${escapeHtml(t.title)}</p>
+                <div class="flex items-center gap-1.5 text-[11px] text-[#4A658A]">
                   ${getCategoryBadgeHtml(t.category)}
-                  <span class="text-[#DECDB5]">•</span>
-                  <span class="${isOverdue ? 'text-[#B14720] font-bold' : ''}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
-                  ${t.priority === 'urgent' ? '<span class="text-[#B14720] font-bold ml-1">• Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[#D39526] font-bold ml-1">• Cao</span>' : '')}
-                  ${isOverdue ? '<span class="text-[#B14720] font-bold ml-1">• Tồn đọng</span>' : ''}
+                  <span class="text-[#CBD7E8]">•</span>
+                  <span class="${isOverdue ? 'text-[#B8171F] font-bold' : ''}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
+                  ${t.priority === 'urgent' ? '<span class="text-[#B8171F] font-bold ml-1">• Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[#F9BD04] font-bold ml-1">• Cao</span>' : '')}
+                  ${isOverdue ? '<span class="text-[#B8171F] font-bold ml-1">• Tồn đọng</span>' : ''}
                 </div>
               </div>
             </div>
             <div class="flex items-center gap-1 shrink-0 self-center">
-              <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="p-1.5 rounded-lg hover:bg-[#FDF3EE] text-[#B14720] transition cursor-pointer" title="Tập trung Pomodoro">
+              <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="p-1.5 rounded-lg hover:bg-[#FDECEE] text-[#B8171F] transition cursor-pointer" title="Tập trung Pomodoro">
                 <i data-lucide="timer" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg hover:bg-[#EFE7D8] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Chỉnh sửa">
+              <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg hover:bg-[#E4ECF7] text-[#4A658A] hover:text-[#032D65] transition cursor-pointer" title="Chỉnh sửa">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
         `;
       }).join('') + (remainingTodosCount > 0 ? `
-        <button onclick="switchLifeTab('todos')" class="w-full text-center py-2 text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:bg-[#F7F2E8] rounded-xl transition cursor-pointer border border-dashed border-[#DECDB5]/80">
+        <button onclick="switchLifeTab('todos')" class="w-full text-center py-2 text-xs font-bold text-[#032D65] hover:text-[#032D65] hover:bg-[#F0F4FA] rounded-xl transition cursor-pointer border border-dashed border-[#CBD7E8]/80">
           Xem thêm ${remainingTodosCount} việc còn lại →
         </button>
       ` : '');
@@ -918,7 +918,7 @@ function renderDashboard(data) {
   const habitContainer = document.getElementById('dashHabitsListContainer');
   if (habitContainer && data.habits) {
     if (!data.habits.items || data.habits.items.length === 0) {
-      habitContainer.innerHTML = '<p class="col-span-2 text-xs text-[#786B60] text-center py-4">Chưa có thói quen nào. Hãy vào mục Thói quen để tạo!</p>';
+      habitContainer.innerHTML = '<p class="col-span-2 text-xs text-[#4A658A] text-center py-4">Chưa có thói quen nào. Hãy vào mục Thói quen để tạo!</p>';
     } else {
       const allHabitItems = data.habits.items || [];
       const displayHabits = allHabitItems.slice(0, 4);
@@ -927,16 +927,16 @@ function renderDashboard(data) {
       habitContainer.innerHTML = displayHabits.map(h => {
         const isDone = h.completed_today === 1;
         return `
-          <div class="flex items-center justify-between p-3 rounded-xl border ${isDone ? 'bg-[#F0F5F2] border-[#D7E4DB]' : 'bg-[#F7F2E8]/60 border-[#DECDB5]/60 hover:bg-[#F7F2E8]'} transition">
+          <div class="flex items-center justify-between p-3 rounded-xl border ${isDone ? 'bg-[#EBF1FA] border-[#CFE0F5]' : 'bg-[#F0F4FA]/60 border-[#CBD7E8]/60 hover:bg-[#F0F4FA]'} transition">
             <div class="flex items-center gap-2.5 min-w-0">
               <button onclick="toggleHabitLogFromDash(${h.id}, '${data.today_str}')" title="${isDone ? 'Bỏ tick hoàn thành' : 'Tick hoàn thành'}" 
-                      class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition cursor-pointer ${isDone ? 'bg-[#5F7465] text-[#FFFDF9] shadow-xs' : 'border-2 border-[#DECDB5] bg-white hover:border-[#5F7465] text-transparent hover:text-[#5F7465]'}">
+                      class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition cursor-pointer ${isDone ? 'bg-[#032D65] text-[#FDFDFF] shadow-xs' : 'border-2 border-[#CBD7E8] bg-white hover:border-[#032D65] text-transparent hover:text-[#032D65]'}">
                 <i data-lucide="check" class="w-4 h-4 stroke-[2.5]"></i>
               </button>
               <div class="min-w-0">
-                <span class="text-xs font-bold text-[#2B231D] truncate block ${isDone ? 'line-through text-[#786B60]' : ''}">${escapeHtml(h.name)}</span>
-                <span class="inline-flex items-center gap-1 text-[10px] text-[#C3651F] font-bold mt-0.5">
-                  <i data-lucide="flame" class="w-3 h-3 text-[#C3651F]"></i>
+                <span class="text-xs font-bold text-[#032D65] truncate block ${isDone ? 'line-through text-[#4A658A]' : ''}">${escapeHtml(h.name)}</span>
+                <span class="inline-flex items-center gap-1 text-[10px] text-[#B8171F] font-bold mt-0.5">
+                  <i data-lucide="flame" class="w-3 h-3 text-[#B8171F]"></i>
                   <span>${h.streak} ngày</span>
                 </span>
               </div>
@@ -945,7 +945,7 @@ function renderDashboard(data) {
         `;
       }).join('') + (remainingHabitsCount > 0 ? `
         <div class="col-span-full pt-1">
-          <button onclick="switchLifeTab('habits')" class="w-full text-center py-2 text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:bg-[#F7F2E8] rounded-xl transition cursor-pointer border border-dashed border-[#DECDB5]/80">
+          <button onclick="switchLifeTab('habits')" class="w-full text-center py-2 text-xs font-bold text-[#032D65] hover:text-[#032D65] hover:bg-[#F0F4FA] rounded-xl transition cursor-pointer border border-dashed border-[#CBD7E8]/80">
             Xem tất cả ${allHabitItems.length} thói quen →
           </button>
         </div>
@@ -964,13 +964,13 @@ function renderDashboard(data) {
     if (finExpense) finExpense.textContent = formatVND(data.finance.total_expense);
     if (finBalance) {
       finBalance.textContent = formatVND(data.finance.balance);
-      finBalance.className = `text-xs sm:text-sm font-extrabold truncate ${data.finance.balance >= 0 ? 'text-[#233329]' : 'text-[#B14720]'}`;
+      finBalance.className = `text-xs sm:text-sm font-extrabold truncate ${data.finance.balance >= 0 ? 'text-[#032D65]' : 'text-[#B8171F]'}`;
     }
 
     const recentList = document.getElementById('dashRecentTransList');
     if (recentList) {
       if (!data.finance.recent_transactions || data.finance.recent_transactions.length === 0) {
-        recentList.innerHTML = '<p class="text-xs text-[#786B60] text-center py-3">Chưa có giao dịch gần đây</p>';
+        recentList.innerHTML = '<p class="text-xs text-[#4A658A] text-center py-3">Chưa có giao dịch gần đây</p>';
       } else {
         const allRecentTx = data.finance.recent_transactions || [];
         const displayTx = allRecentTx.slice(0, 3);
@@ -979,23 +979,23 @@ function renderDashboard(data) {
         recentList.innerHTML = displayTx.map(tx => {
           const isIncome = tx.type === 'income';
           return `
-            <div class="flex items-center justify-between p-2 rounded-xl bg-[#F7F2E8]/60 border border-[#DECDB5]/40 hover:bg-[#F7F2E8] transition text-xs">
+            <div class="flex items-center justify-between p-2 rounded-xl bg-[#F0F4FA]/60 border border-[#CBD7E8]/40 hover:bg-[#F0F4FA] transition text-xs">
               <div class="flex items-center gap-2 min-w-0">
-                <div class="w-6 h-6 rounded-lg ${isIncome ? 'bg-[#F0F5F2] text-[#5F7465]' : 'bg-[#FDF3EE] text-[#B14720]'} flex items-center justify-center shrink-0">
+                <div class="w-6 h-6 rounded-lg ${isIncome ? 'bg-[#EBF1FA] text-[#032D65]' : 'bg-[#FDECEE] text-[#B8171F]'} flex items-center justify-center shrink-0">
                   <i data-lucide="${isIncome ? 'arrow-down-left' : 'arrow-up-right'}" class="w-3.5 h-3.5"></i>
                 </div>
                 <div class="min-w-0">
-                  <div class="font-bold text-[#2B231D] truncate text-[11px]">${escapeHtml(tx.description)}</div>
-                  <div class="text-[10px] text-[#786B60]">${escapeHtml(tx.category)} • ${formatDisplayDate(tx.date)}</div>
+                  <div class="font-bold text-[#032D65] truncate text-[11px]">${escapeHtml(tx.description)}</div>
+                  <div class="text-[10px] text-[#4A658A]">${escapeHtml(tx.category)} • ${formatDisplayDate(tx.date)}</div>
                 </div>
               </div>
-              <span class="font-extrabold tabular-nums shrink-0 ml-2 text-xs ${isIncome ? 'text-[#5F7465]' : 'text-[#B14720]'}">
+              <span class="font-extrabold tabular-nums shrink-0 ml-2 text-xs ${isIncome ? 'text-[#032D65]' : 'text-[#B8171F]'}">
                 ${isIncome ? '+' : '-'}${formatVND(tx.amount)}
               </span>
             </div>
           `;
         }).join('') + (remainingTxCount > 0 ? `
-          <button onclick="switchLifeTab('finance')" class="w-full text-center py-1.5 text-xs font-bold text-[#5F7465] hover:text-[#233329] hover:bg-[#F7F2E8] rounded-xl transition cursor-pointer border border-dashed border-[#DECDB5]/80">
+          <button onclick="switchLifeTab('finance')" class="w-full text-center py-1.5 text-xs font-bold text-[#032D65] hover:text-[#032D65] hover:bg-[#F0F4FA] rounded-xl transition cursor-pointer border border-dashed border-[#CBD7E8]/80">
             Xem toàn bộ sổ giao dịch →
           </button>
         ` : '');
@@ -1008,31 +1008,31 @@ function renderDashboard(data) {
   if (journalContainer) {
     if (!data.journal) {
       journalContainer.innerHTML = `
-        <div class="text-center py-4 px-3 bg-[#F7F2E8] rounded-xl border border-[#DECDB5]/60">
-          <p class="text-xs font-bold text-[#2B231D]">Hôm nay chưa viết nhật ký</p>
-          <p class="text-[11px] text-[#786B60] mt-0.5 mb-2">Dành 2 phút ghi lại lòng biết ơn và cảm nhận</p>
-          <button onclick="switchLifeTab('notebook')" class="px-3 py-1.5 rounded-xl bg-[#5F7465] text-white text-xs font-bold hover:bg-[#4d5e52] transition cursor-pointer">
+        <div class="text-center py-4 px-3 bg-[#F0F4FA] rounded-xl border border-[#CBD7E8]/60">
+          <p class="text-xs font-bold text-[#032D65]">Hôm nay chưa viết nhật ký</p>
+          <p class="text-[11px] text-[#4A658A] mt-0.5 mb-2">Dành 2 phút ghi lại lòng biết ơn và cảm nhận</p>
+          <button onclick="switchLifeTab('notebook')" class="px-3 py-1.5 rounded-xl bg-[#032D65] text-white text-xs font-bold hover:bg-[#02224F] transition cursor-pointer">
             Viết nhật ký ngay
           </button>
         </div>
       `;
     } else {
       journalContainer.innerHTML = `
-        <div class="p-3 bg-[#FDF6E2]/70 rounded-xl border border-[#F4E6C3] space-y-1.5">
-          <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#7A5408]">
-            <i data-lucide="heart" class="w-3.5 h-3.5 text-[#B14720]"></i>
+        <div class="p-3 bg-[#FFF8DB]/70 rounded-xl border border-[#FEEB99] space-y-1.5">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#032D65]">
+            <i data-lucide="heart" class="w-3.5 h-3.5 text-[#B8171F]"></i>
             <span>Lòng biết ơn hôm nay</span>
           </div>
-          <p class="text-xs text-[#2B231D] italic leading-relaxed">"${escapeHtml(data.journal.gratitude || 'Chưa ghi')}"</p>
+          <p class="text-xs text-[#032D65] italic leading-relaxed">"${escapeHtml(data.journal.gratitude || 'Chưa ghi')}"</p>
         </div>
 
         ${data.journal.improvement ? `
-          <div class="p-3 bg-[#F7F2E8] rounded-xl border border-[#DECDB5]/60 space-y-1">
-            <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#626037]">
-              <i data-lucide="target" class="w-3.5 h-3.5 text-[#5F7465]"></i>
+          <div class="p-3 bg-[#F0F4FA] rounded-xl border border-[#CBD7E8]/60 space-y-1">
+            <div class="flex items-center gap-1.5 text-[11px] font-bold text-[#032D65]">
+              <i data-lucide="target" class="w-3.5 h-3.5 text-[#032D65]"></i>
               <span>Bài học / Cần cải thiện</span>
             </div>
-            <p class="text-xs text-[#2B231D] leading-relaxed">${escapeHtml(data.journal.improvement)}</p>
+            <p class="text-xs text-[#032D65] leading-relaxed">${escapeHtml(data.journal.improvement)}</p>
           </div>
         ` : ''}
       `;
@@ -1043,15 +1043,15 @@ function renderDashboard(data) {
   const notesContainer = document.getElementById('dashNotesContainer');
   if (notesContainer) {
     if (!data.notes || data.notes.length === 0) {
-      notesContainer.innerHTML = '<p class="text-xs text-[#786B60] text-center py-3">Chưa có ghi chú nào</p>';
+      notesContainer.innerHTML = '<p class="text-xs text-[#4A658A] text-center py-3">Chưa có ghi chú nào</p>';
     } else {
       notesContainer.innerHTML = data.notes.slice(0, 3).map(n => `
-        <div onclick="openNoteModal(${n.id})" class="p-2.5 rounded-xl bg-[#F7F2E8]/60 hover:bg-[#F7F2E8] border border-[#DECDB5]/50 hover:border-[#5F7465] transition cursor-pointer group">
+        <div onclick="openNoteModal(${n.id})" class="p-2.5 rounded-xl bg-[#F0F4FA]/60 hover:bg-[#F0F4FA] border border-[#CBD7E8]/50 hover:border-[#032D65] transition cursor-pointer group">
           <div class="flex items-center justify-between gap-1 mb-1">
-            <span class="font-bold text-[#2B231D] text-xs truncate group-hover:text-[#5F7465] transition">${escapeHtml(n.title)}</span>
-            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#EFE7D8] text-[#626037] shrink-0">${escapeHtml(n.category)}</span>
+            <span class="font-bold text-[#032D65] text-xs truncate group-hover:text-[#032D65] transition">${escapeHtml(n.title)}</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-[#E4ECF7] text-[#032D65] shrink-0">${escapeHtml(n.category)}</span>
           </div>
-          <p class="text-[11px] text-[#786B60] line-clamp-2 leading-relaxed">${escapeHtml(n.content || '')}</p>
+          <p class="text-[11px] text-[#4A658A] line-clamp-2 leading-relaxed">${escapeHtml(n.content || '')}</p>
         </div>
       `).join('');
     }
@@ -1211,8 +1211,8 @@ function renderTodoCharts(stats) {
             {
               label: 'Hoàn thành',
               data: completedData,
-              backgroundColor: '#7A9682',
-              hoverBackgroundColor: '#5F7465',
+              backgroundColor: '#032D65',
+              hoverBackgroundColor: '#021F47',
               borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
               borderSkipped: 'bottom',
               borderWidth: 0,
@@ -1224,8 +1224,8 @@ function renderTodoCharts(stats) {
             {
               label: 'Tồn đọng cũ',
               data: backlogData,
-              backgroundColor: '#D4927E',
-              hoverBackgroundColor: '#C27D68',
+              backgroundColor: '#B8171F',
+              hoverBackgroundColor: '#961219',
               borderRadius: function(ctx) {
                 const idx = ctx.dataIndex;
                 const topVal = (ctx.chart.data.datasets[2]?.data?.[idx]) || 0;
@@ -1243,8 +1243,8 @@ function renderTodoCharts(stats) {
             {
               label: 'Mới trong ngày',
               data: newData,
-              backgroundColor: '#E3C280',
-              hoverBackgroundColor: '#D4B06A',
+              backgroundColor: '#F9BD04',
+              hoverBackgroundColor: '#E5AD04',
               borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
               borderSkipped: 'bottom',
               borderWidth: 0,
@@ -1270,7 +1270,7 @@ function renderTodoCharts(stats) {
               position: 'top',
               labels: {
                 font: { family: APP_FONT_FAMILY, size: 11, weight: '700' },
-                color: '#2B231D',
+                color: '#032D65',
                 boxWidth: 10,
                 boxHeight: 10,
                 usePointStyle: true,
@@ -1279,7 +1279,7 @@ function renderTodoCharts(stats) {
               }
             },
             tooltip: {
-              backgroundColor: '#233329',
+              backgroundColor: '#032D65',
               titleFont: { family: APP_FONT_FAMILY, size: 12, weight: 'bold' },
               bodyFont: { family: APP_FONT_FAMILY, size: 11 },
               padding: 10,
@@ -1308,16 +1308,16 @@ function renderTodoCharts(stats) {
             x: {
               stacked: true,
               grid: { display: false },
-              border: { color: '#DECDB5', width: 1 },
-              ticks: { font: { family: APP_FONT_FAMILY, size: 11, weight: '600' }, color: '#6E6055', padding: 6 }
+              border: { color: '#CBD7E8', width: 1 },
+              ticks: { font: { family: APP_FONT_FAMILY, size: 11, weight: '600' }, color: '#4A658A', padding: 6 }
             },
             y: {
               stacked: true,
               beginAtZero: true,
               grace: '10%',
               border: { display: false },
-              grid: { color: 'rgba(222, 205, 181, 0.35)', drawTicks: false },
-              ticks: { stepSize: 1, precision: 0, font: { family: APP_FONT_FAMILY, size: 10, weight: '600' }, color: '#8C7E72', padding: 8 }
+              grid: { color: 'rgba(203, 215, 232, 0.35)', drawTicks: false },
+              ticks: { stepSize: 1, precision: 0, font: { family: APP_FONT_FAMILY, size: 10, weight: '600' }, color: '#7B93B2', padding: 8 }
             }
           }
         }
@@ -1347,7 +1347,7 @@ function renderTodoCharts(stats) {
           data: stats.categories.map(c => c.count),
           backgroundColor: catColors,
           borderWidth: 2,
-          borderColor: '#FFFDF9'
+          borderColor: '#FDFDFF'
         }]
       },
       options: {
@@ -1365,7 +1365,7 @@ function renderTodoCharts(stats) {
         plugins: {
           legend: {
             position: 'bottom',
-            labels: { font: { family: APP_FONT_FAMILY, size: 10, weight: '600' }, color: '#786B60', boxWidth: 10 }
+            labels: { font: { family: APP_FONT_FAMILY, size: 10, weight: '600' }, color: '#4A658A', boxWidth: 10 }
           }
         }
       }
@@ -1388,9 +1388,9 @@ function renderTodoList() {
 
   if (lifeState.todos.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-12 text-[#A49688]">
+      <div class="text-center py-12 text-[#7B93B2]">
         <i data-lucide="check-circle" class="w-12 h-12 mx-auto mb-2 opacity-40"></i>
-        <p class="font-bold text-sm text-[#786B60]">Không có công việc nào trong danh mục này</p>
+        <p class="font-bold text-sm text-[#4A658A]">Không có công việc nào trong danh mục này</p>
         <p class="text-xs">Hãy thêm việc mới hoặc đổi bộ lọc bên trên!</p>
       </div>
     `;
@@ -1399,10 +1399,10 @@ function renderTodoList() {
   }
 
   const priorityMeta = {
-    urgent: { label: 'Khẩn cấp', bg: 'bg-[#FDF3EE]', text: 'text-[#B14720]', border: 'border-[#DECDB5]' },
-    high: { label: 'Ưu tiên cao', bg: 'bg-[#FDF6E2]', text: 'text-[#D39526]', border: 'border-[#DECDB5]' },
-    normal: { label: 'Bình thường', bg: 'bg-[#F0F5F2]', text: 'text-[#5F7465]', border: 'border-[#DECDB5]' },
-    low: { label: 'Thấp', bg: 'bg-[#EFE7D8]', text: 'text-[#786B60]', border: 'border-[#DECDB5]' }
+    urgent: { label: 'Khẩn cấp', bg: 'bg-[#FDECEE]', text: 'text-[#B8171F]', border: 'border-[#CBD7E8]' },
+    high: { label: 'Ưu tiên cao', bg: 'bg-[#FFF8DB]', text: 'text-[#F9BD04]', border: 'border-[#CBD7E8]' },
+    normal: { label: 'Bình thường', bg: 'bg-[#EBF1FA]', text: 'text-[#032D65]', border: 'border-[#CBD7E8]' },
+    low: { label: 'Thấp', bg: 'bg-[#E4ECF7]', text: 'text-[#4A658A]', border: 'border-[#CBD7E8]' }
   };
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -1414,27 +1414,27 @@ function renderTodoList() {
 
     return `
       <div ontouchstart="handleTodoTouchStart(event, ${t.id})" ontouchend="handleTodoTouchEnd(event, ${t.id})" 
-           class="p-3 sm:p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-2xs group space-y-2">
+           class="p-3 sm:p-3.5 rounded-2xl bg-[#FDFDFF] border border-[#CBD7E8] hover:border-[#032D65] transition shadow-2xs group space-y-2">
         <!-- Top Row: Checkbox, Title (full width), Edit & Delete Actions -->
         <div class="flex items-start justify-between gap-2.5">
           <div class="flex items-start gap-2.5 min-w-0 flex-1">
             <button onclick="toggleTodoWithFeedback(event, ${t.id})" class="min-w-[36px] min-h-[36px] -ml-1 -mt-1 flex items-center justify-center transition shrink-0 cursor-pointer" title="${isDone ? 'Bỏ hoàn thành' : 'Đánh dấu hoàn thành'}">
-              <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 ${isDone ? 'bg-[#5F7465] border-[#5F7465] text-white' : 'border-[#DECDB5] hover:border-[#5F7465] bg-transparent'} flex items-center justify-center transition shrink-0 hover:scale-105 active:scale-95">
+              <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 ${isDone ? 'bg-[#032D65] border-[#032D65] text-white' : 'border-[#CBD7E8] hover:border-[#032D65] bg-transparent'} flex items-center justify-center transition shrink-0 hover:scale-105 active:scale-95">
                 ${isDone ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
               </span>
             </button>
             <div class="min-w-0 flex-1">
-              <h4 class="font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-[#786B60] opacity-80' : 'text-[#2B231D]'} break-words">${escapeHtml(t.title)}</h4>
-              ${t.description ? `<p class="text-[11px] sm:text-xs text-[#786B60] mt-0.5 line-clamp-2 leading-relaxed break-words">${escapeHtml(t.description)}</p>` : ''}
+              <h4 class="font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-[#4A658A] opacity-80' : 'text-[#032D65]'} break-words">${escapeHtml(t.title)}</h4>
+              ${t.description ? `<p class="text-[11px] sm:text-xs text-[#4A658A] mt-0.5 line-clamp-2 leading-relaxed break-words">${escapeHtml(t.description)}</p>` : ''}
             </div>
           </div>
 
           <!-- Quick Action Buttons: Accessible on mobile -->
           <div class="flex items-center gap-1 shrink-0">
-            <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#5F7465] hover:bg-[#F0F5F2] transition cursor-pointer" title="Chỉnh sửa việc">
+            <button onclick="openTodoModal(${t.id})" class="p-1.5 rounded-lg text-[#4A658A] hover:text-[#032D65] hover:bg-[#EBF1FA] transition cursor-pointer" title="Chỉnh sửa việc">
               <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
             </button>
-            <button onclick="deleteTodo(${t.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition cursor-pointer" title="Xóa việc">
+            <button onclick="deleteTodo(${t.id})" class="p-1.5 rounded-lg text-[#7B93B2] hover:text-[#B8171F] hover:bg-[#FDECEE] transition cursor-pointer" title="Xóa việc">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -1443,18 +1443,18 @@ function renderTodoList() {
         <!-- Bottom Row: Clean Minimalist Typographic Line -->
         <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5 text-xs">
           <!-- Left: Clean Typographic Metadata -->
-          <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-[#786B60]">
+          <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-[#4A658A]">
             ${getCategoryBadgeHtml(t.category)}
-            <span class="text-[#DECDB5]">•</span>
-            <span class="${isOverdue ? 'text-[#B14720] font-bold' : 'text-[#786B60]'}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
-            ${t.priority === 'urgent' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#DECDB5]/60 ml-1">Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF6E2] text-[#D39526] border border-[#DECDB5]/60 ml-1">Ưu tiên</span>' : '')}
-            ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] ml-1">Tồn đọng</span>' : ''}
+            <span class="text-[#CBD7E8]">•</span>
+            <span class="${isOverdue ? 'text-[#B8171F] font-bold' : 'text-[#4A658A]'}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
+            ${t.priority === 'urgent' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDECEE] text-[#B8171F] border border-[#CBD7E8]/60 ml-1">Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFF8DB] text-[#F9BD04] border border-[#CBD7E8]/60 ml-1">Ưu tiên</span>' : '')}
+            ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDECEE] text-[#B8171F] border border-[#FAD4D6] ml-1">Tồn đọng</span>' : ''}
           </div>
 
           <!-- Right: Pomodoro Quick Trigger -->
           <div class="flex items-center gap-2 text-xs">
-            <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#786B60] hover:text-[#B14720] px-2 py-0.5 rounded-lg hover:bg-[#FDF3EE] transition cursor-pointer" title="Bắt đầu Pomodoro">
-              <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B14720]"></i>
+            <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[11px] font-semibold text-[#4A658A] hover:text-[#B8171F] px-2 py-0.5 rounded-lg hover:bg-[#FDECEE] transition cursor-pointer" title="Bắt đầu Pomodoro">
+              <i data-lucide="timer" class="w-3.5 h-3.5 text-[#B8171F]"></i>
               <span>${t.pomodoro_done || 0}/${t.pomodoro_est || 1}</span>
             </button>
           </div>
@@ -1472,10 +1472,10 @@ function renderTodoKanban() {
   if (!pendingCol || !inProgCol || !doneCol) return;
 
   const priorityMeta = {
-    urgent: { label: 'Khẩn cấp', bg: 'bg-[#FDF3EE]', text: 'text-[#B14720]', border: 'border-[#DECDB5]' },
-    high: { label: 'Cao', bg: 'bg-[#FDF6E2]', text: 'text-[#D39526]', border: 'border-[#DECDB5]' },
-    normal: { label: 'Bình thường', bg: 'bg-[#F0F5F2]', text: 'text-[#5F7465]', border: 'border-[#DECDB5]' },
-    low: { label: 'Thấp', bg: 'bg-[#EFE7D8]', text: 'text-[#786B60]', border: 'border-[#DECDB5]' }
+    urgent: { label: 'Khẩn cấp', bg: 'bg-[#FDECEE]', text: 'text-[#B8171F]', border: 'border-[#CBD7E8]' },
+    high: { label: 'Cao', bg: 'bg-[#FFF8DB]', text: 'text-[#F9BD04]', border: 'border-[#CBD7E8]' },
+    normal: { label: 'Bình thường', bg: 'bg-[#EBF1FA]', text: 'text-[#032D65]', border: 'border-[#CBD7E8]' },
+    low: { label: 'Thấp', bg: 'bg-[#E4ECF7]', text: 'text-[#4A658A]', border: 'border-[#CBD7E8]' }
   };
 
   const cols = { pending: [], in_progress: [], completed: [] };
@@ -1488,37 +1488,37 @@ function renderTodoKanban() {
     const isDone = t.status === 'completed';
     const pri = priorityMeta[t.priority] || priorityMeta.normal;
     return `
-      <div class="p-3.5 bg-[#FFFDF9] border border-[#DECDB5] rounded-2xl shadow-2xs space-y-2.5 hover:border-[#5F7465] transition group">
+      <div class="p-3.5 bg-[#FDFDFF] border border-[#CBD7E8] rounded-2xl shadow-2xs space-y-2.5 hover:border-[#032D65] transition group">
         <div class="flex items-start justify-between gap-2">
-          <span class="font-bold text-xs text-[#2B231D] ${isDone ? 'line-through text-[#786B60] opacity-80' : ''}">${escapeHtml(t.title)}</span>
+          <span class="font-bold text-xs text-[#032D65] ${isDone ? 'line-through text-[#4A658A] opacity-80' : ''}">${escapeHtml(t.title)}</span>
           <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-            <button onclick="openTodoModal(${t.id})" class="p-1 text-[#786B60] hover:text-[#5F7465] rounded-lg transition" title="Sửa"><i data-lucide="edit-3" class="w-3 h-3"></i></button>
-            <button onclick="deleteTodo(${t.id})" class="p-1 text-[#A49688] hover:text-[#B14720] rounded-lg transition" title="Xóa"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+            <button onclick="openTodoModal(${t.id})" class="p-1 text-[#4A658A] hover:text-[#032D65] rounded-lg transition" title="Sửa"><i data-lucide="edit-3" class="w-3 h-3"></i></button>
+            <button onclick="deleteTodo(${t.id})" class="p-1 text-[#7B93B2] hover:text-[#B8171F] rounded-lg transition" title="Xóa"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
           </div>
         </div>
-        ${t.description ? `<p class="text-[11px] text-[#786B60] line-clamp-2 leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
-        <div class="flex items-center justify-between text-[10px] text-[#786B60]">
+        ${t.description ? `<p class="text-[11px] text-[#4A658A] line-clamp-2 leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
+        <div class="flex items-center justify-between text-[10px] text-[#4A658A]">
           <div class="flex items-center gap-1.5">
             ${getCategoryBadgeHtml(t.category)} <span class="px-2 py-0.5 rounded-full border ${pri.bg} ${pri.text} ${pri.border} font-bold">${pri.label}</span>
-            ${!isDone && t.due_date && t.due_date < new Date().toISOString().split('T')[0] ? '<span class="px-1.5 py-0.2 rounded border font-semibold bg-[#FDF3EE] text-[#B14720] border-[#F4DDD2]">Tồn đọng</span>' : ''}
+            ${!isDone && t.due_date && t.due_date < new Date().toISOString().split('T')[0] ? '<span class="px-1.5 py-0.2 rounded border font-semibold bg-[#FDECEE] text-[#B8171F] border-[#FAD4D6]">Tồn đọng</span>' : ''}
           </div>
           <span>${formatDisplayDate(t.due_date)}</span>
         </div>
-        <div class="flex items-center justify-between pt-2 border-t border-[#DECDB5]/40 text-[11px]">
-          <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[10px] font-bold text-[#B14720] hover:bg-[#FDF3EE] px-2 py-1 rounded-lg transition cursor-pointer" title="Tập trung Pomodoro">
+        <div class="flex items-center justify-between pt-2 border-t border-[#CBD7E8]/40 text-[11px]">
+          <button onclick="startPomoForTodo(${t.id}, '${escapeHtml(t.title)}')" class="inline-flex items-center gap-1 text-[10px] font-bold text-[#B8171F] hover:bg-[#FDECEE] px-2 py-1 rounded-lg transition cursor-pointer" title="Tập trung Pomodoro">
             <i data-lucide="timer" class="w-3 h-3"></i> ${t.pomodoro_done || 0}/${t.pomodoro_est || 1}
           </button>
           <div class="flex items-center gap-1">
             ${t.status === 'pending' ? `
-              <button onclick="updateTodoStatus(${t.id}, 'in_progress')" class="text-[10px] font-bold text-[#D39526] hover:bg-[#FDF6E2] px-2 py-1 rounded-lg transition cursor-pointer">▶ Làm ngay</button>
-              <button onclick="updateTodoStatus(${t.id}, 'completed')" class="text-[10px] font-bold text-[#5F7465] hover:bg-[#F0F5F2] px-2 py-1 rounded-lg transition cursor-pointer">✓ Xong</button>
+              <button onclick="updateTodoStatus(${t.id}, 'in_progress')" class="text-[10px] font-bold text-[#F9BD04] hover:bg-[#FFF8DB] px-2 py-1 rounded-lg transition cursor-pointer">▶ Làm ngay</button>
+              <button onclick="updateTodoStatus(${t.id}, 'completed')" class="text-[10px] font-bold text-[#032D65] hover:bg-[#EBF1FA] px-2 py-1 rounded-lg transition cursor-pointer">✓ Xong</button>
             ` : ''}
             ${t.status === 'in_progress' ? `
-              <button onclick="updateTodoStatus(${t.id}, 'pending')" class="text-[10px] font-semibold text-[#786B60] hover:bg-[#EFE7D8] px-2 py-1 rounded-lg transition cursor-pointer">⏸ Chờ</button>
-              <button onclick="updateTodoStatus(${t.id}, 'completed')" class="text-[10px] font-bold text-[#5F7465] hover:bg-[#F0F5F2] px-2 py-1 rounded-lg transition cursor-pointer">✓ Xong</button>
+              <button onclick="updateTodoStatus(${t.id}, 'pending')" class="text-[10px] font-semibold text-[#4A658A] hover:bg-[#E4ECF7] px-2 py-1 rounded-lg transition cursor-pointer">⏸ Chờ</button>
+              <button onclick="updateTodoStatus(${t.id}, 'completed')" class="text-[10px] font-bold text-[#032D65] hover:bg-[#EBF1FA] px-2 py-1 rounded-lg transition cursor-pointer">✓ Xong</button>
             ` : ''}
             ${t.status === 'completed' ? `
-              <button onclick="updateTodoStatus(${t.id}, 'pending')" class="text-[10px] font-bold text-[#5F7465] hover:underline cursor-pointer">↺ Mở lại</button>
+              <button onclick="updateTodoStatus(${t.id}, 'pending')" class="text-[10px] font-bold text-[#032D65] hover:underline cursor-pointer">↺ Mở lại</button>
             ` : ''}
           </div>
         </div>
@@ -1526,9 +1526,9 @@ function renderTodoKanban() {
     `;
   };
 
-  pendingCol.innerHTML = cols.pending.map(renderCard).join('') || '<p class="text-xs text-[#A49688] text-center py-4">Trống</p>';
-  inProgCol.innerHTML = cols.in_progress.map(renderCard).join('') || '<p class="text-xs text-[#A49688] text-center py-4">Trống</p>';
-  doneCol.innerHTML = cols.completed.map(renderCard).join('') || '<p class="text-xs text-[#A49688] text-center py-4">Trống</p>';
+  pendingCol.innerHTML = cols.pending.map(renderCard).join('') || '<p class="text-xs text-[#7B93B2] text-center py-4">Trống</p>';
+  inProgCol.innerHTML = cols.in_progress.map(renderCard).join('') || '<p class="text-xs text-[#7B93B2] text-center py-4">Trống</p>';
+  doneCol.innerHTML = cols.completed.map(renderCard).join('') || '<p class="text-xs text-[#7B93B2] text-center py-4">Trống</p>';
 
   if (window.lucide) lucide.createIcons();
 }
@@ -1540,9 +1540,9 @@ function setTodoFilter(filter) {
     const btn = document.getElementById(`todoFilterBtn_${f}`);
     if (btn) {
       if (f === filter) {
-        btn.className = 'px-3 py-1 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer';
+        btn.className = 'px-3 py-1 text-xs font-bold rounded-xl bg-[#032D65] text-[#FDFDFF] shadow-2xs cursor-pointer';
       } else {
-        btn.className = 'px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer';
+        btn.className = 'px-3 py-1 text-xs font-semibold rounded-xl bg-[#FDFDFF] text-[#4A658A] hover:text-[#032D65] border border-[#CBD7E8] cursor-pointer';
       }
     }
   });
@@ -1557,13 +1557,13 @@ function setTodoView(mode) {
   const kanbanContainer = document.getElementById('todoKanbanContainer');
 
   if (mode === 'kanban') {
-    if (listBtn) listBtn.className = 'px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer';
-    if (kanbanBtn) kanbanBtn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FFFDF9] text-[#2B231D] shadow-2xs cursor-pointer';
+    if (listBtn) listBtn.className = 'px-2.5 py-1 text-xs font-semibold text-[#4A658A] hover:text-[#032D65] cursor-pointer';
+    if (kanbanBtn) kanbanBtn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FDFDFF] text-[#032D65] shadow-2xs cursor-pointer';
     if (listContainer) listContainer.classList.add('hidden');
     if (kanbanContainer) kanbanContainer.classList.remove('hidden');
   } else {
-    if (listBtn) listBtn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FFFDF9] text-[#2B231D] shadow-2xs cursor-pointer';
-    if (kanbanBtn) kanbanBtn.className = 'px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] cursor-pointer';
+    if (listBtn) listBtn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-[#FDFDFF] text-[#032D65] shadow-2xs cursor-pointer';
+    if (kanbanBtn) kanbanBtn.className = 'px-2.5 py-1 text-xs font-semibold text-[#4A658A] hover:text-[#032D65] cursor-pointer';
     if (listContainer) listContainer.classList.remove('hidden');
     if (kanbanContainer) kanbanContainer.classList.add('hidden');
   }
@@ -1875,7 +1875,7 @@ function renderHabits(data) {
       const isSelected = ym === data.selected_month;
       return `
         <button onclick="selectHabitMonth('${ym}')" class="w-full text-left px-3 py-1.5 rounded-xl transition text-xs font-semibold cursor-pointer ${
-          isSelected ? 'bg-[#5F7465] text-white font-bold' : 'text-[#2B231D] hover:bg-[#EFE7D8]'
+          isSelected ? 'bg-[#032D65] text-white font-bold' : 'text-[#032D65] hover:bg-[#E4ECF7]'
         }">
           ${label}
         </button>
@@ -1941,7 +1941,7 @@ function renderHabits(data) {
 
       if (isToday) {
         return `
-          <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border border-[#5F7465] bg-[#FFFDF9] text-[#5F7465] hover:border-[#233329]'} cursor-pointer select-none h-6 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
+          <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${ws.date}')" class="flex items-center justify-center rounded-lg ${isDone ? 'bg-[#032D65] text-white shadow-2xs' : 'border border-[#032D65] bg-[#FDFDFF] text-[#032D65] hover:border-[#032D65]'} cursor-pointer select-none h-6 text-[10px] font-bold transition" title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'tích hoàn thành'}">
             <span>${ws.day}</span>
             ${isDone ? '<i data-lucide="check" class="w-2.5 h-2.5 ml-0.5 stroke-[3]"></i>' : '<i data-lucide="plus" class="w-2.5 h-2.5 ml-0.5 opacity-70"></i>'}
           </button>
@@ -1949,20 +1949,20 @@ function renderHabits(data) {
       } else if (isPast) {
         if (isDone) {
           return `
-            <div class="flex items-center justify-center rounded-lg bg-[#5F7465] text-white shadow-2xs select-none transition h-6 text-[10px] font-bold" title="Ngày ${ws.day}: Đã hoàn thành">
+            <div class="flex items-center justify-center rounded-lg bg-[#032D65] text-white shadow-2xs select-none transition h-6 text-[10px] font-bold" title="Ngày ${ws.day}: Đã hoàn thành">
               <span>${ws.day}</span>
             </div>
           `;
         } else {
           return `
-            <div class="flex items-center justify-center rounded-lg bg-[#F7F2E8]/60 text-[#A49688] select-none h-6 text-[10px] font-medium" title="Ngày ${ws.day}: Chưa hoàn thành">
+            <div class="flex items-center justify-center rounded-lg bg-[#F0F4FA]/60 text-[#7B93B2] select-none h-6 text-[10px] font-medium" title="Ngày ${ws.day}: Chưa hoàn thành">
               <span>${ws.day}</span>
             </div>
           `;
         }
       } else {
         return `
-          <div class="flex items-center justify-center rounded-lg bg-transparent text-[#DECDB5]/60 select-none h-6 text-[10px]">
+          <div class="flex items-center justify-center rounded-lg bg-transparent text-[#CBD7E8]/60 select-none h-6 text-[10px]">
             <span>${ws.day}</span>
           </div>
         `;
@@ -1998,7 +1998,7 @@ function renderHabits(data) {
       if (isToday) {
         return `
           <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${ws.date}')" 
-               class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border-2 border-[#5F7465] bg-[#FFFDF9] text-[#5F7465]'} cursor-pointer transition select-none hover:scale-105 active:scale-95" 
+               class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl ${isDone ? 'bg-[#032D65] text-white shadow-2xs' : 'border-2 border-[#032D65] bg-[#FDFDFF] text-[#032D65]'} cursor-pointer transition select-none hover:scale-105 active:scale-95" 
                title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'hoàn thành'}">
             <span class="text-[10px] uppercase font-bold opacity-80">${wdName}</span>
             <span class="text-xs font-extrabold mt-0.5">${ws.day}</span>
@@ -2008,7 +2008,7 @@ function renderHabits(data) {
       } else if (isPast) {
         if (isDone) {
           return `
-            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#5F7465] text-white shadow-2xs select-none transition" 
+            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#032D65] text-white shadow-2xs select-none transition" 
                  title="Ngày ${ws.day}: Đã làm">
               <span class="text-[10px] uppercase font-bold opacity-80">${wdName}</span>
               <span class="text-xs font-bold mt-0.5">${ws.day}</span>
@@ -2017,21 +2017,21 @@ function renderHabits(data) {
           `;
         } else {
           return `
-            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#F7F2E8] text-[#786B60] select-none border border-[#DECDB5]/60" 
+            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#F0F4FA] text-[#4A658A] select-none border border-[#CBD7E8]/60" 
                  title="Ngày ${ws.day}: Chưa làm">
               <span class="text-[10px] uppercase font-semibold">${wdName}</span>
               <span class="text-xs font-semibold mt-0.5">${ws.day}</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-[#DECDB5] mt-1"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-[#CBD7E8] mt-1"></span>
             </div>
           `;
         }
       } else {
         return `
-          <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-transparent text-[#DECDB5] select-none" 
+          <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-transparent text-[#CBD7E8] select-none" 
                title="Ngày ${ws.day}">
             <span class="text-[10px] uppercase font-medium">${wdName}</span>
             <span class="text-xs font-medium mt-0.5">${ws.day}</span>
-            <span class="w-1 h-1 rounded-full bg-[#DECDB5]/40 mt-1"></span>
+            <span class="w-1 h-1 rounded-full bg-[#CBD7E8]/40 mt-1"></span>
           </div>
         `;
       }
@@ -2040,20 +2040,20 @@ function renderHabits(data) {
     const completedRate = Math.round(((h.month_completed_count || 0) / daysInMonth) * 100);
 
     return `
-      <div class="p-4 sm:p-5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5] hover:border-[#5F7465] transition shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
+      <div class="p-4 sm:p-5 rounded-2xl bg-[#FDFDFF] border border-[#CBD7E8] hover:border-[#032D65] transition shadow-xs flex flex-col md:flex-row md:items-start justify-between gap-4 sm:gap-6">
         <!-- Habit Metadata & Details: Generous room for titles -->
         <div class="flex items-start gap-3.5 sm:gap-4 flex-1 min-w-0">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center bg-[#FDF3EE] border border-[#DECDB5] text-[#B14720] shrink-0 mt-0.5">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center bg-[#FDECEE] border border-[#CBD7E8] text-[#B8171F] shrink-0 mt-0.5">
             <i data-lucide="${h.icon || 'sparkles'}" class="w-5 h-5"></i>
           </div>
           <div class="space-y-2 flex-1 min-w-0">
             <div class="flex items-start justify-between gap-2">
-              <h4 onclick="editHabit(${h.id})" class="font-bold text-base sm:text-lg text-[#2B231D] hover:text-[#5F7465] cursor-pointer transition break-words leading-snug" title="Nhấp để sửa tên thói quen">${escapeHtml(h.name)}</h4>
+              <h4 onclick="editHabit(${h.id})" class="font-bold text-base sm:text-lg text-[#032D65] hover:text-[#032D65] cursor-pointer transition break-words leading-snug" title="Nhấp để sửa tên thói quen">${escapeHtml(h.name)}</h4>
               <div class="flex items-center gap-1 shrink-0 pt-0.5">
-                <button onclick="editHabit(${h.id})" class="p-1 text-[#A49688] hover:text-[#5F7465] hover:bg-[#F0F5F2] rounded-lg transition cursor-pointer" title="Sửa tên thói quen">
+                <button onclick="editHabit(${h.id})" class="p-1 text-[#7B93B2] hover:text-[#032D65] hover:bg-[#EBF1FA] rounded-lg transition cursor-pointer" title="Sửa tên thói quen">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                 </button>
-                <button onclick="deleteHabit(${h.id})" class="p-1 text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] rounded-lg transition cursor-pointer" title="Xóa thói quen">
+                <button onclick="deleteHabit(${h.id})" class="p-1 text-[#7B93B2] hover:text-[#B8171F] hover:bg-[#FDECEE] rounded-lg transition cursor-pointer" title="Xóa thói quen">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
@@ -2061,31 +2061,31 @@ function renderHabits(data) {
 
             <!-- Streak & Record Badges -->
             <div class="flex items-center gap-2 flex-wrap">
-              <span class="inline-flex items-center gap-1 text-xs font-bold text-[#C3651F] bg-[#FDF6E2] px-2.5 py-0.5 rounded-full border border-[#DECDB5]">
-                <i data-lucide="flame" class="w-3.5 h-3.5 fill-[#C3651F]"></i> ${h.streak} ngày liên tiếp
+              <span class="inline-flex items-center gap-1 text-xs font-bold text-[#B8171F] bg-[#FFF8DB] px-2.5 py-0.5 rounded-full border border-[#CBD7E8]">
+                <i data-lucide="flame" class="w-3.5 h-3.5 fill-[#B8171F]"></i> ${h.streak} ngày liên tiếp
               </span>
-              <span class="text-xs text-[#786B60]">Kỷ lục: ${h.best_streak} ngày</span>
+              <span class="text-xs text-[#4A658A]">Kỷ lục: ${h.best_streak} ngày</span>
             </div>
 
             <!-- Progress Bar -->
             <div class="space-y-1 pt-0.5 max-w-sm">
-              <div class="flex items-center justify-between text-xs font-semibold text-[#5F7465]">
+              <div class="flex items-center justify-between text-xs font-semibold text-[#032D65]">
                 <span class="flex items-center gap-1.5"><i data-lucide="calendar-check" class="w-3.5 h-3.5"></i> Tiến độ: <strong>${h.month_completed_count || 0} / ${daysInMonth}</strong> ngày</span>
                 <span>${completedRate}%</span>
               </div>
-              <div class="h-1.5 w-full bg-[#EFE7D8] rounded-full overflow-hidden border border-[#DECDB5]/60">
-                <div class="h-full bg-[#5F7465] rounded-full transition-all duration-500" style="width: ${completedRate}%;"></div>
+              <div class="h-1.5 w-full bg-[#E4ECF7] rounded-full overflow-hidden border border-[#CBD7E8]/60">
+                <div class="h-full bg-[#032D65] rounded-full transition-all duration-500" style="width: ${completedRate}%;"></div>
               </div>
             </div>
 
             <!-- Quick Today Check-in Button -->
             <div class="pt-0.5">
               ${h.completed_today ? `
-                <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#5F7465] bg-[#F0F5F2] px-2.5 py-1 rounded-xl border border-[#D7E4DB] transition cursor-pointer">
+                <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#032D65] bg-[#EBF1FA] px-2.5 py-1 rounded-xl border border-[#CFE0F5] transition cursor-pointer">
                   <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Đã làm ✓
                 </button>
               ` : `
-                <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#786B60] hover:text-[#2B231D] bg-[#F7F2E8] hover:bg-[#EFE7D8] px-2.5 py-1 rounded-xl border border-[#DECDB5] transition cursor-pointer">
+                <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${todayStr}')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#4A658A] hover:text-[#032D65] bg-[#F0F4FA] hover:bg-[#E4ECF7] px-2.5 py-1 rounded-xl border border-[#CBD7E8] transition cursor-pointer">
                   <i data-lucide="circle" class="w-3.5 h-3.5"></i> Check-in
                 </button>
               `}
@@ -2097,27 +2097,27 @@ function renderHabits(data) {
         <div class="w-full md:w-[280px] lg:w-[300px] shrink-0 flex flex-col justify-between gap-2 self-start">
           <!-- Mini Grid Header -->
           <div class="flex items-center justify-between pb-0.5">
-            <span class="text-[11px] font-bold text-[#626037] flex items-center gap-1">
-              <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#5F7465]"></i> 7 ngày gần nhất
+            <span class="text-[11px] font-bold text-[#032D65] flex items-center gap-1">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#032D65]"></i> 7 ngày gần nhất
             </span>
-            <button onclick="toggleHabitMonthView(${h.id})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#5F7465] hover:text-[#233329] bg-[#EFE7D8] hover:bg-[#E2D6C0] px-2 py-0.5 rounded-lg border border-[#DECDB5] transition cursor-pointer">
+            <button onclick="toggleHabitMonthView(${h.id})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#032D65] hover:text-[#032D65] bg-[#E4ECF7] hover:bg-[#CBD7E8] px-2 py-0.5 rounded-lg border border-[#CBD7E8] transition cursor-pointer">
               <span id="habitMonthToggleText_${h.id}">Lịch tháng</span>
               <i data-lucide="chevron-down" id="habitMonthChevron_${h.id}" class="w-3 h-3 transition-transform"></i>
             </button>
           </div>
 
           <!-- 7-Day Mini-Grid (Compact 1-row) -->
-          <div class="grid grid-cols-7 gap-1 bg-[#F7F2E8] p-1.5 rounded-xl border border-[#DECDB5]">
+          <div class="grid grid-cols-7 gap-1 bg-[#F0F4FA] p-1.5 rounded-xl border border-[#CBD7E8]">
             ${miniWeekStrip}
           </div>
 
           <!-- Expandable Full Month Calendar Grid (Hidden by default) -->
-          <div id="habitMonthGrid_${h.id}" class="hidden bg-[#F7F2E8] p-2.5 rounded-xl border border-[#DECDB5] shadow-2xs space-y-1.5 mt-1">
-            <div class="flex items-center justify-between text-[10px] font-bold text-[#626037] pb-1 border-b border-[#DECDB5]/60">
+          <div id="habitMonthGrid_${h.id}" class="hidden bg-[#F0F4FA] p-2.5 rounded-xl border border-[#CBD7E8] shadow-2xs space-y-1.5 mt-1">
+            <div class="flex items-center justify-between text-[10px] font-bold text-[#032D65] pb-1 border-b border-[#CBD7E8]/60">
               <span>Toàn bộ tháng ${data.month_label}</span>
-              <span class="text-[#5F7465]">${h.month_completed_count || 0}/${daysInMonth} ngày</span>
+              <span class="text-[#032D65]">${h.month_completed_count || 0}/${daysInMonth} ngày</span>
             </div>
-            <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-bold text-[#786B60] uppercase tracking-wider">
+            <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-bold text-[#4A658A] uppercase tracking-wider">
               <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
             </div>
             <div class="grid grid-cols-7 gap-1">
@@ -2167,9 +2167,9 @@ function renderHabitAreaChart(chartData) {
   const ctx = canvas.getContext('2d');
   const gradHeight = canvas.clientHeight || 180;
   const gradient = ctx.createLinearGradient(0, 0, 0, gradHeight);
-  gradient.addColorStop(0, 'rgba(95, 116, 101, 0.42)'); // Top: soft vintage sage
-  gradient.addColorStop(0.65, 'rgba(95, 116, 101, 0.12)');
-  gradient.addColorStop(1, 'rgba(95, 116, 101, 0.01)');  // Bottom: transparent
+  gradient.addColorStop(0, 'rgba(3, 45, 101, 0.42)'); // Top: soft vintage sage
+  gradient.addColorStop(0.65, 'rgba(3, 45, 101, 0.12)');
+  gradient.addColorStop(1, 'rgba(3, 45, 101, 0.01)');  // Bottom: transparent
 
   habitCharts.area = new Chart(ctx, {
     type: 'line',
@@ -2181,16 +2181,16 @@ function renderHabitAreaChart(chartData) {
           data: completed,
           fill: true,
           backgroundColor: gradient,
-          borderColor: '#5F7465',
+          borderColor: '#032D65',
           borderWidth: 2.5,
           tension: 0.35,
-          pointBackgroundColor: '#FFFDF9',
-          pointBorderColor: '#5F7465',
+          pointBackgroundColor: '#FDFDFF',
+          pointBorderColor: '#032D65',
           pointBorderWidth: 2,
           pointRadius: 3,
           pointHoverRadius: 5.5,
-          pointHoverBackgroundColor: '#5F7465',
-          pointHoverBorderColor: '#FFFDF9',
+          pointHoverBackgroundColor: '#032D65',
+          pointHoverBorderColor: '#FDFDFF',
           pointHoverBorderWidth: 2
         }
       ]
@@ -2208,7 +2208,7 @@ function renderHabitAreaChart(chartData) {
           display: false
         },
         tooltip: {
-          backgroundColor: '#233329',
+          backgroundColor: '#032D65',
           titleFont: { family: APP_FONT_FAMILY, size: 12, weight: 'bold' },
           bodyFont: { family: APP_FONT_FAMILY, size: 12 },
           padding: 10,
@@ -2233,7 +2233,7 @@ function renderHabitAreaChart(chartData) {
           },
           ticks: {
             font: { family: APP_FONT_FAMILY, size: 10, weight: '600' },
-            color: '#786B60',
+            color: '#4A658A',
             maxRotation: 0,
             autoSkip: true,
             maxTicksLimit: 15
@@ -2243,14 +2243,14 @@ function renderHabitAreaChart(chartData) {
           min: 0,
           max: Math.max(total, ...completed) + 1,
           grid: {
-            color: 'rgba(222, 205, 181, 0.35)',
+            color: 'rgba(203, 215, 232, 0.35)',
             borderDash: [3, 3]
           },
           ticks: {
             stepSize: 1,
             precision: 0,
             font: { family: APP_FONT_FAMILY, size: 10 },
-            color: '#786B60'
+            color: '#4A658A'
           }
         }
       }
@@ -2354,7 +2354,7 @@ async function saveHabitModalAction() {
       const res = await fetch('/api/habits', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, icon, color: '#5F7465', target_days })
+        body: JSON.stringify({ name, icon, color: '#032D65', target_days })
       });
       if (!res.ok) throw new Error('Không thể thêm thói quen');
       showToast('Đã thêm thói quen mới thành công!', 'success');
@@ -2448,9 +2448,9 @@ function setJournalMood(mood) {
     const btn = document.getElementById(`moodBtn_${m}`);
     if (btn) {
       if (m === mood) {
-        btn.classList.add('border-[#5F7465]', 'bg-[#F0F5F2]', 'scale-105', 'font-extrabold');
+        btn.classList.add('border-[#032D65]', 'bg-[#EBF1FA]', 'scale-105', 'font-extrabold');
       } else {
-        btn.classList.remove('border-[#5F7465]', 'bg-[#F0F5F2]', 'scale-105', 'font-extrabold');
+        btn.classList.remove('border-[#032D65]', 'bg-[#EBF1FA]', 'scale-105', 'font-extrabold');
       }
     }
   });
@@ -2502,7 +2502,7 @@ async function loadJournalHistory() {
 
     const entries = data.entries || [];
     if (entries.length === 0) {
-      container.innerHTML = '<p class="text-xs text-[#A49688] py-4 text-center">Chưa có bài viết nào</p>';
+      container.innerHTML = '<p class="text-xs text-[#7B93B2] py-4 text-center">Chưa có bài viết nào</p>';
       return;
     }
 
@@ -2515,13 +2515,13 @@ async function loadJournalHistory() {
     };
 
     container.innerHTML = entries.map(e => `
-      <div onclick="loadJournal('${e.date}')" class="p-3 rounded-2xl border ${e.date === lifeState.currentJournalDate ? 'border-[#5F7465] bg-[#F0F5F2]' : 'border-[#DECDB5] bg-[#FFFDF9]'} hover:border-[#5F7465] transition cursor-pointer shadow-2xs space-y-1">
+      <div onclick="loadJournal('${e.date}')" class="p-3 rounded-2xl border ${e.date === lifeState.currentJournalDate ? 'border-[#032D65] bg-[#EBF1FA]' : 'border-[#CBD7E8] bg-[#FDFDFF]'} hover:border-[#032D65] transition cursor-pointer shadow-2xs space-y-1">
         <div class="flex items-center justify-between text-xs">
-          <span class="font-extrabold text-[#2B231D]">${formatDisplayDate(e.date)}</span>
+          <span class="font-extrabold text-[#032D65]">${formatDisplayDate(e.date)}</span>
           <span class="text-[10px] font-bold">${moodIcons[e.mood] || '😊'}</span>
         </div>
-        <p class="font-semibold text-xs text-[#626037] truncate">${escapeHtml(e.title || 'Không có tiêu đề')}</p>
-        <p class="text-[11px] text-[#786B60] line-clamp-2">${escapeHtml(e.content || e.gratitude || '')}</p>
+        <p class="font-semibold text-xs text-[#032D65] truncate">${escapeHtml(e.title || 'Không có tiêu đề')}</p>
+        <p class="text-[11px] text-[#4A658A] line-clamp-2">${escapeHtml(e.content || e.gratitude || '')}</p>
       </div>
     `).join('');
   } catch (err) {
@@ -2555,9 +2555,9 @@ function renderNotes() {
 
   if (lifeState.notes.length === 0) {
     container.innerHTML = `
-      <div class="col-span-full text-center py-16 text-[#A49688]">
+      <div class="col-span-full text-center py-16 text-[#7B93B2]">
         <i data-lucide="sticky-note" class="w-12 h-12 mx-auto mb-2 opacity-40"></i>
-        <p class="font-bold text-sm text-[#786B60]">Không tìm thấy ghi chú nào</p>
+        <p class="font-bold text-sm text-[#4A658A]">Không tìm thấy ghi chú nào</p>
         <p class="text-xs">Bấm "+ Tạo ghi chú" để lưu trữ ý tưởng của bạn!</p>
       </div>
     `;
@@ -2566,29 +2566,29 @@ function renderNotes() {
   }
 
   container.innerHTML = lifeState.notes.map(n => `
-    <div class="p-3.5 sm:p-4 rounded-2xl bg-[#FFFDF9] border ${n.is_pinned ? 'border-[#D39526]' : 'border-[#DECDB5]'} hover:border-[#5F7465] transition shadow-xs flex flex-col justify-between space-y-2.5 sm:space-y-3 group">
+    <div class="p-3.5 sm:p-4 rounded-2xl bg-[#FDFDFF] border ${n.is_pinned ? 'border-[#F9BD04]' : 'border-[#CBD7E8]'} hover:border-[#032D65] transition shadow-xs flex flex-col justify-between space-y-2.5 sm:space-y-3 group">
       <div class="space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">${escapeHtml(n.category)}</span>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E4ECF7] text-[#032D65] border border-[#CBD7E8]">${escapeHtml(n.category)}</span>
           <div class="flex items-center gap-1">
-            <button onclick="copyNoteContent(${n.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#5F7465] hover:bg-[#F0F5F2] transition cursor-pointer" title="Sao chép nội dung">
+            <button onclick="copyNoteContent(${n.id})" class="p-1.5 rounded-lg text-[#4A658A] hover:text-[#032D65] hover:bg-[#EBF1FA] transition cursor-pointer" title="Sao chép nội dung">
               <i data-lucide="copy" class="w-3.5 h-3.5"></i>
             </button>
-            <button onclick="togglePinNote(${n.id})" class="p-1.5 rounded-lg text-[#786B60] hover:text-[#D39526] hover:bg-[#FDF6E2] transition cursor-pointer" title="${n.is_pinned ? 'Bỏ ghim' : 'Ghim lên đầu'}">
-              <i data-lucide="pin" class="w-3.5 h-3.5 ${n.is_pinned ? 'fill-[#D39526] text-[#D39526]' : ''}"></i>
+            <button onclick="togglePinNote(${n.id})" class="p-1.5 rounded-lg text-[#4A658A] hover:text-[#F9BD04] hover:bg-[#FFF8DB] transition cursor-pointer" title="${n.is_pinned ? 'Bỏ ghim' : 'Ghim lên đầu'}">
+              <i data-lucide="pin" class="w-3.5 h-3.5 ${n.is_pinned ? 'fill-[#F9BD04] text-[#F9BD04]' : ''}"></i>
             </button>
-            <button onclick="deleteNote(${n.id})" class="p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition md:opacity-0 md:group-hover:opacity-100 cursor-pointer" title="Xóa ghi chú">
+            <button onclick="deleteNote(${n.id})" class="p-1.5 rounded-lg text-[#7B93B2] hover:text-[#B8171F] hover:bg-[#FDECEE] transition md:opacity-0 md:group-hover:opacity-100 cursor-pointer" title="Xóa ghi chú">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
         </div>
-        <h4 class="font-bold text-sm sm:text-base text-[#2B231D] tracking-tight hover:text-[#5F7465] cursor-pointer" onclick="openNoteModal(${n.id})">${escapeHtml(n.title)}</h4>
-        <p class="text-xs text-[#786B60] whitespace-pre-line line-clamp-3 leading-relaxed">${escapeHtml(n.content)}</p>
+        <h4 class="font-bold text-sm sm:text-base text-[#032D65] tracking-tight hover:text-[#032D65] cursor-pointer" onclick="openNoteModal(${n.id})">${escapeHtml(n.title)}</h4>
+        <p class="text-xs text-[#4A658A] whitespace-pre-line line-clamp-3 leading-relaxed">${escapeHtml(n.content)}</p>
       </div>
 
-      <div class="pt-2 border-t border-[#DECDB5]/40 flex items-center justify-between text-[11px] text-[#A49688]">
+      <div class="pt-2 border-t border-[#CBD7E8]/40 flex items-center justify-between text-[11px] text-[#7B93B2]">
         <span>${formatDisplayDate(n.updated_at || n.created_at)}</span>
-        <button onclick="openNoteModal(${n.id})" class="font-semibold text-[#5F7465] hover:text-[#233329] hover:underline cursor-pointer">Mở ghi chú →</button>
+        <button onclick="openNoteModal(${n.id})" class="font-semibold text-[#032D65] hover:text-[#032D65] hover:underline cursor-pointer">Mở ghi chú →</button>
       </div>
     </div>
   `).join('');
@@ -2726,9 +2726,9 @@ function setNoteFilter(cat) {
     const btn = document.getElementById(`noteFilterBtn_${c}`);
     if (btn) {
       if (c === cat) {
-        btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+        btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg bg-[#032D65] text-[#FDFDFF] shadow-2xs transition cursor-pointer';
       } else {
-        btn.className = 'px-2.5 py-1 text-xs font-semibold text-[#786B60] hover:text-[#2B231D] hover:bg-[#FFFDF9] transition cursor-pointer';
+        btn.className = 'px-2.5 py-1 text-xs font-semibold text-[#4A658A] hover:text-[#032D65] hover:bg-[#FDFDFF] transition cursor-pointer';
       }
     }
   });
@@ -2830,9 +2830,9 @@ function setPomoMode(mode) {
     const btn = document.getElementById(`pomoMode_${m}`);
     if (btn) {
       if (m === mode) {
-        btn.className = 'py-1 rounded-lg bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer font-bold';
+        btn.className = 'py-1 rounded-lg bg-[#032D65] text-[#FDFDFF] shadow-2xs transition cursor-pointer font-bold';
       } else {
-        btn.className = 'py-1 rounded-lg text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] transition cursor-pointer font-semibold';
+        btn.className = 'py-1 rounded-lg text-[#4A658A] hover:text-[#032D65] hover:bg-[#E4ECF7] transition cursor-pointer font-semibold';
       }
     }
   });
@@ -2932,9 +2932,9 @@ function updatePomoUI() {
 
   if (mobilePomoBtn) {
     if (lifeState.pomoIsRunning) {
-      mobilePomoBtn.classList.add('bg-[#F0F5F2]', 'border-[#5F7465]', 'text-[#233329]');
+      mobilePomoBtn.classList.add('bg-[#EBF1FA]', 'border-[#032D65]', 'text-[#032D65]');
     } else {
-      mobilePomoBtn.classList.remove('bg-[#F0F5F2]', 'border-[#5F7465]', 'text-[#233329]');
+      mobilePomoBtn.classList.remove('bg-[#EBF1FA]', 'border-[#032D65]', 'text-[#032D65]');
     }
   }
 
@@ -3014,10 +3014,10 @@ function copyMobileUrl() {
     if (btn) {
       const oldText = btn.textContent;
       btn.textContent = 'Đã chép! ✓';
-      btn.classList.add('bg-[#5F7465]');
+      btn.classList.add('bg-[#032D65]');
       setTimeout(() => {
         btn.textContent = oldText;
-        btn.classList.remove('bg-[#5F7465]');
+        btn.classList.remove('bg-[#032D65]');
       }, 2000);
     }
     showToast('Đã sao chép đường dẫn: ' + input.value, 'success');
@@ -3109,7 +3109,7 @@ function updateSyncStatusUI(status) {
     if (container) container.title = 'Đang đồng bộ dữ liệu thời gian thực...';
   } else if (status === 'synced') {
     dot.className = 'absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 transition-colors ring-1 ring-white';
-    if (icon) icon.className = 'w-4 h-4 text-[#5F7465] transition-colors';
+    if (icon) icon.className = 'w-4 h-4 text-[#032D65] transition-colors';
     if (container) container.title = 'Đồng bộ thời gian thực: Đã cập nhật';
   } else if (status === 'error') {
     dot.className = 'absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white';
@@ -3567,7 +3567,7 @@ function enhanceSelectElement(selectEl) {
   labelSpan.className = 'custom-dropdown-label flex items-center gap-1.5 truncate text-left';
   
   const chevron = document.createElement('span');
-  chevron.className = 'shrink-0 text-[#A49688] transition-transform duration-200 pointer-events-none';
+  chevron.className = 'shrink-0 text-[#7B93B2] transition-transform duration-200 pointer-events-none';
   chevron.innerHTML = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
 
   trigger.appendChild(labelSpan);
@@ -3582,13 +3582,13 @@ function enhanceSelectElement(selectEl) {
     const text = (opt.text || opt.textContent || '').trim();
     const val = opt.value;
     if (text.includes('🔴') || val === 'urgent') {
-      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#B14720] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#B8171F] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
     } else if (text.includes('🟡') || text.includes('🟠') || val === 'high') {
-      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#D39526] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#F9BD04] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
     } else if (text.includes('🟢') || val === 'normal') {
-      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#5F7465] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#032D65] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
     } else if (text.includes('⚪') || text.includes('🟣') || val === 'low') {
-      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#A49688] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
+      return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#7B93B2] shrink-0"></span> <span>${escapeHtml(text.replace(/[🔴🟢🟡🟠⚪🟣]/g, '').trim())}</span></span>`;
     } else if (typeof VINTAGE_CATEGORY_PALETTE !== 'undefined' && VINTAGE_CATEGORY_PALETTE[text]) {
       const meta = VINTAGE_CATEGORY_PALETTE[text];
       return `<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${meta.chartColor};"></span> <span>${escapeHtml(text)}</span></span>`;
@@ -3612,7 +3612,7 @@ function enhanceSelectElement(selectEl) {
       }
 
       const formattedHtml = getOptionFormattedHtml(opt);
-      item.innerHTML = `<span>${formattedHtml}</span>${isSelected ? '<span class="text-xs text-[#5F7465] font-bold">✓</span>' : ''}`;
+      item.innerHTML = `<span>${formattedHtml}</span>${isSelected ? '<span class="text-xs text-[#032D65] font-bold">✓</span>' : ''}`;
 
       item.addEventListener('click', (e) => {
         e.stopPropagation();

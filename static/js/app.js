@@ -17,9 +17,9 @@ window.switchMobileKanbanCol = function(colName) {
     }
     if (btnEl) {
       if (c === colName) {
-        btnEl.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition bg-[#233329] text-[#FFFDF9] shadow-xs cursor-pointer';
+        btnEl.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition bg-[#032D65] text-[#FDFDFF] shadow-xs cursor-pointer';
       } else {
-        btnEl.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition text-[#786B60] hover:text-[#2B231D] cursor-pointer';
+        btnEl.className = 'flex-1 py-2 text-xs font-bold rounded-xl transition text-[#4A658A] hover:text-[#032D65] cursor-pointer';
       }
     }
   });
@@ -98,14 +98,14 @@ function showToast(message, type = 'info') {
   if (!container) return;
 
   const toast = document.createElement('div');
-  let bgClass = 'bg-[#2B231D] text-[#FFFDF9] border border-[#1E1712] shadow-lg';
+  let bgClass = 'bg-[#032D65] text-[#FDFDFF] border border-[#021F47] shadow-lg';
   let iconName = 'info';
 
   if (type === 'success') {
-    bgClass = 'bg-[#5F7465] text-[#FFFDF9] border border-[#4B5E51] shadow-lg';
+    bgClass = 'bg-[#032D65] text-[#FDFDFF] border border-[#02224F] shadow-lg';
     iconName = 'check-circle-2';
   } else if (type === 'error') {
-    bgClass = 'bg-[#B14720] text-[#FFFDF9] border border-[#913716] shadow-lg';
+    bgClass = 'bg-[#B8171F] text-[#FDFDFF] border border-[#961219] shadow-lg';
     iconName = 'alert-triangle';
   }
 
@@ -203,14 +203,14 @@ function switchMainView(mode) {
     if (tblCont) tblCont.classList.add('hidden');
 
     colBtns.forEach(b => {
-      b.className = 'btn-switch-columns px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition flex items-center gap-1.5';
+      b.className = 'btn-switch-columns px-2.5 py-1 rounded-lg font-bold bg-[#FDFDFF] text-[#032D65] shadow-2xs transition flex items-center gap-1.5';
       const icon = b.querySelector('i');
-      if (icon) icon.className = 'w-3.5 h-3.5 text-[#5F7465]';
+      if (icon) icon.className = 'w-3.5 h-3.5 text-[#032D65]';
     });
     tblBtns.forEach(b => {
-      b.className = 'btn-switch-table px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition flex items-center gap-1.5';
+      b.className = 'btn-switch-table px-2.5 py-1 rounded-lg font-semibold text-[#4A658A] hover:text-[#032D65] transition flex items-center gap-1.5';
       const icon = b.querySelector('i');
-      if (icon) icon.className = 'w-3.5 h-3.5 text-[#786B60]';
+      if (icon) icon.className = 'w-3.5 h-3.5 text-[#4A658A]';
     });
 
     loadTransactionColumns();
@@ -219,14 +219,14 @@ function switchMainView(mode) {
     if (tblCont) tblCont.classList.remove('hidden');
 
     colBtns.forEach(b => {
-      b.className = 'btn-switch-columns px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition flex items-center gap-1.5';
+      b.className = 'btn-switch-columns px-2.5 py-1 rounded-lg font-semibold text-[#4A658A] hover:text-[#032D65] transition flex items-center gap-1.5';
       const icon = b.querySelector('i');
-      if (icon) icon.className = 'w-3.5 h-3.5 text-[#786B60]';
+      if (icon) icon.className = 'w-3.5 h-3.5 text-[#4A658A]';
     });
     tblBtns.forEach(b => {
-      b.className = 'btn-switch-table px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition flex items-center gap-1.5';
+      b.className = 'btn-switch-table px-2.5 py-1 rounded-lg font-bold bg-[#FDFDFF] text-[#032D65] shadow-2xs transition flex items-center gap-1.5';
       const icon = b.querySelector('i');
-      if (icon) icon.className = 'w-3.5 h-3.5 text-[#5F7465]';
+      if (icon) icon.className = 'w-3.5 h-3.5 text-[#032D65]';
     });
 
     loadTransactions();
@@ -296,7 +296,7 @@ function renderColumnList(containerId, items, columnType) {
       emptyIcon = 'inbox';
     }
     container.innerHTML = `
-      <div class="h-64 flex flex-col items-center justify-center text-[#A49688] text-xs text-center px-4">
+      <div class="h-64 flex flex-col items-center justify-center text-[#7B93B2] text-xs text-center px-4">
         <i data-lucide="${emptyIcon}" class="w-8 h-8 mb-2 opacity-40"></i>
         <span class="font-medium">${emptyMsg}</span>
       </div>
@@ -314,23 +314,23 @@ function renderColumnList(containerId, items, columnType) {
     const amountFormatted = `${amountSign}${formatMoney(t.amount)} ₫`;
 
     const amountBadgeClass = isExp 
-      ? 'inline-flex items-center justify-end font-black text-xs sm:text-[13px] text-[#B14720] bg-[#FDF3EE] border border-[#F4DDD2] px-2.5 py-1 rounded-lg tabular-nums tracking-tight whitespace-nowrap'
-      : 'inline-flex items-center justify-end font-black text-xs sm:text-[13px] text-[#5F7465] bg-[#F0F5F2] border border-[#D7E4DB] px-2.5 py-1 rounded-lg tabular-nums tracking-tight whitespace-nowrap';
+      ? 'inline-flex items-center justify-end font-black text-xs sm:text-[13px] text-[#B8171F] bg-[#FDECEE] border border-[#FAD4D6] px-2.5 py-1 rounded-lg tabular-nums tracking-tight whitespace-nowrap'
+      : 'inline-flex items-center justify-end font-black text-xs sm:text-[13px] text-[#032D65] bg-[#EBF1FA] border border-[#CFE0F5] px-2.5 py-1 rounded-lg tabular-nums tracking-tight whitespace-nowrap';
 
     // Different card styling based on column
-    let cardBorder = 'border-[#DECDB5] hover:border-[#C5B194] bg-[#FFFDF9]';
+    let cardBorder = 'border-[#CBD7E8] hover:border-[#9FB5D1] bg-[#FDFDFF]';
     let statusBanner = '';
 
     if (columnType === 'unclassified') {
-      cardBorder = 'border-2 border-[#D39526] bg-[#FDFBF5] hover:border-[#B87D17] shadow-xs';
+      cardBorder = 'border-2 border-[#F9BD04] bg-[#FDFDFF] hover:border-[#D9A400] shadow-xs';
       const confPct = Math.round((t.ai_confidence || 0.4) * 100);
       statusBanner = `
-        <div class="flex items-center justify-between gap-1 text-[11px] font-bold text-[#7A5408] bg-[#FDF6E2] px-2.5 py-1 rounded-lg border border-[#F3DB9A]">
+        <div class="flex items-center justify-between gap-1 text-[11px] font-bold text-[#032D65] bg-[#FFF8DB] px-2.5 py-1 rounded-lg border border-[#FCE373]">
           <div class="flex items-center gap-1.5">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526]"></i>
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#F9BD04]"></i>
             <span>Độ chính xác AI: ${confPct}%</span>
           </div>
-          <span class="text-[10px] uppercase tracking-wider text-[#7A5408] bg-[#FFFDF9] px-1.5 py-0.5 rounded font-extrabold border border-[#F3DB9A]">&lt; 65%</span>
+          <span class="text-[10px] uppercase tracking-wider text-[#032D65] bg-[#FDFDFF] px-1.5 py-0.5 rounded font-extrabold border border-[#FCE373]">&lt; 65%</span>
         </div>
       `;
     }
@@ -340,26 +340,26 @@ function renderColumnList(containerId, items, columnType) {
     // Soft Category Button (matches 'Thao tác' soft style)
     let catButtonHtml = '';
     const catObj = state.categories.find(c => c.name === t.category);
-    const catColor = catObj ? catObj.color : '#626037';
+    const catColor = catObj ? catObj.color : '#032D65';
 
     if (columnType === 'unclassified') {
       catButtonHtml = `
-        <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, '${columnType}')" id="cardCatBtn-${t.id}" class="w-full flex items-center justify-between bg-[#FDF6E2] hover:bg-[#FBEFC8] border-2 border-[#D39526] text-[#4A3205] font-extrabold rounded-xl px-3 py-2 text-xs transition shadow-2xs cursor-pointer focus:ring-2 focus:ring-[#D39526]">
+        <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, '${columnType}')" id="cardCatBtn-${t.id}" class="w-full flex items-center justify-between bg-[#FFF8DB] hover:bg-[#FFF2B8] border-2 border-[#F9BD04] text-[#032D65] font-extrabold rounded-xl px-3 py-2 text-xs transition shadow-2xs cursor-pointer focus:ring-2 focus:ring-[#F9BD04]">
           <span class="flex items-center gap-1.5 truncate">
-            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526] shrink-0"></i>
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#F9BD04] shrink-0"></i>
             <span class="truncate">Chọn phân loại</span>
           </span>
-          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#7A5408] shrink-0"></i>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#032D65] shrink-0"></i>
         </button>
       `;
     } else {
       catButtonHtml = `
-        <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, '${columnType}')" id="cardCatBtn-${t.id}" class="w-full flex items-center justify-between bg-[#F7F2E8] hover:bg-[#EFE7D8] border border-[#DECDB5] rounded-xl px-3 py-1.5 text-xs font-bold text-[#2B231D] transition cursor-pointer">
+        <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, '${columnType}')" id="cardCatBtn-${t.id}" class="w-full flex items-center justify-between bg-[#F0F4FA] hover:bg-[#E4ECF7] border border-[#CBD7E8] rounded-xl px-3 py-1.5 text-xs font-bold text-[#032D65] transition cursor-pointer">
           <span class="flex items-center gap-2 truncate">
             <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style="background-color: ${catColor}"></span>
             <span class="truncate">${escapeHtml(t.category)}</span>
           </span>
-          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#786B60] shrink-0"></i>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#4A658A] shrink-0"></i>
         </button>
       `;
     }
@@ -367,11 +367,11 @@ function renderColumnList(containerId, items, columnType) {
     card.innerHTML = `
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <div class="flex items-center gap-1.5 text-[#786B60] font-semibold text-[11px]">
-            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#A49688] shrink-0"></i>
+          <div class="flex items-center gap-1.5 text-[#4A658A] font-semibold text-[11px]">
+            <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#7B93B2] shrink-0"></i>
             <span>${formatDate(t.date)}</span>
           </div>
-          <button onclick="handleDeleteFromColumn(${t.id})" title="Xóa giao dịch này" class="opacity-0 group-hover:opacity-100 hover:text-[#B14720] text-[#A49688] p-0.5 rounded transition">
+          <button onclick="handleDeleteFromColumn(${t.id})" title="Xóa giao dịch này" class="opacity-0 group-hover:opacity-100 hover:text-[#B8171F] text-[#7B93B2] p-0.5 rounded transition">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           </button>
         </div>
@@ -381,11 +381,11 @@ function renderColumnList(containerId, items, columnType) {
       </div>
 
       <div>
-        <p class="font-bold text-[#2B231D] text-[13px] leading-snug line-clamp-2" title="${escapeHtml(t.raw_description || t.description)}">
+        <p class="font-bold text-[#032D65] text-[13px] leading-snug line-clamp-2" title="${escapeHtml(t.raw_description || t.description)}">
           ${escapeHtml(t.description || t.raw_description)}
         </p>
         ${t.raw_description && t.raw_description !== t.description ? `
-          <p class="text-[11px] text-[#786B60] truncate mt-1" title="${escapeHtml(t.raw_description)}">
+          <p class="text-[11px] text-[#4A658A] truncate mt-1" title="${escapeHtml(t.raw_description)}">
             ${escapeHtml(t.raw_description)}
           </p>
         ` : ''}
@@ -494,16 +494,16 @@ function switchChartTab(tab) {
   const subtitle = document.getElementById('trendChartHeaderSubtitle');
 
   if (tab === 'weekly') {
-    btnWeekly.className = 'px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition';
-    btnMonthly.className = 'px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition';
+    btnWeekly.className = 'px-2.5 py-1 rounded-lg font-bold bg-[#FDFDFF] text-[#032D65] shadow-2xs transition';
+    btnMonthly.className = 'px-2.5 py-1 rounded-lg font-semibold text-[#4A658A] hover:text-[#032D65] transition';
     cWeekly.classList.remove('hidden');
     cMonthly.classList.add('hidden');
     title.textContent = 'Tiến Độ Chi Tiêu Theo Tuần';
     subtitle.textContent = 'Theo dõi nhịp độ thu - chi các tuần trong tháng';
     renderWeeklyChart();
   } else {
-    btnWeekly.className = 'px-2.5 py-1 rounded-lg font-semibold text-[#786B60] hover:text-[#2B231D] transition';
-    btnMonthly.className = 'px-2.5 py-1 rounded-lg font-bold bg-[#FFFDF9] text-[#2B231D] shadow-2xs transition';
+    btnWeekly.className = 'px-2.5 py-1 rounded-lg font-semibold text-[#4A658A] hover:text-[#032D65] transition';
+    btnMonthly.className = 'px-2.5 py-1 rounded-lg font-bold bg-[#FDFDFF] text-[#032D65] shadow-2xs transition';
     cWeekly.classList.add('hidden');
     cMonthly.classList.remove('hidden');
     title.textContent = 'Biến Động Thu - Chi Theo Tháng';
@@ -542,9 +542,9 @@ function updateMonthDropdownUI() {
 
   const isAll = state.selectedMonth === 'all';
   let html = `
-    <button onclick="selectMonth('all')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition font-medium ${isAll ? 'bg-[#FDF6E2] text-[#7A5408] font-bold' : 'text-[#2B231D] hover:bg-[#EFE7D8]'}">
+    <button onclick="selectMonth('all')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition font-medium ${isAll ? 'bg-[#FFF8DB] text-[#032D65] font-bold' : 'text-[#032D65] hover:bg-[#E4ECF7]'}">
       <span>Toàn bộ thời gian</span>
-      ${isAll ? '<i data-lucide="check" class="w-3.5 h-3.5 text-[#D39526]"></i>' : ''}
+      ${isAll ? '<i data-lucide="check" class="w-3.5 h-3.5 text-[#F9BD04]"></i>' : ''}
     </button>
   `;
 
@@ -552,9 +552,9 @@ function updateMonthDropdownUI() {
     const [yr, mo] = m.split('-');
     const isSelected = state.selectedMonth === m;
     html += `
-      <button onclick="selectMonth('${m}')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition font-medium ${isSelected ? 'bg-[#FDF6E2] text-[#7A5408] font-bold' : 'text-[#2B231D] hover:bg-[#EFE7D8]'}">
+      <button onclick="selectMonth('${m}')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition font-medium ${isSelected ? 'bg-[#FFF8DB] text-[#032D65] font-bold' : 'text-[#032D65] hover:bg-[#E4ECF7]'}">
         <span>Tháng ${mo}/${yr}</span>
-        ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-[#D39526]"></i>' : ''}
+        ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-[#F9BD04]"></i>' : ''}
       </button>
     `;
   });
@@ -678,12 +678,12 @@ function openCardCategoryPicker(event, transId, columnType) {
   picker.innerHTML = filteredCats.map(c => {
     const isSelected = (c.name === currentCategory && columnType !== 'unclassified');
     return `
-      <button type="button" onclick="onSelectCardCategory(${transId}, '${escapeHtml(c.name)}', '${columnType}')" class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left transition font-medium ${isSelected ? 'bg-[#FDF6E2] text-[#7A5408] font-bold' : 'text-[#2B231D] hover:bg-[#EFE7D8]'}">
+      <button type="button" onclick="onSelectCardCategory(${transId}, '${escapeHtml(c.name)}', '${columnType}')" class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-left transition font-medium ${isSelected ? 'bg-[#FFF8DB] text-[#032D65] font-bold' : 'text-[#032D65] hover:bg-[#E4ECF7]'}">
         <div class="flex items-center gap-2.5 truncate">
           <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style="background-color: ${c.color}"></span>
           <span class="truncate">${escapeHtml(c.name)}</span>
         </div>
-        ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-[#D39526] shrink-0"></i>' : ''}
+        ${isSelected ? '<i data-lucide="check" class="w-3.5 h-3.5 text-[#F9BD04] shrink-0"></i>' : ''}
       </button>
     `;
   }).join('');
@@ -785,9 +785,9 @@ async function loadOverview() {
       if (typeof animateNumberValue === 'function') animateNumberValue(netElem, data.net_balance, 650, v => formatCurrency(v));
       else netElem.textContent = formatCurrency(data.net_balance);
       if (data.net_balance >= 0) {
-        netElem.className = 'text-2xl sm:text-[28px] font-black text-[#5F7465] tabular-nums tracking-tight my-1';
+        netElem.className = 'text-2xl sm:text-[28px] font-black text-[#032D65] tabular-nums tracking-tight my-1';
       } else {
-        netElem.className = 'text-2xl sm:text-[28px] font-black text-[#B14720] tabular-nums tracking-tight my-1';
+        netElem.className = 'text-2xl sm:text-[28px] font-black text-[#B8171F] tabular-nums tracking-tight my-1';
       }
     }
 
@@ -801,11 +801,11 @@ async function loadOverview() {
     if (pBar) {
       pBar.style.width = `${rate}%`;
       if (rate >= 30) {
-        pBar.className = 'bg-[#5F7465] h-1.5 rounded-full transition-all duration-500';
+        pBar.className = 'bg-[#032D65] h-1.5 rounded-full transition-all duration-500';
       } else if (rate >= 10) {
-        pBar.className = 'bg-[#D39526] h-1.5 rounded-full transition-all duration-500';
+        pBar.className = 'bg-[#F9BD04] h-1.5 rounded-full transition-all duration-500';
       } else {
-        pBar.className = 'bg-[#C3651F] h-1.5 rounded-full transition-all duration-500';
+        pBar.className = 'bg-[#B8171F] h-1.5 rounded-full transition-all duration-500';
       }
     }
 
@@ -854,13 +854,13 @@ async function renderCategoryPieChart() {
 
     const labels = breakdown.map(b => b.category);
     const amounts = breakdown.map(b => b.amount);
-    const fallbackPalette = ['#5F7465', '#D39526', '#B14720', '#626037', '#C3651F', '#663B1B', '#7C3929', '#552F26', '#8E8275'];
+    const fallbackPalette = ['#032D65', '#B8171F', '#F9BD04', '#1E4E8C', '#D93840', '#FBC93D', '#3B6BA5', '#8F1117', '#E0A800'];
     const colors = breakdown.map((b, i) => b.color || fallbackPalette[i % fallbackPalette.length]);
 
     // Populate Legend List
     breakdown.forEach(item => {
       const row = document.createElement('div');
-      row.className = 'flex items-center justify-between text-xs py-1.5 px-2 rounded-xl hover:bg-[#F7F2E8] cursor-pointer transition border border-transparent hover:border-[#DECDB5]';
+      row.className = 'flex items-center justify-between text-xs py-1.5 px-2 rounded-xl hover:bg-[#F0F4FA] cursor-pointer transition border border-transparent hover:border-[#CBD7E8]';
       row.onclick = () => {
         const catFilter = document.getElementById('categoryFilter');
         if (catFilter) catFilter.value = item.category;
@@ -871,12 +871,12 @@ async function renderCategoryPieChart() {
       row.innerHTML = `
         <div class="flex items-center gap-2 truncate">
           <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style="background-color: ${item.color}"></span>
-          <span class="font-semibold text-[#2B231D] truncate">${item.category}</span>
-          <span class="text-[10px] text-[#786B60]">(${item.count})</span>
+          <span class="font-semibold text-[#032D65] truncate">${item.category}</span>
+          <span class="text-[10px] text-[#4A658A]">(${item.count})</span>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <span class="font-bold text-[#2B231D] tabular-nums">${formatCurrency(item.amount)}</span>
-          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#EFE7D8] text-[#786B60] border border-[#DECDB5]/60">${item.percentage}%</span>
+          <span class="font-bold text-[#032D65] tabular-nums">${formatCurrency(item.amount)}</span>
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#E4ECF7] text-[#4A658A] border border-[#CBD7E8]/60">${item.percentage}%</span>
         </div>
       `;
       legendEl.appendChild(row);
@@ -892,7 +892,7 @@ async function renderCategoryPieChart() {
           data: amounts,
           backgroundColor: colors,
           borderWidth: 2,
-          borderColor: '#FFFDF9',
+          borderColor: '#FDFDFF',
           hoverOffset: 6
         }]
       },
@@ -915,10 +915,10 @@ async function renderCategoryPieChart() {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#2B231D',
-            titleColor: '#FFFDF9',
-            bodyColor: '#F7F2E8',
-            borderColor: '#DECDB5',
+            backgroundColor: '#032D65',
+            titleColor: '#FDFDFF',
+            bodyColor: '#F0F4FA',
+            borderColor: '#CBD7E8',
             borderWidth: 1,
             padding: 10,
             cornerRadius: 8,
@@ -970,14 +970,14 @@ async function renderWeeklyChart() {
           {
             label: 'Chi tiêu',
             data: expenses,
-            backgroundColor: '#B14720',
+            backgroundColor: '#B8171F',
             borderRadius: 6,
             barPercentage: 0.6
           },
           {
             label: 'Thu nhập',
             data: incomes,
-            backgroundColor: '#5F7465',
+            backgroundColor: '#032D65',
             borderRadius: 6,
             barPercentage: 0.6
           }
@@ -1010,10 +1010,10 @@ async function renderWeeklyChart() {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#2B231D',
-            titleColor: '#FFFDF9',
-            bodyColor: '#F7F2E8',
-            borderColor: '#DECDB5',
+            backgroundColor: '#032D65',
+            titleColor: '#FDFDFF',
+            bodyColor: '#F0F4FA',
+            borderColor: '#CBD7E8',
             borderWidth: 1,
             padding: 10,
             cornerRadius: 8,
@@ -1025,12 +1025,12 @@ async function renderWeeklyChart() {
         scales: {
           x: {
             grid: { display: false },
-            ticks: { color: '#786B60', font: { size: 11 } }
+            ticks: { color: '#4A658A', font: { size: 11 } }
           },
           y: {
-            grid: { color: '#EFE7D8' },
+            grid: { color: '#E4ECF7' },
             ticks: {
-              color: '#786B60',
+              color: '#4A658A',
               font: { size: 11 },
               callback: (val) => {
                 if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
@@ -1092,14 +1092,14 @@ async function renderMonthlyChart() {
           {
             label: 'Chi tiêu',
             data: expenses,
-            backgroundColor: '#B14720',
+            backgroundColor: '#B8171F',
             borderRadius: 6,
             barPercentage: 0.6
           },
           {
             label: 'Thu nhập',
             data: incomes,
-            backgroundColor: '#5F7465',
+            backgroundColor: '#032D65',
             borderRadius: 6,
             barPercentage: 0.6
           }
@@ -1132,10 +1132,10 @@ async function renderMonthlyChart() {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#2B231D',
-            titleColor: '#FFFDF9',
-            bodyColor: '#F7F2E8',
-            borderColor: '#DECDB5',
+            backgroundColor: '#032D65',
+            titleColor: '#FDFDFF',
+            bodyColor: '#F0F4FA',
+            borderColor: '#CBD7E8',
             borderWidth: 1,
             padding: 10,
             cornerRadius: 8,
@@ -1147,12 +1147,12 @@ async function renderMonthlyChart() {
         scales: {
           x: {
             grid: { display: false },
-            ticks: { color: '#786B60', font: { size: 11 } }
+            ticks: { color: '#4A658A', font: { size: 11 } }
           },
           y: {
-            grid: { color: '#EFE7D8' },
+            grid: { color: '#E4ECF7' },
             ticks: {
-              color: '#786B60',
+              color: '#4A658A',
               font: { size: 11 },
               callback: (val) => {
                 if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M';
@@ -1200,7 +1200,7 @@ async function loadTransactions() {
     if (countBadge) countBadge.textContent = `${state.totalTransactions} mục`;
 
     if (items.length === 0) {
-      if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-[#A49688] text-xs">Không tìm thấy giao dịch nào</td></tr>`;
+      if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-[#7B93B2] text-xs">Không tìm thấy giao dịch nào</td></tr>`;
       if (paginationInfo) paginationInfo.textContent = '0 - 0 của 0';
       updatePaginationControls();
       return;
@@ -1215,32 +1215,32 @@ async function loadTransactions() {
       items.forEach(t => {
         const isExp = t.type === 'expense';
         const amountSign = isExp ? '-' : '+';
-        const amountClass = isExp ? 'text-[#B14720] font-bold tabular-nums' : 'text-[#5F7465] font-bold tabular-nums';
+        const amountClass = isExp ? 'text-[#B8171F] font-bold tabular-nums' : 'text-[#032D65] font-bold tabular-nums';
 
         const catObj = state.categories.find(c => c.name === t.category);
-        const catColor = catObj ? catObj.color : '#626037';
+        const catColor = catObj ? catObj.color : '#032D65';
 
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-[#F7F2E8]/70 transition group';
+        tr.className = 'hover:bg-[#F0F4FA]/70 transition group';
         tr.innerHTML = `
-          <td class="py-2.5 px-4 font-semibold text-[#786B60] whitespace-nowrap">
+          <td class="py-2.5 px-4 font-semibold text-[#4A658A] whitespace-nowrap">
             ${formatDate(t.date)}
           </td>
           <td class="py-2.5 px-4 max-w-xs md:max-w-md">
-            <div class="font-bold text-[#2B231D] text-xs truncate" title="${escapeHtml(t.raw_description || t.description)}">
+            <div class="font-bold text-[#032D65] text-xs truncate" title="${escapeHtml(t.raw_description || t.description)}">
               ${escapeHtml(t.description || t.raw_description)}
             </div>
             ${t.raw_description && t.raw_description !== t.description ? `
-              <div class="text-[10px] text-[#A49688] truncate mt-0.5" title="${escapeHtml(t.raw_description)}">
+              <div class="text-[10px] text-[#7B93B2] truncate mt-0.5" title="${escapeHtml(t.raw_description)}">
                 ${escapeHtml(t.raw_description)}
               </div>
             ` : ''}
           </td>
           <td class="py-2.5 px-4 whitespace-nowrap">
-            <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, 'table')" id="tableCatBtn-${t.id}" class="inline-flex items-center gap-1.5 bg-[#F7F2E8] hover:bg-[#EFE7D8] border border-[#DECDB5] rounded-xl px-2.5 py-1 text-xs font-semibold text-[#2B231D] transition cursor-pointer shadow-2xs">
+            <button type="button" onclick="openCardCategoryPicker(event, ${t.id}, 'table')" id="tableCatBtn-${t.id}" class="inline-flex items-center gap-1.5 bg-[#F0F4FA] hover:bg-[#E4ECF7] border border-[#CBD7E8] rounded-xl px-2.5 py-1 text-xs font-semibold text-[#032D65] transition cursor-pointer shadow-2xs">
               <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs" style="background-color: ${catColor}"></span>
               <span>${escapeHtml(t.category)}</span>
-              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#786B60]"></i>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#4A658A]"></i>
             </button>
           </td>
           <td class="py-2.5 px-4 text-right whitespace-nowrap">
@@ -1249,7 +1249,7 @@ async function loadTransactions() {
             </span>
           </td>
           <td class="py-2.5 px-4 text-center whitespace-nowrap">
-            <button onclick="deleteTransaction(${t.id})" title="Xóa giao dịch" class="opacity-70 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg text-[#A49688] hover:text-[#B14720] hover:bg-[#FDF3EE] transition cursor-pointer">
+            <button onclick="deleteTransaction(${t.id})" title="Xóa giao dịch" class="opacity-70 md:opacity-0 md:group-hover:opacity-100 p-1.5 rounded-lg text-[#7B93B2] hover:text-[#B8171F] hover:bg-[#FDECEE] transition cursor-pointer">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </td>
@@ -1375,13 +1375,13 @@ function closeUploadModal() {
 function handleDragOver(e) {
   e.preventDefault();
   const dz = document.getElementById('dropZone');
-  if (dz) dz.classList.add('border-[#5F7465]', 'bg-[#F0F5F2]');
+  if (dz) dz.classList.add('border-[#032D65]', 'bg-[#EBF1FA]');
 }
 
 function handleDragLeave(e) {
   e.preventDefault();
   const dz = document.getElementById('dropZone');
-  if (dz) dz.classList.remove('border-[#5F7465]', 'bg-[#F0F5F2]');
+  if (dz) dz.classList.remove('border-[#032D65]', 'bg-[#EBF1FA]');
 }
 
 function handleDrop(e) {
