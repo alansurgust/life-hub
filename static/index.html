@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <!-- Anti-Cache Meta Tags for Instant Mobile Updates -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Finance & Life Hub - Quản Lý Cá Nhân All-in-One</title>
@@ -53,7 +49,7 @@
             }
           },
           fontFamily: {
-            sans: ["'Plus Jakarta Sans'", '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
             serif: ['Newsreader', 'Georgia', 'Cambria', 'serif']
           }
         }
@@ -179,26 +175,11 @@
           <span>Link iPhone / iPad</span>
         </button>
 
-        <!-- User Profile Pill -->
-        <div id="sidebarUserProfile" class="flex items-center justify-between p-2 rounded-xl bg-[#FFFDF9] border border-[#DECDB5] shadow-2xs">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div id="sidebarUserAvatar" class="w-8 h-8 rounded-full bg-[#5F7465] text-[#FFFDF9] flex items-center justify-center font-bold text-xs shrink-0 select-none shadow-xs">
-              AS
-            </div>
-            <div class="min-w-0 flex-1">
-              <div id="sidebarUserName" class="text-xs font-bold text-[#2B231D] truncate leading-tight">Alan Surgust</div>
-              <div id="sidebarUserRole" class="text-[10px] text-[#786B60] truncate font-medium">@alansurgust</div>
-            </div>
-          </div>
-          <!-- Logout Button -->
-          <button onclick="handleAuthLogout()" id="sidebarLogoutBtn" class="p-1.5 rounded-lg hover:bg-[#FDF3EE] text-[#786B60] hover:text-[#B14720] transition cursor-pointer" title="Đăng xuất tài khoản">
-            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-          </button>
-        </div>
-
         <!-- Storage Info & Settings -->
         <div class="flex items-center justify-between px-1 text-xs text-[#786B60]">
-
+          <span class="text-[10px] font-semibold text-[#626037] flex items-center gap-1">
+            <i data-lucide="hard-drive" class="w-3 h-3 text-[#5F7465]"></i> D:\app\finance
+          </span>
           <button onclick="openSettingsModal()" class="p-1.5 rounded-lg hover:bg-[#E7DEC8] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Cài đặt">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>
           </button>
@@ -223,7 +204,7 @@
           <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
             
             <!-- 0. Dashboard Tab Controls -->
-            <div id="headerDashboardControls" class="hidden md:flex items-center gap-2">
+            <div id="headerDashboardControls" class="hidden sm:flex items-center gap-2">
               <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526]"></i>
                 <span id="dashHeaderDate">Thứ Hai, 02/11/2026</span>
@@ -257,13 +238,13 @@
               </div>
 
               <!-- Upload Statement Button -->
-              <button onclick="openUploadModal()" class="hidden sm:inline-flex items-center gap-1.5 sm:gap-2 text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
+              <button onclick="openUploadModal()" class="inline-flex items-center gap-1.5 sm:gap-2 text-xs font-bold px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer">
                 <i data-lucide="upload-cloud" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Tải sao kê</span>
               </button>
 
               <!-- Actions Menu Dropdown -->
-              <div class="relative hidden sm:block">
+              <div class="relative">
                 <button onclick="toggleActionMenu()" id="actionMenuBtn" title="Thao tác & Dữ liệu" class="inline-flex items-center gap-1 sm:gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#2B231D] border border-[#DECDB5] shadow-2xs transition cursor-pointer">
                   <i data-lucide="layers" class="w-3.5 h-3.5 text-[#786B60]"></i>
                   <span class="hidden md:inline">Thao tác</span>
@@ -293,7 +274,7 @@
             </div>
 
             <!-- 2. Todos Tab Controls -->
-            <div id="headerTodosControls" class="hidden sm:flex items-center gap-2">
+            <div id="headerTodosControls" class="hidden flex items-center gap-2">
               <button onclick="openTodoModal()" class="animate-shine inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Việc mới</span>
@@ -305,7 +286,7 @@
             </div>
 
             <!-- 3. Habits Tab Controls -->
-            <div id="headerHabitsControls" class="hidden sm:flex items-center gap-2">
+            <div id="headerHabitsControls" class="hidden flex items-center gap-2">
               <button onclick="quickAddHabit()" class="animate-shine inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] shadow-sm transition cursor-pointer tap-spring">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">Thói quen mới</span>
@@ -328,8 +309,19 @@
               </button>
             </div>
 
+            <!-- Mobile Pomodoro Header Trigger -->
+            <button onclick="toggleMobilePomodoro()" id="mobilePomoHeaderBtn" class="md:hidden flex items-center gap-1 px-2 h-9 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 transition text-xs font-bold text-[#786B60] cursor-pointer" title="Đồng hồ Pomodoro">
+              <i data-lucide="timer" class="w-4 h-4 text-[#C3651F]"></i>
+              <span id="mobilePomoHeaderTime" class="tabular-nums">25:00</span>
+            </button>
+
+            <!-- Mobile Quick Settings Button -->
+            <button onclick="openSettingsModal()" class="md:hidden w-9 h-9 rounded-xl flex items-center justify-center bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 transition text-[#786B60] hover:text-[#2B231D] cursor-pointer" title="Cài đặt">
+              <i data-lucide="settings" class="w-4 h-4"></i>
+            </button>
+
             <!-- Live Realtime Sync Status: FIXED ICON ONLY (No jumping text, strictly 36x36) -->
-            <button onclick="triggerCloudSyncNow()" id="liveSyncStatus" class="hidden sm:flex w-9 h-9 rounded-xl items-center justify-center bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 select-none relative transition cursor-pointer" title="Đồng bộ thời gian thực: Đã kết nối & sẵn sàng">
+            <button onclick="triggerCloudSyncNow()" id="liveSyncStatus" class="w-9 h-9 rounded-xl flex items-center justify-center bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 select-none relative transition cursor-pointer" title="Đồng bộ thời gian thực: Đã kết nối & sẵn sàng">
               <i data-lucide="cloud" id="liveSyncCloudIcon" class="w-4 h-4 text-[#5F7465] transition-transform"></i>
               <span id="syncPulseDot" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 transition-colors ring-1 ring-white"></span>
             </button>
@@ -337,7 +329,7 @@
 
 
             <!-- Global Reload Button -->
-            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
+            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\app\finance" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
               <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#786B60] group-hover:text-[#5F7465] transition"></i>
               <span class="hidden lg:inline">Làm mới</span>
             </button>
@@ -443,7 +435,7 @@
 
                 <!-- Quick add To-do directly from Dashboard -->
                 <div class="flex items-center gap-2 pt-2 border-t border-[#DECDB5]/50">
-                  <input type="text" id="dashQuickTodoTitle" placeholder="Thêm nhanh việc cần làm..." 
+                  <input type="text" id="dashQuickTodoTitle" placeholder="Thêm nhanh việc cần làm... (nhấn Enter)" 
                          class="flex-1 bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs text-[#2B231D] placeholder-[#A49688] focus:bg-[#FFFDF9] focus:outline-none focus:ring-1 focus:ring-[#5F7465]"
                          onkeydown="if(event.key==='Enter') quickAddTodoFromDash()">
                   <button onclick="quickAddTodoFromDash()" class="px-3 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] text-xs font-bold hover:bg-[#1A261F] transition cursor-pointer flex items-center gap-1">
@@ -647,7 +639,7 @@
           <div class="flex items-center justify-between mb-1">
             <div>
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Phân Bổ Chi Tiêu</h3>
-              
+              <p class="text-xs text-[#786B60]">Tỷ lệ theo từng danh mục</p>
             </div>
             <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#786B60] font-semibold border border-[#DECDB5]" id="pieChartMonthLabel">Tháng này</span>
           </div>
@@ -735,7 +727,7 @@
             <h3 class="font-extrabold text-base sm:text-lg text-[#2B231D] tracking-tight">Chi Tiết Phân Loại Giao Dịch (3 Cột)</h3>
             <span id="columnsTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#2B231D] font-bold border border-[#DECDB5]">0 mục</span>
           </div>
-          
+          <p class="text-xs text-[#786B60]">Mục AI tự đoán có độ chính xác dưới 65% ở cột giữa. Chọn danh mục để tự động chuyển sang cột tương ứng.</p>
         </div>
 
         <!-- Controls: View Mode & Search -->
@@ -1002,7 +994,7 @@
           <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
             <div class="flex items-center gap-2">
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tiến Độ Hoàn Thành Theo Ngày</h3>
-              <span class="text-[10px] font-bold text-[#786B60] bg-[#EFE7D8] px-2 py-0.5 rounded-lg border border-[#DECDB5]">Tuần này (T2 - CN)</span>
+              <span class="text-[10px] font-bold text-[#786B60] bg-[#EFE7D8] px-2 py-0.5 rounded-lg border border-[#DECDB5]">7 ngày qua • Cột đôi</span>
             </div>
           </div>
           <div class="relative h-64 mt-2">
@@ -1028,7 +1020,7 @@
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#F7F2E8] p-2 rounded-2xl border border-[#DECDB5]">
           <div class="flex items-center gap-2 flex-1 px-3">
             <i data-lucide="plus" class="w-4 h-4 text-[#786B60] shrink-0"></i>
-            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới..." class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
+            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới... (Gõ tiêu đề và nhấn Enter)" class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
           </div>
           <div class="flex items-center gap-2 shrink-0 flex-wrap">
             <select id="todoQuickPriority" class="bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#2B231D] outline-none cursor-pointer">
@@ -1054,13 +1046,10 @@
         <!-- Filter Pills & View Switcher -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-b border-[#DECDB5]/50 pb-4">
           <div class="flex items-center gap-1.5 flex-wrap">
-            <button onclick="setTodoFilter('all')" id="todoFilterBtn_all" class="px-3 py-1 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer">Hiện tại & Tồn đọng</button>
+            <button onclick="setTodoFilter('all')" id="todoFilterBtn_all" class="px-3 py-1 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs cursor-pointer">Tất cả</button>
             <button onclick="setTodoFilter('today')" id="todoFilterBtn_today" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Hôm nay</button>
             <button onclick="setTodoFilter('week')" id="todoFilterBtn_week" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Tuần này</button>
-            <button onclick="setTodoFilter('archive')" id="todoFilterBtn_archive" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer flex items-center gap-1">
-              <i data-lucide="archive" class="w-3.5 h-3.5 text-[#5F7465]"></i>
-              <span>Lịch sử tuần đã xong</span>
-            </button>
+            <button onclick="setTodoFilter('urgent')" id="todoFilterBtn_urgent" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Khẩn cấp</button>
             <button onclick="setTodoFilter('completed')" id="todoFilterBtn_completed" class="px-3 py-1 text-xs font-semibold rounded-xl bg-[#FFFDF9] text-[#786B60] hover:text-[#2B231D] border border-[#DECDB5] cursor-pointer">Đã hoàn thành</button>
           </div>
 
@@ -1191,7 +1180,7 @@
       </div>
 
             <!-- Biểu Đồ Miền (Area Chart): Thống kê số thói quen đã hoàn thành theo ngày trong tháng -->
-      <div id="habitAreaChartBox" class="bg-[#FFFDF9] p-5 sm:p-6 rounded-3xl border border-[#DECDB5] shadow-2xs space-y-3">
+      <div class="bg-[#FFFDF9] p-5 sm:p-6 rounded-3xl border border-[#DECDB5] shadow-2xs space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DECDB5]/50 pb-3">
           <div>
             <div class="flex items-center gap-2">
@@ -1366,7 +1355,7 @@
           </div>
           <div>
             <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tải Lên Sao Kê Ngân Hàng</h3>
-            <p class="text-xs text-[#786B60]">Hỗ trợ Excel, CSV, PDF</p>
+            <p class="text-xs text-[#786B60]">Lưu vào D:\app\finance • Hỗ trợ Excel, CSV, PDF</p>
           </div>
         </div>
         <button onclick="closeUploadModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
@@ -1415,7 +1404,7 @@
           <div class="w-8 h-8 rounded-xl bg-[#EFE7D8] text-[#2B231D] flex items-center justify-center border border-[#DECDB5]">
             <i data-lucide="settings" class="w-4 h-4"></i>
           </div>
-          <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Cài Đặt Hệ Thống & Tài Khoản</h3>
+          <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Cấu Hình AI Phân Loại</h3>
         </div>
         <button onclick="closeSettingsModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -1423,29 +1412,6 @@
       </div>
 
       <div class="space-y-3 text-xs">
-        <!-- User Account & Quick Logout / Login Section (VERY TOP OF SETTINGS) -->
-        <div class="p-3.5 rounded-2xl bg-[#F7F2E8] border border-[#DECDB5] flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div id="settingsUserAvatar" class="w-9 h-9 rounded-full bg-[#5F7465] text-[#FFFDF9] flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
-              AS
-            </div>
-            <div class="min-w-0">
-              <div id="settingsUserName" class="text-xs font-extrabold text-[#2B231D] truncate">Alan Surgust</div>
-              <div id="settingsUserRole" class="text-[10px] text-[#786B60] truncate font-medium">@alansurgust</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5 shrink-0">
-            <button type="button" id="settingsSwitchUserBtn" onclick="closeSettingsModal(); showAuthModal();" class="px-2.5 py-1.5 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] text-[#2B231D] border border-[#DECDB5] text-[11px] font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs" title="Chuyển tài khoản hoặc đăng nhập">
-              <i data-lucide="user-check" class="w-3.5 h-3.5 text-[#5F7465]"></i>
-              <span>Đổi TK</span>
-            </button>
-            <button type="button" id="settingsLogoutBtn" onclick="closeSettingsModal(); handleAuthLogout();" class="px-2.5 py-1.5 rounded-xl bg-[#FDF3EE] hover:bg-[#F9E2D8] text-[#B14720] border border-[#F4DDD2] text-[11px] font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs" title="Đăng xuất khỏi thiết bị">
-              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-              <span>Đăng xuất</span>
-            </button>
-          </div>
-        </div>
-
         <div>
           <label class="block font-bold text-[#2B231D] mb-1">Mô Hình AI (LLM)</label>
           <select id="settingsProvider" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-semibold text-[#2B231D] outline-none">
@@ -1457,7 +1423,7 @@
         <div>
           <label class="block font-bold text-[#2B231D] mb-1">API Key</label>
           <input type="password" id="settingsApiKey" placeholder="Nhập API Key nếu muốn dùng AI đám mây" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-          
+          <p class="text-[11px] text-[#786B60] mt-1">Dữ liệu được lưu tại: <strong class="text-[#2B231D] font-mono">D:\app\finance\expense_data.db</strong></p>
         </div>
 
         <!-- Google Cloud Run Sync Section -->
@@ -1476,10 +1442,10 @@
               <span>Đồng bộ ngay</span>
             </button>
           </div>
-          
+          <p class="text-[10px] text-[#786B60] leading-relaxed">
+            Nhập đường link Cloud Run sau khi triển khai. Nhấn <strong>Đồng bộ ngay</strong> để kéo mọi dữ liệu bạn nhập trên iPhone về máy tính và ngược lại!
+          </p>
         </div>
-
-
       </div>
 
       <div class="flex items-center justify-end gap-2 pt-2">
@@ -1817,171 +1783,36 @@
     <!-- Populated dynamically -->
   </div>
 
-  <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait - 6 Optimized Tabs) ================= -->
-  <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait - 6 Optimized Tabs) ================= -->
-  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-1 py-1 flex items-center justify-between shadow-lg min-h-[3.5rem] select-none">
+  <!-- ================= MOBILE BOTTOM NAVIGATION (iPhone / iPad portrait - 5 Standard Tabs) ================= -->
+  <nav class="app-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF9]/95 backdrop-blur-md border-t border-[#DECDB5] px-1.5 py-1 flex items-center justify-around shadow-lg min-h-[3.5rem] select-none">
     <div id="bottomNavPill" class="bottom-nav-pill opacity-0"></div>
-    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[9.5px] py-1 rounded-xl transition cursor-pointer tap-spring shrink-0 min-w-0">
+    <button onclick="switchLifeTab('dashboard')" id="mobileNav_dashboard" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#233329] font-bold text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-      <span class="truncate">Tổng quan</span>
+      <span>Tổng quan</span>
     </button>
-    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[9.5px] py-1 rounded-xl transition cursor-pointer tap-spring shrink-0 min-w-0">
+    <button onclick="switchLifeTab('finance')" id="mobileNav_finance" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="wallet" class="w-4 h-4"></i>
-      <span class="truncate">Tài chính</span>
+      <span>Tài chính</span>
     </button>
-    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[9.5px] py-1 rounded-xl transition cursor-pointer tap-spring shrink-0 min-w-0">
+    <button onclick="switchLifeTab('todos')" id="mobileNav_todos" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="check-square" class="w-4 h-4"></i>
-      <span class="truncate">Việc làm</span>
+      <span>Việc làm</span>
     </button>
-    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[9.5px] py-1 rounded-xl transition cursor-pointer tap-spring shrink-0 min-w-0">
+    <button onclick="switchLifeTab('habits')" id="mobileNav_habits" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="flame" class="w-4 h-4"></i>
-      <span class="truncate">Thói quen</span>
+      <span>Thói quen</span>
     </button>
-    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[9.5px] py-1 rounded-xl transition cursor-pointer tap-spring shrink-0 min-w-0">
+    <button onclick="switchLifeTab('notebook')" id="mobileNav_notebook" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[10px] py-1.5 rounded-xl transition cursor-pointer tap-spring">
       <i data-lucide="book-open" class="w-4 h-4"></i>
-      <span class="truncate">Sổ tay</span>
-    </button>
-    <button onclick="openSettingsModal()" id="mobileNav_settings" class="relative z-10 flex-1 flex flex-col items-center justify-center gap-0.5 text-[#786B60] font-medium text-[9.5px] py-1 rounded-xl transition cursor-pointer tap-spring shrink-0 min-w-0" title="Cài đặt hệ thống & Tài khoản">
-      <i data-lucide="settings" class="w-4 h-4"></i>
-      <span class="truncate">Cài đặt</span>
+      <span>Sổ tay</span>
     </button>
   </nav>
-
-  <!-- ================= AUTH MODAL (LOGIN / REGISTER) ================= -->
-  <div id="authModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-[#2B231D]/60 backdrop-blur-md p-4 modal-overlay-animate">
-    <div class="bg-[#FFFDF9] rounded-3xl max-w-sm sm:max-w-md w-full p-6 sm:p-7 shadow-2xl border border-[#DECDB5] relative space-y-5 modal-dialog-content modal-content-animate">
-      
-      <!-- Close Button -->
-      <button type="button" onclick="hideAuthModal()" class="absolute top-4 right-4 text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition cursor-pointer" title="Đóng">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-
-      <!-- Brand & Header -->
-      <div class="text-center space-y-2">
-        <div class="w-12 h-12 mx-auto rounded-2xl bg-[#233329] text-[#FFFDF9] flex items-center justify-center shadow-sm border border-[#DECDB5]">
-          <i data-lucide="shield-check" class="w-6 h-6 text-[#E3C280]"></i>
-        </div>
-        <div>
-          <h3 class="font-extrabold text-xl text-[#2B231D] tracking-tight font-serif-vintage">LIFE HUB OS</h3>
-          <p class="text-xs text-[#786B60] mt-0.5">Finance & Life System • Đăng Nhập & Tạo Tài Khoản</p>
-        </div>
-      </div>
-
-      <!-- Segmented Tab: Đăng Nhập / Đăng Ký -->
-      <div class="flex items-center bg-[#F2ECE1] p-1 rounded-2xl border border-[#DECDB5]">
-        <button type="button" onclick="switchAuthTab('login')" id="authTabLogin" class="flex-1 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer">
-          Đăng Nhập
-        </button>
-        <button type="button" onclick="switchAuthTab('register')" id="authTabRegister" class="flex-1 py-2 text-xs font-bold rounded-xl text-[#786B60] hover:text-[#2B231D] transition cursor-pointer">
-          Tạo Tài Khoản
-        </button>
-      </div>
-
-      <!-- Alert Message Banner -->
-      <div id="authAlert" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
-
-      <!-- LOGIN FORM -->
-      <form id="authLoginForm" onsubmit="handleAuthLogin(event)" class="space-y-3.5">
-        <div>
-          <label class="block font-bold text-xs text-[#2B231D] mb-1">Tên đăng nhập</label>
-          <div class="relative">
-            <i data-lucide="user" class="w-4 h-4 text-[#A49688] absolute left-3 top-2.5"></i>
-            <input type="text" id="loginUsername" required autocomplete="username" placeholder="alansurgust" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl pl-9 pr-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-xs text-[#2B231D] mb-1">Mật khẩu</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-[#A49688] absolute left-3 top-2.5"></i>
-            <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Mật khẩu 6 số" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl pl-9 pr-10 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-            <button type="button" onclick="togglePasswordVisibility('loginPassword', 'loginEyeIcon')" class="absolute right-3 top-2.5 text-[#A49688] hover:text-[#2B231D]">
-              <i data-lucide="eye" id="loginEyeIcon" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-
-        <button type="submit" id="loginSubmitBtn" class="w-full py-2.5 px-4 rounded-xl bg-[#233329] text-[#FFFDF9] hover:bg-[#1A261F] text-xs font-bold transition shadow-sm flex items-center justify-center gap-2 cursor-pointer mt-2">
-          <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>Đăng Nhập</span>
-        </button>
-      </form>
-
-      <!-- REGISTER FORM -->
-      <form id="authRegisterForm" onsubmit="handleAuthRegister(event)" class="space-y-3 hidden">
-        <div>
-          <label class="block font-bold text-xs text-[#2B231D] mb-1">Họ và tên</label>
-          <div class="relative">
-            <i data-lucide="badge-check" class="w-4 h-4 text-[#A49688] absolute left-3 top-2.5"></i>
-            <input type="text" id="regFullName" placeholder="Họ và tên" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl pl-9 pr-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-xs text-[#2B231D] mb-1">Tên đăng nhập</label>
-          <div class="relative">
-            <i data-lucide="user" class="w-4 h-4 text-[#A49688] absolute left-3 top-2.5"></i>
-            <input type="text" id="regUsername" required autocomplete="username" placeholder="Tối thiểu 3 ký tự" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl pl-9 pr-3 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-xs text-[#2B231D] mb-1">Mật khẩu</label>
-          <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-[#A49688] absolute left-3 top-2.5"></i>
-            <input type="password" id="regPassword" required autocomplete="new-password" placeholder="Tối thiểu 6 ký tự" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl pl-9 pr-10 py-2 text-xs font-semibold outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-            <button type="button" onclick="togglePasswordVisibility('regPassword', 'regEyeIcon')" class="absolute right-3 top-2.5 text-[#A49688] hover:text-[#2B231D]">
-              <i data-lucide="eye" id="regEyeIcon" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-
-        <button type="submit" id="regSubmitBtn" class="w-full py-2.5 px-4 rounded-xl bg-[#5F7465] text-[#FFFDF9] hover:bg-[#4d5e52] text-xs font-bold transition shadow-sm flex items-center justify-center gap-2 cursor-pointer mt-2">
-          <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span>Tạo Tài Khoản Mới</span>
-        </button>
-      </form>
-
-      <div class="text-center pt-2 border-t border-[#DECDB5]/60 text-[11px] text-[#8C7E72]">
-        Mỗi người dùng có một không gian dữ liệu riêng biệt và an toàn
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ================= MOBILE USER ACTION SHEET ================= -->
-  <div id="mobileUserModal" class="hidden fixed inset-0 z-[9998] flex items-end justify-center bg-[#2B231D]/45 backdrop-blur-sm p-0 modal-overlay-animate">
-    <div class="bg-[#FFFDF9] rounded-t-[28px] max-w-md w-full p-5 shadow-2xl border border-[#DECDB5] relative space-y-4 modal-dialog-content modal-dialog-bottomsheet">
-      <div class="sheet-handle"></div>
-      <div class="flex items-center justify-between border-b border-[#DECDB5]/70 pb-3">
-        <div class="flex items-center gap-3">
-          <div id="mobileModalAvatar" class="w-10 h-10 rounded-full bg-[#5F7465] text-[#FFFDF9] flex items-center justify-center font-bold text-sm shadow-xs">
-            AS
-          </div>
-          <div>
-            <h3 id="mobileModalName" class="font-extrabold text-sm text-[#2B231D]">Alan Surgust</h3>
-            <p id="mobileModalUsername" class="text-xs text-[#786B60]">@alansurgust</p>
-          </div>
-        </div>
-        <button onclick="closeMobileUserModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <div class="space-y-2 pt-1">
-        <button onclick="handleAuthLogout()" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#FDF3EE] text-[#B14720] hover:bg-[#F9E2D8] border border-[#F4DDD2] text-xs font-bold transition cursor-pointer">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
-          <span>Đăng Xuất Tài Khoản</span>
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- Toast Container -->
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
 
   <!-- Application Logic -->
-  <script src="/static/js/app.js?v=2.14.0"></script>
-  <script src="/static/js/life_hub.js?v=2.14.0"></script>
+  <script src="/static/js/app.js?v=2.9.1"></script>
+  <script src="/static/js/life_hub.js?v=2.9.1"></script>
 </body>
 </html>

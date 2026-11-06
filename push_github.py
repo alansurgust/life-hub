@@ -45,6 +45,12 @@ for root, dirs, files in os.walk(repo_dir):
         continue
     rel_root = os.path.relpath(root, repo_dir)
     for f in files:
+        if f.startswith('.env') or f.endswith('.bak') or '__pycache__' in root:
+            try:
+                os.remove(os.path.join(root, f))
+            except Exception:
+                pass
+            continue
         rel_f = os.path.join(rel_root, f) if rel_root != "." else f
         src_f = os.path.join(update_dir, rel_f)
         if not os.path.exists(src_f):
@@ -61,6 +67,8 @@ for root, dirs, files in os.walk(update_dir):
     dest_dir = os.path.join(repo_dir, rel_path) if rel_path != "." else repo_dir
     os.makedirs(dest_dir, exist_ok=True)
     for f in files:
+        if f.startswith('.env') or f.endswith('.bak') or '__pycache__' in root:
+            continue
         src_file = os.path.join(root, f)
         dest_file = os.path.join(dest_dir, f)
         shutil.copy2(src_file, dest_file)
