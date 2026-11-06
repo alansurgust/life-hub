@@ -19,7 +19,7 @@
   /* Vintage Typography Inks */
   --vintage-text: #2B231D;            /* Deep Warm Espresso Ink (Primary) */
   --vintage-text-muted: #786B60;      /* Warm Sepia (Secondary / Caption) */
-  --vintage-text-subtle: #A49688;     /* Faded Vintage Ink */
+  --vintage-text-subtle: #8C7E72;     /* Faded Vintage Ink */
 
   /* 8 Authentic Vintage Palette Swatches */
   --vintage-swatch-1-sage: #5F7465;   /* Swatch 1: Sage Slate Green */
@@ -54,7 +54,7 @@
 
 /* Typography - Clean Vietnamese-compatible Font Family */
 .font-serif-vintage {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'Newsreader', 'Georgia', 'Cambria', serif;
   letter-spacing: -0.015em;
 }
 
@@ -246,8 +246,8 @@ html, body {
 @media (max-width: 768px) {
   .app-top-header {
     /* Guaranteed generous clearance under iPhone status bar, clock, notch & Dynamic Island */
-    padding-top: max(env(safe-area-inset-top, 0px), 54px) !important;
-    padding-bottom: 10px !important;
+    padding-top: max(env(safe-area-inset-top, 0px), 44px) !important;
+    padding-bottom: 6px !important;
   }
 }
 

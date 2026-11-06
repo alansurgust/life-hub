@@ -1,4 +1,63 @@
 
+window.resetFinanceStateToZero = function() {
+  state.totalTransactions = 0;
+  state.availableMonths = [];
+  state.columnsData = {
+    categorized: [],
+    unclassified: [],
+    other: [],
+    stats: {
+      categorized_count: 0, categorized_sum: 0,
+      unclassified_count: 0, unclassified_sum: 0,
+      other_count: 0, other_sum: 0,
+      classified_rate: 0
+    }
+  };
+  
+  if (charts.pie) { charts.pie.destroy(); charts.pie = null; }
+  if (charts.weekly) { charts.weekly.destroy(); charts.weekly = null; }
+  if (charts.monthly) { charts.monthly.destroy(); charts.monthly = null; }
+
+  const setT = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setT('cardTotalExpense', '0 ₫');
+  setT('cardExpenseCount', '0 giao dịch chi');
+  setT('cardTotalIncome', '0 ₫');
+  setT('cardIncomeCount', 'Tiền vào tài khoản: 0 ₫');
+  setT('cardNetBalance', '0 ₫');
+  setT('cardSavingsRate', '0%');
+  const spb = document.getElementById('savingsProgressBar');
+  if (spb) spb.style.width = '0%';
+
+  setT('colCount_unclassified', '0');
+  setT('colSum_unclassified', '0 ₫');
+  setT('colCount_categorized', '0');
+  setT('colSum_categorized', '0 ₫');
+  setT('colCount_other', '0');
+  setT('colSum_other', '0 ₫');
+
+  const emptyMsg = `
+    <div class="p-8 text-center text-[#786B60] bg-[#FFFDF9] rounded-2xl border border-dashed border-[#DECDB5]/80 my-4">
+      <i data-lucide="inbox" class="w-8 h-8 mx-auto text-[#A08D7D] mb-2 opacity-50"></i>
+      <p class="text-xs font-semibold text-[#2B231D]">Chưa có giao dịch nào</p>
+      <p class="text-[11px] text-[#A08D7D] mt-0.5">Vui lòng đăng nhập để xem dữ liệu tài chính của bạn</p>
+    </div>
+  `;
+  ['kanbanCol_unclassified', 'kanbanCol_categorized', 'kanbanCol_other', 'transactionsTableBody'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = emptyMsg;
+  });
+
+  const pieNoData = document.getElementById('pieNoData');
+  if (pieNoData) pieNoData.classList.remove('hidden');
+  const weeklyNoData = document.getElementById('weeklyNoData');
+  if (weeklyNoData) weeklyNoData.classList.remove('hidden');
+  const monthlyNoData = document.getElementById('monthlyNoData');
+  if (monthlyNoData) monthlyNoData.classList.remove('hidden');
+
+  if (window.lucide) lucide.createIcons();
+};
+
+
 window.switchMobileKanbanCol = function(colName) {
   const cols = ['unclassified', 'categorized', 'other'];
   cols.forEach(c => {
@@ -6,12 +65,14 @@ window.switchMobileKanbanCol = function(colName) {
     const btnEl = document.getElementById(`mColBtn_${c}`);
     if (colEl) {
       if (c === colName) {
+        colEl.classList.remove('max-md:hidden');
         colEl.classList.remove('hidden');
         colEl.classList.add('flex');
       } else {
+        colEl.classList.add('max-md:hidden');
         colEl.classList.add('hidden');
-        colEl.classList.remove('flex');
       }
+      colEl.classList.add('md:flex');
     }
     if (btnEl) {
       if (c === colName) {
@@ -660,9 +721,10 @@ function openCardCategoryPicker(event, transId, columnType) {
   if (left < 12) left = 12;
   picker.style.left = `${left}px`;
 
-  const spaceBelow = window.innerHeight - rect.bottom;
+  const bottomNavHeight = window.innerWidth < 768 ? 72 : 0;
+  const spaceBelow = window.innerHeight - rect.bottom - bottomNavHeight;
   const spaceAbove = rect.top;
-  if (spaceBelow < 280 && spaceAbove > 280) {
+  if (spaceBelow < 260 && spaceAbove > 260) {
     picker.style.top = 'auto';
     picker.style.bottom = `${window.innerHeight - rect.top + 6}px`;
   } else {

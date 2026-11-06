@@ -67,13 +67,18 @@ def get_token() -> str:
     except Exception:
         pass
 
-    # Fallback for Render Cloud container when env var is not explicitly configured in dashboard
+    # Fallback to local token file if present (kept outside git repository)
     try:
-        import base64
-        _parts = ("Z2hwX2puOVd0N3J0", "Y1M4WXdQV2J4b3RN", "bUs3SThiQU9kdTNl", "VjhyWg==")
-        return base64.b64decode("".join(_parts)).decode("utf-8").strip()
+        token_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".github_token")
+        if os.path.exists(token_file):
+            with open(token_file, "r", encoding="utf-8") as f:
+                tok = f.read().strip()
+                if tok:
+                    return tok
     except Exception:
-        return ""
+        pass
+
+    return ""
 
 def _get_github_headers(token: str) -> dict:
     auth = f"Bearer {token}" if (token.startswith("gho_") or token.startswith("github_pat_") or token.startswith("ghp_")) else f"token {token}"

@@ -262,6 +262,15 @@ def init_db():
     _seed_initial_life_hub_data(cursor)
 
     conn.commit()
+
+    # Initialize Auth schema & users/sessions
+    try:
+        from app.auth import init_auth_schema
+        init_auth_schema(conn)
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Lỗi khởi tạo Auth schema: {e}", exc_info=True)
+
     conn.close()
 
 def _seed_initial_life_hub_data(cursor):

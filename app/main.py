@@ -11,12 +11,17 @@ import calendar
 from typing import Optional, List
 import asyncio
 from pydantic import BaseModel
-from fastapi import FastAPI, UploadFile, File, Form, Query, HTTPException, Depends, WebSocket, WebSocketDisconnect
+from fastapi import Request, FastAPI, UploadFile, File, Form, Query, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
 
 from app.database import get_db_connection, init_db
+from app.auth import (
+    hash_password, verify_password, create_session,
+    validate_session, delete_session, extract_token_from_request
+)
+
 from app.models import (
     TransactionCreate, TransactionUpdate, SettingsUpdate, RawTextUpload, UserRuleCreate, CategoryUpdate,
     TodoCreate, TodoUpdate, TodoStatusUpdate, HabitCreate, HabitUpdate, JournalEntryCreate, NoteCreate, NoteUpdate
@@ -42,6 +47,32 @@ def get_vn_now():
 
 def get_vn_today():
     return get_vn_now().date()
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    full_name: Optional[str] = ""
+
+def get_current_user_optional(request: Request) -> Optional[dict]:
+    token = extract_token_from_request(request)
+    if not token:
+        return None
+    conn = get_db_connection()
+    try:
+        return validate_session(conn, token)
+    finally:
+        conn.close()
+
+def get_current_user(request: Request) -> dict:
+    user = get_current_user_optional(request)
+    if user:
+        return user
+    raise HTTPException(status_code=401, detail="Vui lòng đăng nhập để tiếp tục.")
 
 app = FastAPI(title="Finance - Quản Lý & Thống Kê Chi Tiêu AI", version="2.0.0")
 
@@ -254,6 +285,121 @@ async def websocket_sync_endpoint(websocket: WebSocket):
     except Exception:
         sync_manager.disconnect(websocket)
 
+
+# =========================================================================
+# AUTHENTICATION API (MULTI-USER SUPPORT)
+# =========================================================================
+@app.post("/api/auth/register")
+def register_endpoint(req: RegisterRequest):
+    username = (req.username or "").strip()
+    password = (req.password or "").strip()
+    full_name = (req.full_name or "").strip() or username
+    
+    if len(username) < 3:
+        raise HTTPException(status_code=400, detail="Tên đăng nhập phải có ít nhất 3 ký tự.")
+    if len(password) < 6:
+        raise HTTPException(status_code=400, detail="Mật khẩu phải có ít nhất 6 ký tự.")
+    
+    conn = get_db_connection()
+    try:
+        c = conn.cursor()
+        c.execute("SELECT id FROM users WHERE LOWER(username) = LOWER(?)", (username,))
+        if c.fetchone():
+            raise HTTPException(status_code=400, detail="Tên đăng nhập đã tồn tại.")
+        
+        pw_hash, salt = hash_password(password)
+        c.execute("""
+            INSERT INTO users (username, password_hash, salt, full_name, role)
+            VALUES (?, ?, ?, ?, 'member')
+        """, (username, pw_hash, salt, full_name))
+        new_user_id = c.lastrowid
+        
+        # Clone default categories for new user
+        from app.database import DEFAULT_CATEGORIES
+        for cat in DEFAULT_CATEGORIES:
+            try:
+                c.execute("""
+                    INSERT INTO categories (name, type, color, icon, user_id)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (cat["name"], cat["type"], cat["color"], cat["icon"], new_user_id))
+            except Exception:
+                pass
+        
+        conn.commit()
+        token = create_session(conn, new_user_id)
+        return {
+            "success": True,
+            "token": token,
+            "user": {
+                "id": new_user_id,
+                "username": username,
+                "full_name": full_name,
+                "avatar": "",
+                "role": "member"
+            }
+        }
+    finally:
+        conn.close()
+
+@app.post("/api/auth/login")
+def login_endpoint(req: LoginRequest):
+    username = (req.username or "").strip()
+    password = (req.password or "").strip()
+    
+    if not username or not password:
+        raise HTTPException(status_code=400, detail="Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.")
+    
+    conn = get_db_connection()
+    try:
+        c = conn.cursor()
+        c.execute("SELECT id, username, password_hash, salt, full_name, avatar, role FROM users WHERE LOWER(username) = LOWER(?)", (username,))
+        row = c.fetchone()
+        if not row:
+            raise HTTPException(status_code=401, detail="Tên đăng nhập hoặc mật khẩu không chính xác.")
+        
+        if not verify_password(password, row["password_hash"], row["salt"]):
+            raise HTTPException(status_code=401, detail="Tên đăng nhập hoặc mật khẩu không chính xác.")
+        
+        token = create_session(conn, row["id"])
+        return {
+            "success": True,
+            "token": token,
+            "user": {
+                "id": row["id"],
+                "username": row["username"],
+                "full_name": row["full_name"],
+                "avatar": row["avatar"] or "",
+                "role": row["role"]
+            }
+        }
+    finally:
+        conn.close()
+
+@app.post("/api/auth/logout")
+def logout_endpoint(request: Request):
+    token = extract_token_from_request(request)
+    if token:
+        conn = get_db_connection()
+        try:
+            delete_session(conn, token)
+        finally:
+            conn.close()
+    return {"success": True, "message": "Đã đăng xuất thành công."}
+
+@app.get("/api/auth/me")
+def get_me_endpoint(request: Request):
+    token = extract_token_from_request(request)
+    if not token:
+        raise HTTPException(status_code=401, detail="Chưa đăng nhập.")
+    conn = get_db_connection()
+    try:
+        user = validate_session(conn, token)
+        if not user:
+            raise HTTPException(status_code=401, detail="Phiên làm việc hết hạn hoặc không hợp lệ.")
+        return {"authenticated": True, "user": user}
+    finally:
+        conn.close()
+
 @app.post("/api/sync/restore-gist")
 def restore_from_gist_endpoint():
     from app.cloud_persistence import load_data_from_gist
@@ -370,187 +516,213 @@ STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
 # ----------------- STATS APIS -----------------
 
 @app.get("/api/stats/overview")
-def get_stats_overview(month: Optional[str] = Query(None)):
-    """Returns overview KPI metrics for the selected month or all time."""
+def get_stats_overview(month: Optional[str] = Query(None), user: Optional[dict] = Depends(get_current_user_optional)):
+    """Returns overview KPI metrics for the selected month or all time, strictly scoped to user."""
+    if not user:
+        return {
+            "month": "",
+            "available_months": [],
+            "total_income": 0.0,
+            "total_expense": 0.0,
+            "net_balance": 0.0,
+            "savings_rate": 0.0,
+            "expense_count": 0,
+            "income_count": 0,
+            "top_categories": []
+        }
     conn = get_db_connection()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
+        uid = user["id"]
 
-    # Get available months list
-    c.execute("SELECT DISTINCT month FROM transactions ORDER BY month DESC")
-    available_months = [row["month"] for row in c.fetchall()]
+        # Get available months list for this user
+        c.execute("SELECT DISTINCT month FROM transactions WHERE user_id = ? ORDER BY month DESC", (uid,))
+        available_months = [row["month"] for row in c.fetchall()]
 
-    # If no month specified, default to latest month in DB
-    selected_month = month
-    if not selected_month and available_months:
-        selected_month = available_months[0]
+        selected_month = month
+        if not selected_month and available_months:
+            selected_month = available_months[0]
 
-    where_clause = ""
-    params = []
-    if selected_month and selected_month != "all":
-        where_clause = "WHERE month = ?"
-        params = [selected_month]
+        where_parts = ["user_id = ?"]
+        params = [uid]
+        if selected_month and selected_month != "all":
+            where_parts.append("month = ?")
+            params.append(selected_month)
+        where_clause = "WHERE " + " AND ".join(where_parts)
 
-    # Calculate Total Income
-    c.execute(f"SELECT COALESCE(SUM(amount), 0) FROM transactions {where_clause} {'AND' if where_clause else 'WHERE'} type = 'income'", params)
-    total_income = c.fetchone()[0]
+        # Calculate Total Income
+        c.execute(f"SELECT COALESCE(SUM(amount), 0) FROM transactions {where_clause} AND type = 'income'", params)
+        total_income = c.fetchone()[0]
 
-    # Calculate Total Expense
-    c.execute(f"SELECT COALESCE(SUM(amount), 0) FROM transactions {where_clause} {'AND' if where_clause else 'WHERE'} type = 'expense'", params)
-    total_expense = c.fetchone()[0]
+        # Calculate Total Expense
+        c.execute(f"SELECT COALESCE(SUM(amount), 0) FROM transactions {where_clause} AND type = 'expense'", params)
+        total_expense = c.fetchone()[0]
 
-    # Transaction count
-    c.execute(f"SELECT COUNT(*) FROM transactions {where_clause}", params)
-    total_transactions = c.fetchone()[0]
+        # Transaction count
+        c.execute(f"SELECT COUNT(*) FROM transactions {where_clause}", params)
+        total_transactions = c.fetchone()[0]
 
-    # Top spending category
-    c.execute(f"""
-        SELECT category, SUM(amount) as cat_total 
-        FROM transactions 
-        {where_clause} {'AND' if where_clause else 'WHERE'} type = 'expense'
-        GROUP BY category 
-        ORDER BY cat_total DESC 
-        LIMIT 1
-    """, params)
-    top_cat_row = c.fetchone()
-    top_category = {
-        "name": top_cat_row["category"] if top_cat_row else "Chưa có",
-        "amount": top_cat_row["cat_total"] if top_cat_row else 0,
-        "percentage": round((top_cat_row["cat_total"] / total_expense * 100), 1) if (top_cat_row and total_expense > 0) else 0
-    }
+        # Top spending category
+        c.execute(f"""
+            SELECT category, SUM(amount) as cat_total 
+            FROM transactions 
+            {where_clause} AND type = 'expense'
+            GROUP BY category 
+            ORDER BY cat_total DESC 
+            LIMIT 1
+        """, params)
+        top_cat_row = c.fetchone()
+        top_category = {
+            "name": top_cat_row["category"] if top_cat_row else "Chưa có",
+            "amount": top_cat_row["cat_total"] if top_cat_row else 0,
+            "percentage": round((top_cat_row["cat_total"] / total_expense * 100), 1) if (top_cat_row and total_expense > 0) else 0
+        }
 
-    net_balance = total_income - total_expense
-    savings_rate = round((net_balance / total_income * 100), 1) if total_income > 0 else 0.0
+        net_balance = total_income - total_expense
+        savings_rate = round((net_balance / total_income * 100), 1) if total_income > 0 else 0.0
 
-    conn.close()
-
-    return {
-        "selected_month": selected_month or "all",
-        "available_months": available_months,
-        "total_income": total_income,
-        "total_expense": total_expense,
-        "net_balance": net_balance,
-        "savings_rate": savings_rate,
-        "total_transactions": total_transactions,
-        "top_category": top_category
-    }
+        return {
+            "selected_month": selected_month or "all",
+            "available_months": available_months,
+            "total_income": total_income,
+            "total_expense": total_expense,
+            "net_balance": net_balance,
+            "savings_rate": savings_rate,
+            "total_transactions": total_transactions,
+            "top_category": top_category
+        }
+    finally:
+        conn.close()
 
 @app.get("/api/stats/monthly")
-def get_stats_monthly():
-    """Returns monthly income, expense and balance timeline for charts."""
+def get_stats_monthly(user: Optional[dict] = Depends(get_current_user_optional)):
+    """Returns monthly income, expense and balance timeline for charts, strictly scoped to user."""
+    if not user:
+        return []
     conn = get_db_connection()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
+        c.execute("""
+            SELECT 
+                month,
+                SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+                SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
+            FROM transactions
+            WHERE user_id = ?
+            GROUP BY month
+            ORDER BY month ASC
+        """, (user["id"],))
+        rows = c.fetchall()
 
-    c.execute("""
-        SELECT 
-            month,
-            SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
-            SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
-        FROM transactions
-        GROUP BY month
-        ORDER BY month ASC
-    """)
-    rows = c.fetchall()
-    conn.close()
-
-    result = []
-    for r in rows:
-        inc = r["income"] or 0
-        exp = r["expense"] or 0
-        result.append({
-            "month": r["month"],
-            "income": inc,
-            "expense": exp,
-            "balance": inc - exp
-        })
-    return result
+        result = []
+        for r in rows:
+            inc = r["income"] or 0
+            exp = r["expense"] or 0
+            result.append({
+                "month": r["month"],
+                "income": inc,
+                "expense": exp,
+                "balance": inc - exp
+            })
+        return result
+    finally:
+        conn.close()
 
 @app.get("/api/stats/weekly")
-def get_stats_weekly(month: Optional[str] = Query(None)):
-    """Returns weekly expense and income breakdown for a selected month."""
-    conn = get_db_connection()
-    c = conn.cursor()
-
-    # If no month specified, pick latest
-    if not month or month == "all":
-        c.execute("SELECT month FROM transactions ORDER BY month DESC LIMIT 1")
-        m_row = c.fetchone()
-        month = m_row["month"] if m_row else ""
-
-    if not month:
-        conn.close()
+def get_stats_weekly(month: Optional[str] = Query(None), user: Optional[dict] = Depends(get_current_user_optional)):
+    """Returns weekly expense and income breakdown for a selected month, strictly scoped to user."""
+    if not user:
         return []
+    conn = get_db_connection()
+    try:
+        c = conn.cursor()
+        uid = user["id"]
 
-    c.execute("""
-        SELECT 
-            week,
-            SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense,
-            SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
-            COUNT(*) as count
-        FROM transactions
-        WHERE month = ?
-        GROUP BY week
-        ORDER BY week ASC
-    """, (month,))
-    rows = c.fetchall()
-    conn.close()
+        # If no month specified, pick latest for this user
+        if not month or month == "all":
+            c.execute("SELECT month FROM transactions WHERE user_id = ? ORDER BY month DESC LIMIT 1", (uid,))
+            m_row = c.fetchone()
+            month = m_row["month"] if m_row else ""
 
-    result = []
-    for idx, r in enumerate(rows, start=1):
-        result.append({
-            "week_label": f"Tuần {idx}",
-            "week_code": r["week"],
-            "expense": r["expense"] or 0,
-            "income": r["income"] or 0,
-            "count": r["count"]
-        })
-    return result
+        if not month:
+            return []
+
+        c.execute("""
+            SELECT 
+                week,
+                SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense,
+                SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+                COUNT(*) as count
+            FROM transactions
+            WHERE user_id = ? AND month = ?
+            GROUP BY week
+            ORDER BY week ASC
+        """, (uid, month))
+        rows = c.fetchall()
+
+        result = []
+        for idx, r in enumerate(rows, start=1):
+            result.append({
+                "week_label": f"Tuần {idx}",
+                "week_code": r["week"],
+                "expense": r["expense"] or 0,
+                "income": r["income"] or 0,
+                "count": r["count"]
+            })
+        return result
+    finally:
+        conn.close()
 
 @app.get("/api/stats/categories")
-def get_stats_categories(month: Optional[str] = Query(None), type: str = "expense"):
+def get_stats_categories(month: Optional[str] = Query(None), type: str = "expense", user: Optional[dict] = Depends(get_current_user_optional)):
     """Returns category breakdown with percentages and colors for Pie / Donut Chart."""
+    if not user:
+        return {"total": 0.0, "breakdown": []}
     conn = get_db_connection()
-    c = conn.cursor()
+    try:
+        c = conn.cursor()
 
-    where_clause = "WHERE t.type = ?"
-    params = [type]
+        where_clause = "WHERE t.user_id = ? AND t.type = ?"
+        params = [user["id"], type]
 
-    if month and month != "all":
-        where_clause += " AND t.month = ?"
-        params.append(month)
+        if month and month != "all":
+            where_clause += " AND t.month = ?"
+            params.append(month)
 
-    query = f"""
-        SELECT 
-            t.category,
-            COALESCE(c.color, '#64748b') as color,
-            COALESCE(c.icon, 'tag') as icon,
-            SUM(t.amount) as total_amount,
-            COUNT(t.id) as count
-        FROM transactions t
-        LEFT JOIN categories c ON t.category = c.name
-        {where_clause}
-        GROUP BY t.category
-        ORDER BY total_amount DESC
-    """
-    c.execute(query, params)
-    rows = c.fetchall()
+        query = f"""
+            SELECT 
+                t.category,
+                COALESCE(c.color, '#64748b') as color,
+                COALESCE(c.icon, 'tag') as icon,
+                SUM(t.amount) as total_amount,
+                COUNT(t.id) as count
+            FROM transactions t
+            LEFT JOIN categories c ON t.category = c.name
+            {where_clause}
+            GROUP BY t.category
+            ORDER BY total_amount DESC
+        """
+        c.execute(query, params)
+        rows = c.fetchall()
 
-    total_sum = sum(r["total_amount"] for r in rows) if rows else 0.0
+        total_sum = sum(r["total_amount"] for r in rows) if rows else 0.0
 
-    result = []
-    for r in rows:
-        amt = r["total_amount"]
-        pct = round((amt / total_sum * 100), 1) if total_sum > 0 else 0.0
-        result.append({
-            "category": r["category"],
-            "color": r["color"],
-            "icon": r["icon"],
-            "amount": amt,
-            "count": r["count"],
-            "percentage": pct
-        })
+        result = []
+        for r in rows:
+            amt = r["total_amount"]
+            pct = round((amt / total_sum * 100), 1) if total_sum > 0 else 0.0
+            result.append({
+                "category": r["category"],
+                "color": r["color"],
+                "icon": r["icon"],
+                "amount": amt,
+                "count": r["count"],
+                "percentage": pct
+            })
 
-    conn.close()
-    return {"total": total_sum, "breakdown": result}
+        return {"total": total_sum, "breakdown": result}
+    finally:
+        conn.close()
 
 # ----------------- TRANSACTIONS APIS -----------------
 
@@ -562,13 +734,16 @@ def get_transactions(
     type: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
     limit: int = 100,
-    offset: int = 0
+    offset: int = 0,
+    user: Optional[dict] = Depends(get_current_user_optional)
 ):
+    if not user:
+        return {"transactions": [], "total": 0, "page": 1, "page_size": limit, "total_pages": 0}
     conn = get_db_connection()
     c = conn.cursor()
 
-    filters = []
-    params = []
+    filters = ["t.user_id = ?"]
+    params = [user["id"]]
 
     if month and month != "all":
         filters.append("t.month = ?")
@@ -614,7 +789,7 @@ def get_transactions(
     return {"total": total_count, "items": rows}
 
 @app.post("/api/transactions")
-def create_transaction(item: TransactionCreate):
+def create_transaction(item: TransactionCreate, user: dict = Depends(get_current_user)):
     date_iso, month_iso, week_iso = parse_vietnamese_date(item.date)
 
     conn = get_db_connection()
@@ -624,11 +799,12 @@ def create_transaction(item: TransactionCreate):
     c.execute("""
         INSERT INTO transactions (
             date, month, week, type, amount, category, 
-            description, raw_description, ref_no, is_manual_category, ai_confidence, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1.0, CURRENT_TIMESTAMP)
+            description, raw_description, ref_no, is_manual_category, ai_confidence, updated_at, user_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1.0, CURRENT_TIMESTAMP, ?)
     """, (
         date_iso, month_iso, week_iso, item.type, item.amount, item.category,
-        item.description, item.raw_description or item.description, item.ref_no or ""
+        item.description, item.raw_description or item.description, item.ref_no or "",
+        user["id"]
     ))
     new_id = c.lastrowid
     conn.commit()
@@ -727,7 +903,8 @@ def update_transaction_category(trans_id: int, payload: CategoryUpdate):
 def get_transaction_columns(
     month: Optional[str] = Query(None),
     type: Optional[str] = Query(None),
-    search: Optional[str] = Query(None)
+    search: Optional[str] = Query(None),
+    user: Optional[dict] = Depends(get_current_user_optional)
 ):
     """
     Returns transactions organized into 3 columns:
@@ -735,11 +912,26 @@ def get_transaction_columns(
     2. 'unclassified' (Chưa phân loại): (is_manual_category = 0 AND (ai_confidence < 0.65 OR category = 'Chưa phân loại'))
     3. 'other' (Khác): category = 'Khác' AND (is_manual_category = 1 OR ai_confidence >= 0.65)
     """
+    if not user:
+        return {
+            "categorized": [],
+            "unclassified": [],
+            "other": [],
+            "stats": {
+                "categorized_count": 0,
+                "categorized_sum": 0,
+                "unclassified_count": 0,
+                "unclassified_sum": 0,
+                "other_count": 0,
+                "other_sum": 0,
+                "classified_rate": 0
+            }
+        }
     conn = get_db_connection()
     c = conn.cursor()
 
-    base_filters = []
-    base_params = []
+    base_filters = ["t.user_id = ?"]
+    base_params = [user["id"]]
 
     if month and month != "all":
         base_filters.append("t.month = ?")
@@ -822,7 +1014,8 @@ def delete_transaction(trans_id: int):
 async def upload_statement(
     file: UploadFile = File(...),
     bank_name: str = Form("Ngân hàng"),
-    statement_month: Optional[str] = Form(None)
+    statement_month: Optional[str] = Form(None),
+    user: dict = Depends(get_current_user)
 ):
     """
     Accepts PDF, Excel (.xlsx, .xls), or CSV bank statement file.
@@ -881,8 +1074,8 @@ async def upload_statement(
     c.execute("""
         SELECT id, date, type, amount, description, raw_description, ref_no, balance 
         FROM transactions 
-        WHERE date >= ? AND date <= ?
-    """, (min_date, max_date))
+        WHERE date >= ? AND date <= ? AND user_id = ?
+    """, (min_date, max_date, user["id"]))
     existing_rows = [dict(r) for r in c.fetchall()]
 
     existing_by_date = {}
@@ -924,21 +1117,21 @@ async def upload_statement(
     total_out = sum(t["amount"] for t in categorized if t["type"] == "expense")
 
     c.execute("""
-        INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (file.filename, bank_name, statement_range, total_in, total_out, len(categorized)))
+        INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (file.filename, bank_name, statement_range, total_in, total_out, len(categorized), user["id"]))
     statement_id = c.lastrowid
 
     for t in categorized:
         c.execute("""
             INSERT INTO transactions (
                 statement_id, date, month, week, type, amount, category, 
-                description, raw_description, ref_no, balance, ai_confidence, is_manual_category
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                description, raw_description, ref_no, balance, ai_confidence, is_manual_category, user_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             statement_id, t["date"], t["month"], t["week"], t["type"], t["amount"], t["category"],
             t["description"], t.get("raw_description", ""), t.get("ref_no", ""),
-            t.get("balance"), t.get("ai_confidence", 0.8), t.get("is_manual_category", 0)
+            t.get("balance"), t.get("ai_confidence", 0.8), t.get("is_manual_category", 0), user["id"]
         ))
 
     conn.commit()
@@ -958,7 +1151,7 @@ async def upload_statement(
     }
 
 @app.post("/api/upload/text")
-async def upload_raw_text(payload: RawTextUpload):
+async def upload_raw_text(payload: RawTextUpload, user: dict = Depends(get_current_user)):
     """Parses pasted raw SMS / bank notifications text with duplicate check."""
     parsed = parse_raw_text_statement(payload.text, default_month=payload.statement_month)
     if not parsed:
@@ -977,8 +1170,8 @@ async def upload_raw_text(payload: RawTextUpload):
     c.execute("""
         SELECT id, date, type, amount, description, raw_description, ref_no, balance 
         FROM transactions 
-        WHERE date >= ? AND date <= ?
-    """, (min_date, max_date))
+        WHERE date >= ? AND date <= ? AND user_id = ?
+    """, (min_date, max_date, user["id"]))
     existing_rows = [dict(r) for r in c.fetchall()]
 
     existing_by_date = {}
@@ -1017,21 +1210,21 @@ async def upload_raw_text(payload: RawTextUpload):
     total_out = sum(t["amount"] for t in categorized if t["type"] == "expense")
 
     c.execute("""
-        INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, ("Văn bản dán trực tiếp", payload.bank_name or "Ngân hàng", stmt_month, total_in, total_out, len(categorized)))
+        INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, ("Văn bản dán trực tiếp", payload.bank_name or "Ngân hàng", stmt_month, total_in, total_out, len(categorized), user["id"]))
     statement_id = c.lastrowid
 
     for t in categorized:
         c.execute("""
             INSERT INTO transactions (
                 statement_id, date, month, week, type, amount, category, 
-                description, raw_description, ref_no, balance, ai_confidence, is_manual_category
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                description, raw_description, ref_no, balance, ai_confidence, is_manual_category, user_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             statement_id, t["date"], t["month"], t["week"], t["type"], t["amount"], t["category"],
             t["description"], t.get("raw_description", ""), t.get("ref_no", ""),
-            t.get("balance"), t.get("ai_confidence", 0.8), 0
+            t.get("balance"), t.get("ai_confidence", 0.8), 0, user["id"]
         ))
 
     conn.commit()
@@ -1049,15 +1242,18 @@ async def upload_raw_text(payload: RawTextUpload):
     }
 
 @app.post("/api/reset-all")
-def reset_all_data():
-    """Resets all transactions and uploaded statements cleanly."""
+def reset_all_data(user: dict = Depends(get_current_user)):
+    """Resets all transactions and uploaded statements cleanly for the current user."""
     conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("DELETE FROM transactions")
-    c.execute("DELETE FROM statements")
-    conn.commit()
-    conn.close()
-    return {"status": "success", "message": "Đã xóa sạch toàn bộ giao dịch và sao kê trong hệ thống."}
+    try:
+        c = conn.cursor()
+        uid = user["id"]
+        c.execute("DELETE FROM transactions WHERE user_id = ?", (uid,))
+        c.execute("DELETE FROM statements WHERE user_id = ?", (uid,))
+        conn.commit()
+    finally:
+        conn.close()
+    return {"status": "success", "message": "Đã xóa sạch toàn bộ giao dịch và sao kê của bạn."}
 
 @app.post("/api/ai/categorize-pending")
 async def categorize_pending():
@@ -1164,21 +1360,22 @@ def update_settings(payload: SettingsUpdate):
     return {"status": "success"}
 
 @app.get("/api/statements")
-def get_statements():
+def get_statements(user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT * FROM statements ORDER BY uploaded_at DESC")
+    c.execute("SELECT * FROM statements WHERE user_id = ? ORDER BY uploaded_at DESC", (user["id"],))
     stmts = [dict(r) for r in c.fetchall()]
     conn.close()
     return stmts
 
 @app.delete("/api/statements/{statement_id}")
-def delete_statement(statement_id: int):
+def delete_statement(statement_id: int, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
+    uid = user["id"]
     # Delete transactions associated with statement
-    c.execute("DELETE FROM transactions WHERE statement_id = ?", (statement_id,))
-    c.execute("DELETE FROM statements WHERE id = ?", (statement_id,))
+    c.execute("DELETE FROM transactions WHERE statement_id = ? AND user_id = ?", (statement_id, uid))
+    c.execute("DELETE FROM statements WHERE id = ? AND user_id = ?", (statement_id, uid))
     conn.commit()
     conn.close()
     return {"status": "success"}
@@ -1186,7 +1383,7 @@ def delete_statement(statement_id: int):
 # ----------------- SEED SAMPLE DEMO DATA -----------------
 
 @app.post("/api/seed-sample-data")
-async def seed_sample_data():
+async def seed_sample_data(user: dict = Depends(get_current_user)):
     """Generates realistic Vietnamese banking data across 3 consecutive months for testing."""
     sample_records = [
         # Tháng 11/2026
@@ -1231,19 +1428,20 @@ async def seed_sample_data():
     conn = get_db_connection()
     c = conn.cursor()
 
-    # Clear existing data for a clean seed
-    c.execute("DELETE FROM transactions")
-    c.execute("DELETE FROM statements")
+    # Clear existing data for a clean seed for this user
+    uid = user["id"]
+    c.execute("DELETE FROM transactions WHERE user_id = ?", (uid,))
+    c.execute("DELETE FROM statements WHERE user_id = ?", (uid,))
 
     # Insert statements for the 3 months
-    c.execute("INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count) VALUES (?, ?, ?, ?, ?, ?)",
-              ("Sao_ke_mau_T11_2026.xlsx", "Vietcombank", "2026-11", 31500000, 20620000, 18))
+    c.execute("INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              ("Sao_ke_mau_T11_2026.xlsx", "Vietcombank", "2026-11", 31500000, 20620000, 18, uid))
     s1_id = c.lastrowid
-    c.execute("INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count) VALUES (?, ?, ?, ?, ?, ?)",
-              ("Sao_ke_mau_T10_2026.pdf", "Techcombank", "2026-10", 27500000, 20030000, 8))
+    c.execute("INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              ("Sao_ke_mau_T10_2026.pdf", "Techcombank", "2026-10", 27500000, 20030000, 8, uid))
     s2_id = c.lastrowid
-    c.execute("INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count) VALUES (?, ?, ?, ?, ?, ?)",
-              ("Sao_ke_mau_T09_2026.csv", "MBBank", "2026-09", 27500000, 17050000, 6))
+    c.execute("INSERT INTO statements (filename, bank_name, statement_month, total_in, total_out, transaction_count, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+              ("Sao_ke_mau_T09_2026.csv", "MBBank", "2026-09", 27500000, 17050000, 6, uid))
     s3_id = c.lastrowid
 
     for r in sample_records:
@@ -1252,9 +1450,9 @@ async def seed_sample_data():
         c.execute("""
             INSERT INTO transactions (
                 statement_id, date, month, week, type, amount, category, 
-                description, raw_description, ai_confidence, is_manual_category
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0.95, 0)
-        """, (stmt_id, d_iso, m_iso, w_iso, r["type"], r["amount"], r["category"], r["description"], r["raw"]))
+                description, raw_description, ai_confidence, is_manual_category, user_id
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0.95, 0, ?)
+        """, (stmt_id, d_iso, m_iso, w_iso, r["type"], r["amount"], r["category"], r["description"], r["raw"], uid))
 
     conn.commit()
     conn.close()
@@ -1265,11 +1463,16 @@ async def seed_sample_data():
 # ----------------- CSV EXPORT -----------------
 
 @app.get("/api/export/csv")
-def export_csv(month: Optional[str] = Query(None)):
+def export_csv(month: Optional[str] = Query(None), user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
-    where = "WHERE month = ?" if month and month != "all" else ""
-    params = [month] if month and month != "all" else []
+    uid = user["id"]
+    if month and month != "all":
+        where = "WHERE user_id = ? AND month = ?"
+        params = [uid, month]
+    else:
+        where = "WHERE user_id = ?"
+        params = [uid]
 
     c.execute(f"""
         SELECT date, month, week, type, amount, category, description, raw_description, ref_no
@@ -1334,16 +1537,45 @@ def get_network_info():
     }
 
 @app.get("/api/dashboard")
-def get_dashboard_summary():
+def get_dashboard_summary(user: Optional[dict] = Depends(get_current_user_optional)):
     """Returns an integrated overview covering all 5 life modules."""
-    conn = get_db_connection()
-    c = conn.cursor()
     today = get_vn_today()
     today_str = today.isoformat()
-
-    # Weekdays in Vietnamese
     weekday_names = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"]
     today_formatted = f"{weekday_names[today.weekday()]}, {today.strftime('%d/%m/%Y')}"
+
+    if not user:
+        return {
+            "greeting": "Chào bạn!",
+            "today_str": today_str,
+            "today_formatted": today_formatted,
+            "finance": {
+                "month_label": "",
+                "total_income": 0.0,
+                "total_expense": 0.0,
+                "balance": 0.0,
+                "savings_rate": 0.0,
+                "recent_transactions": []
+            },
+            "todos": {
+                "pending_count": 0,
+                "completed_count": 0,
+                "rollover_count": 0,
+                "total": 0,
+                "rate": 0,
+                "top_todos": []
+            },
+            "habits": {
+                "total": 0,
+                "completed_today": 0,
+                "rate": 0,
+                "items": []
+            },
+            "journal": None,
+            "notes": []
+        }
+    conn = get_db_connection()
+    c = conn.cursor()
 
     # Current hour greeting (Vietnam UTC+7)
     hour = get_vn_now().hour
@@ -1356,40 +1588,52 @@ def get_dashboard_summary():
     else:
         greeting = "Chào buổi tối!"
 
-    # 1. Finance Snapshot
-    c.execute("SELECT DISTINCT month FROM transactions ORDER BY month DESC")
+    uid = user["id"]
+
+    # 1. Finance Snapshot (Strictly scoped to user)
+    c.execute("SELECT DISTINCT month FROM transactions WHERE user_id = ? ORDER BY month DESC", (uid,))
     available_months = [row["month"] for row in c.fetchall()]
-    latest_month = available_months[0] if available_months else today.strftime("%Y-%m")
-    month_parts = latest_month.split("-")
-    month_label = f"Tháng {month_parts[1]}/{month_parts[0]}" if len(month_parts) == 2 else "Toàn thời gian"
+    if available_months:
+        latest_month = available_months[0]
+        month_parts = latest_month.split("-")
+        month_label = f"Tháng {month_parts[1]}/{month_parts[0]}" if len(month_parts) == 2 else "Toàn thời gian"
 
-    c.execute("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE month = ? AND type = 'income'", (latest_month,))
-    fin_income = c.fetchone()[0]
-    c.execute("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE month = ? AND type = 'expense'", (latest_month,))
-    fin_expense = c.fetchone()[0]
-    fin_balance = fin_income - fin_expense
-    savings_rate = round((fin_balance / fin_income) * 100) if fin_income > 0 else 0
+        c.execute("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE month = ? AND type = 'income' AND user_id = ?", (latest_month, uid))
+        fin_income = c.fetchone()[0]
+        c.execute("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE month = ? AND type = 'expense' AND user_id = ?", (latest_month, uid))
+        fin_expense = c.fetchone()[0]
+        fin_balance = fin_income - fin_expense
+        savings_rate = round((fin_balance / fin_income) * 100) if fin_income > 0 else 0
 
-    c.execute("""
-        SELECT id, date, description, amount, category, type
-        FROM transactions
-        ORDER BY date DESC, id DESC
-        LIMIT 4
-    """)
-    recent_transactions = [dict(r) for r in c.fetchall()]
+        c.execute("""
+            SELECT id, date, description, amount, category, type
+            FROM transactions
+            WHERE user_id = ?
+            ORDER BY date DESC, id DESC
+            LIMIT 4
+        """, (uid,))
+        recent_transactions = [dict(r) for r in c.fetchall()]
+    else:
+        month_label = "Chưa có dữ liệu"
+        fin_income = 0
+        fin_expense = 0
+        fin_balance = 0
+        savings_rate = 0
+        recent_transactions = []
 
-    # 2. To-Do & Productivity Snapshot (Today's active workload + Rollover)
+    # 2. To-Do & Productivity Snapshot (Strictly scoped to user)
     c.execute("""
         SELECT COUNT(*) FROM todos 
         WHERE status = 'completed' 
           AND (date(completed_at) = ? OR (completed_at IS NULL AND due_date = ?))
-    """, (today_str, today_str))
+          AND user_id = ?
+    """, (today_str, today_str, uid))
     completed_todos_count = c.fetchone()[0]
 
-    c.execute("SELECT COUNT(*) FROM todos WHERE due_date <= ? AND status != 'completed'", (today_str,))
+    c.execute("SELECT COUNT(*) FROM todos WHERE due_date <= ? AND status != 'completed' AND user_id = ?", (today_str, uid))
     pending_todos_count = c.fetchone()[0]
 
-    c.execute("SELECT COUNT(*) FROM todos WHERE due_date < ? AND status != 'completed'", (today_str,))
+    c.execute("SELECT COUNT(*) FROM todos WHERE due_date < ? AND status != 'completed' AND user_id = ?", (today_str, uid))
     rollover_todos_count = c.fetchone()[0]
 
     total_todos = pending_todos_count + completed_todos_count
@@ -1398,41 +1642,43 @@ def get_dashboard_summary():
     c.execute("""
         SELECT id, title, priority, due_date, category, status, pomodoro_done, pomodoro_est
         FROM todos
-        WHERE status != 'completed'
+        WHERE status != 'completed' AND user_id = ?
         ORDER BY 
             CASE priority WHEN 'urgent' THEN 1 WHEN 'high' THEN 2 WHEN 'normal' THEN 3 ELSE 4 END,
             due_date ASC, id ASC
         LIMIT 3
-    """)
+    """, (uid,))
     top_todos = [dict(r) for r in c.fetchall()]
 
-    # 3. Habits Snapshot (Today's status)
+    # 3. Habits Snapshot (Strictly scoped to user)
     c.execute("""
         SELECT h.id, h.name, h.icon, h.color, h.streak, h.best_streak,
             (SELECT COUNT(*) FROM habit_logs hl WHERE hl.habit_id = h.id AND hl.date = ? AND hl.status = 1) as completed_today
         FROM habits h
+        WHERE h.user_id = ?
         ORDER BY h.id ASC
-    """, (today_str,))
+    """, (today_str, uid))
     habits = [dict(r) for r in c.fetchall()]
     habits_done_today = sum(1 for h in habits if h["completed_today"])
     habits_rate = round((habits_done_today / len(habits)) * 100) if habits else 0
 
-    # 4. Journal Snapshot
-    c.execute("SELECT date, title, mood, gratitude, improvement, content FROM journal_entries WHERE date = ?", (today_str,))
+    # 4. Journal Snapshot (Strictly scoped to user)
+    c.execute("SELECT date, title, mood, gratitude, improvement, content FROM journal_entries WHERE date = ? AND user_id = ?", (today_str, uid))
     j_row = c.fetchone()
     today_journal = dict(j_row) if j_row else None
     if not today_journal:
-        c.execute("SELECT date, title, mood, gratitude, improvement, content FROM journal_entries ORDER BY date DESC LIMIT 1")
+        c.execute("SELECT date, title, mood, gratitude, improvement, content FROM journal_entries WHERE user_id = ? ORDER BY date DESC LIMIT 1", (uid,))
         j_lat = c.fetchone()
         today_journal = dict(j_lat) if j_lat else None
 
-    # 5. Notes Snapshot (Pinned or recent)
+    # 5. Notes Snapshot (Strictly scoped to user)
     c.execute("""
         SELECT id, title, content, category, is_pinned, color, updated_at
         FROM notes
+        WHERE user_id = ?
         ORDER BY is_pinned DESC, updated_at DESC
         LIMIT 3
-    """)
+    """, (uid,))
     recent_notes = [dict(r) for r in c.fetchall()]
 
     conn.close()
@@ -1475,16 +1721,19 @@ def get_dashboard_summary():
 def get_todos(
     filter_by: str = "all",
     category: Optional[str] = None,
-    status: Optional[str] = None
+    status: Optional[str] = None,
+    user: Optional[dict] = Depends(get_current_user_optional)
 ):
+    if not user:
+        return []
     conn = get_db_connection()
     c = conn.cursor()
     today = get_vn_today()
     today_str = today.isoformat()
     week_end = (today + datetime.timedelta(days=7)).isoformat()
 
-    query = "SELECT * FROM todos WHERE 1=1"
-    params = []
+    query = "SELECT * FROM todos WHERE user_id = ?"
+    params = [user["id"]]
 
     if filter_by == "today":
         # Today includes:
@@ -1532,15 +1781,15 @@ def get_todos(
     return todos
 
 @app.post("/api/todos")
-def create_todo(item: TodoCreate):
+def create_todo(item: TodoCreate, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
     uid = f"{item.title}||{item.due_date}"
     c.execute("DELETE FROM deleted_records WHERE table_name = 'todos' AND record_uid = ?", (uid,))
     c.execute("""
-        INSERT INTO todos (title, description, due_date, priority, category, pomodoro_est, status, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
-    """, (item.title, item.description or "", item.due_date, item.priority or "normal", item.category or "Công việc", item.pomodoro_est or 1))
+        INSERT INTO todos (title, description, due_date, priority, category, pomodoro_est, status, updated_at, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP, ?)
+    """, (item.title, item.description or "", item.due_date, item.priority or "normal", item.category or "Công việc", item.pomodoro_est or 1, user["id"]))
     new_id = c.lastrowid
     conn.commit()
     c.execute("SELECT * FROM todos WHERE id = ?", (new_id,))
@@ -1652,153 +1901,173 @@ def increment_todo_pomodoro(todo_id: int):
     return updated
 
 @app.delete("/api/todos/completed/clear")
-def clear_completed_todos():
+def clear_completed_todos(user: dict = Depends(get_current_user)):
     conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT title, due_date FROM todos WHERE status = 'completed'")
-    rows = c.fetchall()
-    for row in rows:
-        uid = f"{row['title']}||{row['due_date']}"
-        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (uid,))
-    c.execute("DELETE FROM todos WHERE status = 'completed'")
-    deleted = len(rows)
-    conn.commit()
-    conn.close()
+    try:
+        c = conn.cursor()
+        uid = user["id"]
+        c.execute("SELECT title, due_date FROM todos WHERE status = 'completed' AND user_id = ?", (uid,))
+        rows = c.fetchall()
+        for row in rows:
+            r_uid = f"{row['title']}||{row['due_date']}"
+            c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (r_uid,))
+        c.execute("DELETE FROM todos WHERE status = 'completed' AND user_id = ?", (uid,))
+        deleted = len(rows)
+        conn.commit()
+    finally:
+        conn.close()
     sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "clear", "deleted_count": deleted, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True, "deleted_count": deleted}
 
 @app.delete("/api/todos/{todo_id}")
-def delete_todo(todo_id: int):
+def delete_todo(todo_id: int, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
-    c = conn.cursor()
-    c.execute("SELECT title, due_date FROM todos WHERE id = ?", (todo_id,))
-    row = c.fetchone()
-    if row:
-        uid = f"{row['title']}||{row['due_date']}"
-        c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (uid,))
-        c.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
-    conn.commit()
-    conn.close()
+    try:
+        c = conn.cursor()
+        c.execute("SELECT title, due_date FROM todos WHERE id = ? AND user_id = ?", (todo_id, user["id"]))
+        row = c.fetchone()
+        if row:
+            r_uid = f"{row['title']}||{row['due_date']}"
+            c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('todos', ?)", (r_uid,))
+            c.execute("DELETE FROM todos WHERE id = ? AND user_id = ?", (todo_id, user["id"]))
+        conn.commit()
+    finally:
+        conn.close()
     sync_manager.broadcast({"event": "data_changed", "tab": "todos", "action": "delete", "todo_id": todo_id, "timestamp": datetime.datetime.now().isoformat()})
     return {"success": True, "message": "Đã xóa việc thành công"}
 
 @app.get("/api/todos/stats")
-def get_todo_stats():
+def get_todo_stats(user: Optional[dict] = Depends(get_current_user_optional)):
+    if not user:
+        return {
+            "total": 0, "completed": 0, "pending": 0, "completion_rate": 0,
+            "today_total": 0, "today_completed": 0, "today_rate": 0, "high_priority_pending": 0
+        }
     conn = get_db_connection()
-    c = conn.cursor()
-    today = datetime.date.today()
-    today_str = today.isoformat()
+    try:
+        c = conn.cursor()
+        uid = user["id"]
+        today = datetime.date.today()
+        today_str = today.isoformat()
 
-    # 1. Completed today: tasks marked completed today
-    c.execute("""
-        SELECT COUNT(*) FROM todos 
-        WHERE status = 'completed' 
-          AND (date(completed_at) = ? OR (completed_at IS NULL AND due_date = ?))
-    """, (today_str, today_str))
-    today_completed = c.fetchone()[0]
-
-    # 2. Pending today: tasks due today OR uncompleted tasks rolled over from past
-    c.execute("SELECT COUNT(*) FROM todos WHERE due_date <= ? AND status != 'completed'", (today_str,))
-    today_pending = c.fetchone()[0]
-
-    # 3. Rollover from previous days (uncompleted from before today)
-    c.execute("SELECT COUNT(*) FROM todos WHERE due_date < ? AND status != 'completed'", (today_str,))
-    rollover_count = c.fetchone()[0]
-
-    # 4. Planned specifically for today
-    c.execute("SELECT COUNT(*) FROM todos WHERE due_date = ?", (today_str,))
-    today_planned = c.fetchone()[0]
-
-    # Today's active total workload:
-    today_total = today_completed + today_pending
-    today_rate = round((today_completed / today_total * 100), 1) if today_total > 0 else 0
-
-    c.execute("SELECT COUNT(*) FROM todos WHERE priority = 'urgent' AND status != 'completed'")
-    urgent_count = c.fetchone()[0]
-
-    seven_days_ago = (today - datetime.timedelta(days=6)).isoformat()
-    c.execute("""
-        SELECT COUNT(*) FROM todos 
-        WHERE status = 'completed' 
-          AND (date(completed_at) >= ? OR (completed_at IS NULL AND due_date >= ?))
-    """, (seven_days_ago, seven_days_ago))
-    week_completed = c.fetchone()[0]
-
-    daily_labels = []
-    completed_series = []
-    backlog_series = []
-    new_series = []
-    created_series = []
-    day_names = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
-
-    for i in range(6, -1, -1):
-        d = today - datetime.timedelta(days=i)
-        d_str = d.isoformat()
-        day_label = f"{day_names[d.weekday()]} ({d.strftime('%d/%m')})"
-        daily_labels.append(day_label)
-
-        # 1. Đã hoàn thành trong ngày d: việc có completed_at vào ngày d
+        # 1. Completed today: tasks marked completed today
         c.execute("""
             SELECT COUNT(*) FROM todos 
             WHERE status = 'completed' 
               AND (date(completed_at) = ? OR (completed_at IS NULL AND due_date = ?))
-        """, (d_str, d_str))
-        completed_series.append(c.fetchone()[0])
+              AND user_id = ?
+        """, (today_str, today_str, uid))
+        today_completed = c.fetchone()[0]
 
-        # 2. Tồn đọng cũ từ hôm trước: việc có hạn trước ngày d, và chưa hoàn thành trước ngày d
+        # 2. Pending today: tasks due today OR uncompleted tasks rolled over from past
+        c.execute("SELECT COUNT(*) FROM todos WHERE due_date <= ? AND status != 'completed' AND user_id = ?", (today_str, uid))
+        today_pending = c.fetchone()[0]
+
+        # 3. Rollover from previous days (uncompleted from before today)
+        c.execute("SELECT COUNT(*) FROM todos WHERE due_date < ? AND status != 'completed' AND user_id = ?", (today_str, uid))
+        rollover_count = c.fetchone()[0]
+
+        # 4. Planned specifically for today
+        c.execute("SELECT COUNT(*) FROM todos WHERE due_date = ? AND user_id = ?", (today_str, uid))
+        today_planned = c.fetchone()[0]
+
+        # Today's active total workload:
+        today_total = today_completed + today_pending
+        today_rate = round((today_completed / today_total * 100), 1) if today_total > 0 else 0
+
+        c.execute("SELECT COUNT(*) FROM todos WHERE priority = 'urgent' AND status != 'completed' AND user_id = ?", (uid,))
+        urgent_count = c.fetchone()[0]
+
+        seven_days_ago = (today - datetime.timedelta(days=6)).isoformat()
         c.execute("""
             SELECT COUNT(*) FROM todos 
-            WHERE due_date < ?
-              AND (date(created_at) <= ? OR created_at IS NULL)
-              AND (completed_at IS NULL OR date(completed_at) >= ?)
-        """, (d_str, d_str, d_str))
-        backlog_count = c.fetchone()[0]
-        backlog_series.append(backlog_count)
+            WHERE status = 'completed' 
+              AND (date(completed_at) >= ? OR (completed_at IS NULL AND due_date >= ?))
+              AND user_id = ?
+        """, (seven_days_ago, seven_days_ago, uid))
+        week_completed = c.fetchone()[0]
 
-        # 3. Mới trong ngày d: việc có hạn vào đúng ngày d
-        c.execute("""
-            SELECT COUNT(*) FROM todos 
-            WHERE due_date = ?
-              AND (date(created_at) <= ? OR created_at IS NULL)
-        """, (d_str, d_str))
-        new_count = c.fetchone()[0]
-        new_series.append(new_count)
+        daily_labels = []
+        completed_series = []
+        backlog_series = []
+        new_series = []
+        created_series = []
+        day_names = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
 
-        # Gộp tổng khối lượng cần làm của ngày (Cũ + Mới)
-        created_series.append(backlog_count + new_count)
+        for i in range(6, -1, -1):
+            d = today - datetime.timedelta(days=i)
+            d_str = d.isoformat()
+            day_label = f"{day_names[d.weekday()]} ({d.strftime('%d/%m')})"
+            daily_labels.append(day_label)
 
-    c.execute("SELECT category, COUNT(*) as count FROM todos GROUP BY category ORDER BY count DESC")
-    categories_breakdown = [{"category": row["category"], "count": row["count"]} for row in c.fetchall()]
+            # 1. Đã hoàn thành trong ngày d: việc có completed_at vào ngày d
+            c.execute("""
+                SELECT COUNT(*) FROM todos 
+                WHERE status = 'completed' 
+                  AND (date(completed_at) = ? OR (completed_at IS NULL AND due_date = ?))
+                  AND user_id = ?
+            """, (d_str, d_str, uid))
+            completed_series.append(c.fetchone()[0])
 
-    conn.close()
-    return {
-        "today_total": today_total,
-        "today_completed": today_completed,
-        "today_pending": today_pending,
-        "today_planned": today_planned,
-        "rollover_count": rollover_count,
-        "today_rate": today_rate,
-        "urgent_count": urgent_count,
-        "week_completed": week_completed,
-        "chart": {
-            "labels": daily_labels,
-            "completed": completed_series,
-            "backlog": backlog_series,
-            "new_tasks": new_series,
-            "created": created_series
-        },
-        "categories": categories_breakdown
-    }
+            # 2. Tồn đọng cũ từ hôm trước: việc có hạn trước ngày d, và chưa hoàn thành trước ngày d
+            c.execute("""
+                SELECT COUNT(*) FROM todos 
+                WHERE due_date < ?
+                  AND (date(created_at) <= ? OR created_at IS NULL)
+                  AND (completed_at IS NULL OR date(completed_at) >= ?)
+                  AND user_id = ?
+            """, (d_str, d_str, d_str, uid))
+            backlog_count = c.fetchone()[0]
+            backlog_series.append(backlog_count)
+
+            # 3. Mới trong ngày d: việc có hạn vào đúng ngày d
+            c.execute("""
+                SELECT COUNT(*) FROM todos 
+                WHERE due_date = ?
+                  AND (date(created_at) <= ? OR created_at IS NULL)
+                  AND user_id = ?
+            """, (d_str, d_str, uid))
+            new_count = c.fetchone()[0]
+            new_series.append(new_count)
+
+            # Gộp tổng khối lượng cần làm của ngày (Cũ + Mới)
+            created_series.append(backlog_count + new_count)
+
+        c.execute("SELECT category, COUNT(*) as count FROM todos WHERE user_id = ? GROUP BY category ORDER BY count DESC", (uid,))
+        categories_breakdown = [{"category": row["category"], "count": row["count"]} for row in c.fetchall()]
+
+        return {
+            "today_total": today_total,
+            "today_completed": today_completed,
+            "today_pending": today_pending,
+            "today_planned": today_planned,
+            "rollover_count": rollover_count,
+            "today_rate": today_rate,
+            "urgent_count": urgent_count,
+            "week_completed": week_completed,
+            "chart": {
+                "labels": daily_labels,
+                "completed": completed_series,
+                "backlog": backlog_series,
+                "new_tasks": new_series,
+                "created": created_series
+            },
+            "categories": categories_breakdown
+        }
+    finally:
+        conn.close()
 
 # =========================================================================
 # SECTION 3: HABITS & STREAKS (Habitica)
 # =========================================================================
 
 @app.get("/api/habits")
-def get_habits(month: Optional[str] = None):
+def get_habits(month: Optional[str] = None, user: Optional[dict] = Depends(get_current_user_optional)):
+    if not user:
+        return {"habits": [], "chart": {"labels": [], "completed": [], "total_habits": 0, "month_label": ""}}
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT * FROM habits ORDER BY id ASC")
+    c.execute("SELECT * FROM habits WHERE user_id = ? ORDER BY id ASC", (user["id"],))
     habits = [dict(row) for row in c.fetchall()]
 
     today = get_vn_today()
@@ -1820,7 +2089,7 @@ def get_habits(month: Optional[str] = None):
     first_weekday = datetime.date(year, m_num, 1).weekday() # 0 = Monday (T2), 6 = Sunday (CN)
 
     # Get list of available months with habit records
-    c.execute("SELECT DISTINCT substr(date, 1, 7) as ym FROM habit_logs WHERE date IS NOT NULL ORDER BY ym DESC")
+    c.execute("SELECT DISTINCT substr(hl.date, 1, 7) as ym FROM habit_logs hl JOIN habits h ON hl.habit_id = h.id WHERE hl.date IS NOT NULL AND h.user_id = ? ORDER BY ym DESC", (user["id"],))
     available_months = [row["ym"] for row in c.fetchall()]
     curr_ym = today.strftime("%Y-%m")
     if curr_ym not in available_months:
@@ -1864,7 +2133,7 @@ def get_habits(month: Optional[str] = None):
     for d in range(1, num_days + 1):
         d_str = f"{year:04d}-{m_num:02d}-{d:02d}"
         chart_labels.append(f"{d:02d}/{m_num:02d}")
-        c.execute("SELECT COUNT(DISTINCT habit_id) FROM habit_logs WHERE date = ?", (d_str,))
+        c.execute("SELECT COUNT(DISTINCT hl.habit_id) FROM habit_logs hl JOIN habits h ON hl.habit_id = h.id WHERE hl.date = ? AND h.user_id = ?", (d_str, user["id"]))
         count = c.fetchone()[0]
         chart_completed.append(count)
 
@@ -1882,12 +2151,13 @@ def get_habits(month: Optional[str] = None):
     discipline_current_streak = 0
     if total_habits_count > 0:
         c.execute("""
-            SELECT date, COUNT(DISTINCT habit_id) as cnt
-            FROM habit_logs
-            WHERE date IS NOT NULL AND date <= ?
-            GROUP BY date
-            ORDER BY date ASC
-        """, (today_str,))
+            SELECT hl.date, COUNT(DISTINCT hl.habit_id) as cnt
+            FROM habit_logs hl
+            JOIN habits h ON hl.habit_id = h.id
+            WHERE hl.date IS NOT NULL AND hl.date <= ? AND h.user_id = ?
+            GROUP BY hl.date
+            ORDER BY hl.date ASC
+        """, (today_str, user["id"]))
         qualified_dates = []
         for row in c.fetchall():
             # Strictly > 75% (e.g. 6/7 = 85.7%, 4/5 = 80%, 3/3 = 100%; if 4 habits, 4/4 = 100% > 75%, or >= 0.75? User said: "trên 75% thì mới tính là ngày kỷ luật" -> rate >= 0.75)
@@ -1930,14 +2200,14 @@ def get_habits(month: Optional[str] = None):
     }
 
 @app.post("/api/habits")
-def create_habit(item: HabitCreate):
+def create_habit(item: HabitCreate, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("DELETE FROM deleted_records WHERE table_name = 'habits' AND record_uid = ?", (item.name,))
     c.execute("""
-        INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at)
-        VALUES (?, ?, ?, ?, 0, 0, CURRENT_TIMESTAMP)
-    """, (item.name, item.icon or "sparkles", item.color or "#5F7465", item.target_days or 7))
+        INSERT INTO habits (name, icon, color, target_days, streak, best_streak, updated_at, user_id)
+        VALUES (?, ?, ?, ?, 0, 0, CURRENT_TIMESTAMP, ?)
+    """, (item.name, item.icon or "sparkles", item.color or "#5F7465", item.target_days or 7, user["id"]))
     new_id = c.lastrowid
     conn.commit()
     c.execute("SELECT * FROM habits WHERE id = ?", (new_id,))
@@ -2051,37 +2321,40 @@ def delete_habit(habit_id: int):
 # =========================================================================
 
 @app.get("/api/journal")
-def get_journal(date: Optional[str] = None, limit: int = 15):
+def get_journal(date: Optional[str] = None, limit: int = 15, user: Optional[dict] = Depends(get_current_user_optional)):
+    if not user:
+        return {"entry": None} if date else {"entries": []}
     conn = get_db_connection()
     c = conn.cursor()
 
     if date:
-        c.execute("SELECT * FROM journal_entries WHERE date = ?", (date,))
+        c.execute("SELECT * FROM journal_entries WHERE date = ? AND user_id = ?", (date, user["id"]))
         row = c.fetchone()
         entry = dict(row) if row else None
         conn.close()
         return {"entry": entry}
 
-    c.execute("SELECT * FROM journal_entries ORDER BY date DESC LIMIT ?", (limit,))
+    c.execute("SELECT * FROM journal_entries WHERE user_id = ? ORDER BY date DESC LIMIT ?", (user["id"], limit))
     entries = [dict(row) for row in c.fetchall()]
     conn.close()
     return {"entries": entries}
 
 @app.post("/api/journal")
-def save_journal(entry: JournalEntryCreate):
+def save_journal(entry: JournalEntryCreate, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("""
-        INSERT INTO journal_entries (date, title, content, mood, gratitude, improvement, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        INSERT INTO journal_entries (date, title, content, mood, gratitude, improvement, updated_at, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
         ON CONFLICT(date) DO UPDATE SET
             title = excluded.title,
             content = excluded.content,
             mood = excluded.mood,
             gratitude = excluded.gratitude,
             improvement = excluded.improvement,
-            updated_at = CURRENT_TIMESTAMP
-    """, (entry.date, entry.title or "", entry.content or "", entry.mood or "good", entry.gratitude or "", entry.improvement or ""))
+            updated_at = CURRENT_TIMESTAMP,
+            user_id = excluded.user_id
+    """, (entry.date, entry.title or "", entry.content or "", entry.mood or "good", entry.gratitude or "", entry.improvement or "", user["id"]))
     conn.commit()
 
     c.execute("SELECT * FROM journal_entries WHERE date = ?", (entry.date,))
@@ -2091,10 +2364,10 @@ def save_journal(entry: JournalEntryCreate):
     return saved
 
 @app.delete("/api/journal/{entry_id}")
-def delete_journal(entry_id: int):
+def delete_journal(entry_id: int, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM journal_entries WHERE id = ?", (entry_id,))
+    c.execute("DELETE FROM journal_entries WHERE id = ? AND user_id = ?", (entry_id, user["id"]))
     conn.commit()
     conn.close()
     sync_manager.broadcast({"event": "data_changed", "tab": "journal", "action": "delete", "entry_id": entry_id, "timestamp": datetime.datetime.now().isoformat()})
@@ -2105,11 +2378,13 @@ def delete_journal(entry_id: int):
 # =========================================================================
 
 @app.get("/api/notes")
-def get_notes(category: Optional[str] = None, q: Optional[str] = None):
+def get_notes(category: Optional[str] = None, q: Optional[str] = None, user: Optional[dict] = Depends(get_current_user_optional)):
+    if not user:
+        return []
     conn = get_db_connection()
     c = conn.cursor()
-    query = "SELECT * FROM notes WHERE 1=1"
-    params = []
+    query = "SELECT * FROM notes WHERE user_id = ?"
+    params = [user["id"]]
 
     if category and category != "all":
         query += " AND category = ?"
@@ -2126,14 +2401,14 @@ def get_notes(category: Optional[str] = None, q: Optional[str] = None):
     return notes
 
 @app.post("/api/notes")
-def create_note(item: NoteCreate):
+def create_note(item: NoteCreate, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
     c.execute("DELETE FROM deleted_records WHERE table_name = 'notes' AND record_uid = ?", (item.title,))
     c.execute("""
-        INSERT INTO notes (title, content, category, is_pinned, color, updated_at)
-        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-    """, (item.title, item.content or "", item.category or "Ý tưởng", item.is_pinned or 0, item.color or "#FFFDF9"))
+        INSERT INTO notes (title, content, category, is_pinned, color, updated_at, user_id)
+        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
+    """, (item.title, item.content or "", item.category or "Ý tưởng", item.is_pinned or 0, item.color or "#FFFDF9", user["id"]))
     new_id = c.lastrowid
     conn.commit()
     c.execute("SELECT * FROM notes WHERE id = ?", (new_id,))
@@ -2189,14 +2464,14 @@ def toggle_pin_note(note_id: int):
     return {"success": True, "note_id": note_id, "is_pinned": new_pin}
 
 @app.delete("/api/notes/{note_id}")
-def delete_note(note_id: int):
+def delete_note(note_id: int, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT title FROM notes WHERE id = ?", (note_id,))
+    c.execute("SELECT title FROM notes WHERE id = ? AND user_id = ?", (note_id, user["id"]))
     row = c.fetchone()
     if row:
         c.execute("INSERT OR REPLACE INTO deleted_records (table_name, record_uid) VALUES ('notes', ?)", (row['title'],))
-        c.execute("DELETE FROM notes WHERE id = ?", (note_id,))
+        c.execute("DELETE FROM notes WHERE id = ? AND user_id = ?", (note_id, user["id"]))
     conn.commit()
     conn.close()
     sync_manager.broadcast({"event": "data_changed", "tab": "notes", "action": "delete", "note_id": note_id, "timestamp": datetime.datetime.now().isoformat()})
@@ -2233,6 +2508,9 @@ def export_sync_data():
         c.execute("SELECT * FROM notes")
         notes = [dict(r) for r in c.fetchall()]
 
+        c.execute("SELECT id, username, password_hash, salt, full_name, avatar, role, created_at, updated_at FROM users")
+        users = [dict(r) for r in c.fetchall()]
+
         # Clean up and exclude any stale tombstones for habits that are actively logged
         active_habit_log_uids = {f"{r['habit_name']}||{r['date']}" for r in habit_logs if r.get('habit_name') and r.get('date')}
         all_del = [dict(r) for r in c.execute("SELECT table_name, record_uid, deleted_at FROM deleted_records").fetchall()]
@@ -2246,7 +2524,8 @@ def export_sync_data():
             "habits": habits,
             "habit_logs": habit_logs,
             "journal_entries": journal_entries,
-            "notes": notes
+            "notes": notes,
+            "users": users
         }
     finally:
         conn.close()
@@ -2258,12 +2537,40 @@ def import_sync_data(payload: dict):
     try:
         c = conn.cursor()
 
+        # Sync users
+        for u in payload.get("users", []):
+            if u.get("id") and u.get("username") and u.get("password_hash") and u.get("salt"):
+                try:
+                    c.execute("""
+                        INSERT INTO users (id, username, password_hash, salt, full_name, avatar, role, created_at, updated_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON CONFLICT(id) DO UPDATE SET
+                            username = excluded.username,
+                            password_hash = excluded.password_hash,
+                            salt = excluded.salt,
+                            full_name = excluded.full_name,
+                            avatar = excluded.avatar,
+                            role = excluded.role,
+                            updated_at = excluded.updated_at
+                    """, (
+                        u.get("id"), u.get("username"), u.get("password_hash"), u.get("salt"),
+                        u.get("full_name", ""), u.get("avatar", ""), u.get("role", "member"),
+                        u.get("created_at"), u.get("updated_at")
+                    ))
+                except Exception:
+                    pass
+
         # Build local habit name -> local habit id map early for tombstone handling
         c.execute("SELECT id, name FROM habits")
         local_habit_name_to_id = {row["name"]: row["id"] for row in c.fetchall()}
         valid_local_habit_ids = set(local_habit_name_to_id.values())
 
-        # Remote habit map already prepared above
+        # Remote habit id -> name lookup map prepared early to prevent UnboundLocalError
+        remote_habit_id_to_name = {
+            h.get("id"): h.get("name")
+            for h in payload.get("habits", [])
+            if h.get("id") and h.get("name")
+        }
 
         # Identify all active habit logs (both incoming and local) so positive check-ins ALWAYS win
         active_incoming_habit_logs = set()

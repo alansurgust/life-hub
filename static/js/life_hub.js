@@ -1,4 +1,532 @@
 
+// Early clean slate on mobile if unauthenticated
+(function() {
+  const isTouch = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (window.innerWidth <= 768);
+  const isAuthed = sessionStorage.getItem('life_hub_mobile_authenticated') === 'true';
+  const hasToken = sessionStorage.getItem('life_hub_token');
+  if (isTouch && (!isAuthed || !hasToken)) {
+    // When DOM is ready, immediately zero out numbers
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.resetAllUIToZero === 'function') {
+        window.resetAllUIToZero();
+      }
+    });
+  }
+})();
+
+
+window.resetAllUIToZero = function() {
+  const setT = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  
+  // 1. Dashboard Pulses
+  setT('dashPulseBalance', '0 ₫');
+  setT('dashPulseExpenseSub', 'Chi tiêu: 0 ₫');
+  setT('dashPulseTodos', '0 việc');
+  setT('dashPulseTodosSub', 'Đang hoàn thành 0%');
+  setT('dashPulseHabits', '0/0 đã làm');
+  setT('dashPulseHabitsSub', 'Chuỗi liên tiếp: 0 ngày');
+  setT('dashPulseMood', 'Chưa ghi');
+
+  // 2. Dashboard Widgets
+  setT('dashHabitsRateBadge', '0%');
+  setT('dashHabitsFraction', '0/0');
+  const dhBar = document.getElementById('dashHabitsProgressBar');
+  if (dhBar) dhBar.style.width = '0%';
+  setT('dashFinIncome', '0 ₫');
+  setT('dashFinExpense', '0 ₫');
+  setT('dashFinBalance', '0 ₫');
+
+  // 3. Todos Tab
+  setT('todoKpiTodayRate', '0%');
+  setT('todoKpiTodayCount', '0 / 0 việc hôm nay');
+  const tkBar = document.getElementById('todoKpiProgressBar');
+  if (tkBar) tkBar.style.width = '0%';
+  setT('todoKpiPending', '0');
+  setT('todoKpiCompleted', '0');
+  setT('todoKpiHighPriority', '0');
+  setT('sidebarTodosBadge', '0');
+
+  // 4. Habits Tab
+  setT('habitKpiTodayRate', '0%');
+  setT('habitKpiTodayCount', '0 / 0 thói quen');
+  const hkBar = document.getElementById('habitKpiProgressBar');
+  if (hkBar) hkBar.style.width = '0%';
+  setT('habitKpiBestStreak', '0 ngày');
+  setT('habitKpiActiveCount', '0');
+  setT('sidebarHabitsBadge', '0');
+  const habitBox = document.getElementById('habitAreaChartBox');
+  if (habitBox) habitBox.classList.add('hidden');
+
+  // 5. Notes & Journal
+  setT('notesKpiTotal', '0');
+  setT('notesKpiPinned', '0');
+  setT('sidebarNotesBadge', '0');
+
+  // 6. User display info -> Khách
+  setT('sidebarUserName', 'Khách');
+  setT('sidebarUserRole', 'Chưa đăng nhập');
+  setT('sidebarUserAvatar', '--');
+  setT('mobileUserInitials', '--');
+  setT('mobileModalName', 'Khách');
+  setT('mobileModalUsername', 'Chưa đăng nhập');
+  setT('mobileModalAvatar', '--');
+  setT('settingsUserName', 'Khách');
+  setT('settingsUserRole', 'Chưa đăng nhập');
+  setT('settingsUserAvatar', '--');
+
+  // 7. Containers Empty States
+  const emptyBox = (text) => `
+    <div class="p-6 text-center text-[#786B60] bg-[#FFFDF9] rounded-2xl border border-dashed border-[#DECDB5]/80">
+      <p class="text-xs font-semibold text-[#2B231D]">${text}</p>
+      <p class="text-[11px] text-[#786B60] mt-0.5">Vui lòng đăng nhập tài khoản để xem dữ liệu</p>
+    </div>
+  `;
+
+  const dTodo = document.getElementById('dashTodoListContainer');
+  if (dTodo) dTodo.innerHTML = emptyBox('Chưa có công việc nào');
+  const dHabit = document.getElementById('dashHabitsListContainer');
+  if (dHabit) dHabit.innerHTML = emptyBox('Chưa có thói quen nào');
+  const dFin = document.getElementById('dashRecentTransList');
+  if (dFin) dFin.innerHTML = emptyBox('Chưa có giao dịch nào');
+  const dJour = document.getElementById('dashJournalContainer');
+  if (dJour) dJour.innerHTML = emptyBox('Chưa có nhật ký hôm nay');
+  const dNotes = document.getElementById('dashNotesContainer');
+  if (dNotes) dNotes.innerHTML = emptyBox('Chưa có ghi chú nào');
+
+  const tCont = document.getElementById('todoListContainer');
+  if (tCont) tCont.innerHTML = emptyBox('Chưa có công việc nào');
+  const tComp = document.getElementById('todoCompletedContainer');
+  if (tComp) tComp.innerHTML = '';
+  const hGrid = document.getElementById('habitGridContainer');
+  if (hGrid) hGrid.innerHTML = emptyBox('Chưa có thói quen nào');
+  const nGrid = document.getElementById('notesGridContainer');
+  if (nGrid) nGrid.innerHTML = emptyBox('Chưa có ghi chú nào');
+  const jHist = document.getElementById('journalHistoryContainer');
+  if (jHist) jHist.innerHTML = emptyBox('Chưa có lịch sử nhật ký');
+
+  // 8. Destroy Todo & Habit Charts
+  if (window.todoCharts && window.todoCharts.velocity) {
+    try { window.todoCharts.velocity.destroy(); } catch(e) {}
+    window.todoCharts.velocity = null;
+  }
+  if (window.todoCharts && window.todoCharts.category) {
+    try { window.todoCharts.category.destroy(); } catch(e) {}
+    window.todoCharts.category = null;
+  }
+  if (window.habitAreaChartInstance) {
+    try { window.habitAreaChartInstance.destroy(); } catch(e) {}
+    window.habitAreaChartInstance = null;
+  }
+
+  // 9. Finance Tab UI reset
+  if (typeof window.resetFinanceStateToZero === 'function') {
+    window.resetFinanceStateToZero();
+  }
+
+  if (window.lucide) lucide.createIcons();
+};
+
+// =========================================================================
+// DEVICE & ENVIRONMENT DETECTION
+// =========================================================================
+function isMobileApp() {
+  const isTouchMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+    || (window.innerWidth <= 768 && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
+  const isLocalHost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  // If touch mobile device or running on remote web (e.g. Render Cloud), treat as mobile app
+  return isTouchMobile || !isLocalHost;
+}
+
+// =========================================================================
+// GLOBAL FETCH INTERCEPTOR FOR MULTI-USER AUTHENTICATION
+// =========================================================================
+(function() {
+  const originalFetch = window.fetch;
+  window.fetch = async function(...args) {
+    let [resource, config] = args;
+    config = config || {};
+    
+    // Attach Bearer token: mobile uses sessionStorage, desktop uses localStorage
+    const token = sessionStorage.getItem('life_hub_token') || localStorage.getItem('life_hub_token');
+    if (token) {
+      config.headers = config.headers || {};
+      if (config.headers instanceof Headers) {
+        if (!config.headers.has('Authorization')) {
+          config.headers.set('Authorization', `Bearer ${token}`);
+        }
+      } else if (Array.isArray(config.headers)) {
+        const hasAuth = config.headers.some(([k]) => k.toLowerCase() === 'authorization');
+        if (!hasAuth) {
+          config.headers.push(['Authorization', `Bearer ${token}`]);
+        }
+      } else {
+        if (!config.headers['Authorization'] && !config.headers['authorization']) {
+          config.headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+    }
+
+    const response = await originalFetch(resource, config);
+
+    // If 401 Unauthorized occurs on API endpoint, trigger Auth Modal
+    if (response.status === 401 && typeof resource === 'string' && resource.startsWith('/api/') && !resource.startsWith('/api/auth/login')) {
+      if (typeof showAuthModal === 'function') {
+        showAuthModal('Phiên làm việc đã hết hạn. Vui lòng đăng nhập lại.');
+      }
+    }
+
+    return response;
+  };
+})();
+
+// =========================================================================
+// LIFE HUB AUTHENTICATION CONTROLLER (MULTI-USER)
+// =========================================================================
+let currentUser = null;
+
+function getStoredUser() {
+  try {
+    const raw = sessionStorage.getItem('life_hub_user') || localStorage.getItem('life_hub_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function updateAuthUI(user) {
+  currentUser = user;
+  if (!user) return;
+
+  const initials = (user.full_name || user.username || 'A')
+    .split(' ')
+    .filter(Boolean)
+    .map(p => p[0].toUpperCase())
+    .slice(0, 2)
+    .join('') || 'AS';
+
+  // Desktop sidebar
+  const sbAvatar = document.getElementById('sidebarUserAvatar');
+  const sbName = document.getElementById('sidebarUserName');
+  const sbRole = document.getElementById('sidebarUserRole');
+  if (sbAvatar) sbAvatar.textContent = initials;
+  if (sbName) sbName.textContent = user.full_name || user.username;
+  if (sbRole) sbRole.textContent = `@${user.username}`;
+
+  // Mobile Header
+  const mobInitials = document.getElementById('mobileUserInitials');
+  if (mobInitials) mobInitials.textContent = initials;
+
+  // Mobile User Modal
+  const mobModalAvatar = document.getElementById('mobileModalAvatar');
+  const mobModalName = document.getElementById('mobileModalName');
+  const mobModalUsername = document.getElementById('mobileModalUsername');
+  if (mobModalAvatar) mobModalAvatar.textContent = initials;
+  if (mobModalName) mobModalName.textContent = user.full_name || user.username;
+  if (mobModalUsername) mobModalUsername.textContent = `@${user.username}`;
+
+  // Settings Modal user section
+  const setAvatar = document.getElementById('settingsUserAvatar');
+  const setName = document.getElementById('settingsUserName');
+  const setRole = document.getElementById('settingsUserRole');
+  if (setAvatar) setAvatar.textContent = initials;
+  if (setName) setName.textContent = user.full_name || user.username;
+  if (setRole) setRole.textContent = `@${user.username}`;
+}
+
+function showAuthModal(message, isError = true) {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  
+  modal.classList.remove('hidden');
+  requestAnimationFrame(() => {
+    modal.classList.add('modal-visible');
+  });
+
+  if (message) {
+    showAuthAlert(message, isError);
+  }
+  // Autofill username as alansurgust for smooth experience, focus password
+  const usernameInput = document.getElementById('loginUsername');
+  const passwordInput = document.getElementById('loginPassword');
+  if (usernameInput && !usernameInput.value) {
+    usernameInput.value = 'alansurgust';
+  }
+  if (passwordInput) {
+    passwordInput.value = '';
+    setTimeout(() => passwordInput.focus(), 350);
+  }
+  if (window.lucide) {
+    lucide.createIcons({ root: modal });
+  }
+}
+
+function hideAuthModal() {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.classList.remove('modal-visible');
+  setTimeout(() => {
+    modal.classList.add('hidden');
+  }, 300);
+  const alert = document.getElementById('authAlert');
+  if (alert) alert.classList.add('hidden');
+}
+
+function showAuthAlert(message, isError = true) {
+  const alert = document.getElementById('authAlert');
+  if (!alert) return;
+  alert.textContent = message;
+  alert.className = isError 
+    ? 'p-3 rounded-xl text-xs font-semibold bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2]' 
+    : 'p-3 rounded-xl text-xs font-semibold bg-[#F0F5F2] text-[#233329] border border-[#C5D7CC]';
+  alert.classList.remove('hidden');
+}
+
+function switchAuthTab(tab) {
+  const tabLogin = document.getElementById('authTabLogin');
+  const tabRegister = document.getElementById('authTabRegister');
+  const formLogin = document.getElementById('authLoginForm');
+  const formRegister = document.getElementById('authRegisterForm');
+  const alert = document.getElementById('authAlert');
+  if (alert) alert.classList.add('hidden');
+
+  if (tab === 'login') {
+    if (tabLogin) tabLogin.className = 'flex-1 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+    if (tabRegister) tabRegister.className = 'flex-1 py-2 text-xs font-bold rounded-xl text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
+    if (formLogin) formLogin.classList.remove('hidden');
+    if (formRegister) formRegister.classList.add('hidden');
+  } else {
+    if (tabRegister) tabRegister.className = 'flex-1 py-2 text-xs font-bold rounded-xl bg-[#233329] text-[#FFFDF9] shadow-2xs transition cursor-pointer';
+    if (tabLogin) tabLogin.className = 'flex-1 py-2 text-xs font-bold rounded-xl text-[#786B60] hover:text-[#2B231D] transition cursor-pointer';
+    if (formRegister) formRegister.classList.remove('hidden');
+    if (formLogin) formLogin.classList.add('hidden');
+  }
+}
+
+function togglePasswordVisibility(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (icon) icon.setAttribute('data-lucide', 'eye-off');
+  } else {
+    input.type = 'password';
+    if (icon) icon.setAttribute('data-lucide', 'eye');
+  }
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+async function handleAuthLogin(e) {
+  if (e) e.preventDefault();
+  const username = document.getElementById('loginUsername')?.value.trim();
+  const password = document.getElementById('loginPassword')?.value.trim();
+  const submitBtn = document.getElementById('loginSubmitBtn');
+
+  if (!username || !password) {
+    showAuthAlert('Vui lòng nhập tên đăng nhập và mật khẩu.');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-70');
+  }
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showAuthAlert(data.detail || 'Tên đăng nhập hoặc mật khẩu không chính xác.');
+      return;
+    }
+
+    localStorage.removeItem('life_hub_logged_out');
+    localStorage.setItem('life_hub_token', data.token);
+    localStorage.setItem('life_hub_user', JSON.stringify(data.user));
+    sessionStorage.setItem('life_hub_token', data.token);
+    sessionStorage.setItem('life_hub_user', JSON.stringify(data.user));
+    sessionStorage.setItem('life_hub_mobile_authenticated', 'true');
+    sessionStorage.setItem('life_hub_last_active', Date.now().toString());
+
+    // Instant clean reload: guarantees every single module and chart loads synchronously without fragmentation!
+    window.location.reload();
+  } catch (err) {
+    showAuthAlert('Không thể kết nối đến máy chủ.');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-70');
+    }
+  }
+}
+
+async function handleAuthRegister(e) {
+  if (e) e.preventDefault();
+  const full_name = document.getElementById('regFullName')?.value.trim();
+  const username = document.getElementById('regUsername')?.value.trim();
+  const password = document.getElementById('regPassword')?.value.trim();
+  const submitBtn = document.getElementById('regSubmitBtn');
+
+  if (!username || !password) {
+    showAuthAlert('Vui lòng điền đầy đủ các thông tin bắt buộc.');
+    return;
+  }
+  if (password.length < 6) {
+    showAuthAlert('Mật khẩu phải có ít nhất 6 ký tự.');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.classList.add('opacity-70');
+  }
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, full_name })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showAuthAlert(data.detail || 'Không thể tạo tài khoản.');
+      return;
+    }
+
+    localStorage.removeItem('life_hub_logged_out');
+    localStorage.setItem('life_hub_token', data.token);
+    localStorage.setItem('life_hub_user', JSON.stringify(data.user));
+    sessionStorage.setItem('life_hub_token', data.token);
+    sessionStorage.setItem('life_hub_user', JSON.stringify(data.user));
+    sessionStorage.setItem('life_hub_mobile_authenticated', 'true');
+    sessionStorage.setItem('life_hub_last_active', Date.now().toString());
+
+    // Clean reload to show pure blank new workspace
+    window.location.reload();
+  } catch (err) {
+    showAuthAlert('Lỗi kết nối khi đăng ký tài khoản.');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-70');
+    }
+  }
+}
+
+async function handleAuthLogout() {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST' });
+  } catch(e) {}
+  sessionStorage.clear();
+  localStorage.removeItem('life_hub_token');
+  localStorage.removeItem('life_hub_user');
+  localStorage.setItem('life_hub_logged_out', 'true');
+  currentUser = null;
+
+  // Instantly reset all numbers, KPIs, charts, and lists to 0
+  if (typeof window.resetAllUIToZero === 'function') {
+    window.resetAllUIToZero();
+  }
+
+  // Close other modals if open
+  closeMobileUserModal();
+  const setM = document.getElementById('settingsModal');
+  if (setM) setM.classList.add('hidden');
+
+  // Show Auth Modal for login
+  showAuthModal('Bạn đã đăng xuất thành công. Vui lòng đăng nhập lại.', false);
+}
+
+function openMobileUserModal() {
+  const m = document.getElementById('mobileUserModal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  requestAnimationFrame(() => {
+    m.classList.add('modal-visible');
+  });
+  if (window.lucide) {
+    lucide.createIcons({ root: m });
+  }
+}
+
+function closeMobileUserModal() {
+  const m = document.getElementById('mobileUserModal');
+  if (!m) return;
+  m.classList.remove('modal-visible');
+  setTimeout(() => {
+    m.classList.add('hidden');
+  }, 300);
+}
+
+async function checkAuthSession() {
+  const isMobile = isMobileApp();
+  const isLoggedOut = localStorage.getItem('life_hub_logged_out') === 'true';
+
+  // ON MOBILE (Phone / Tablet / Remote Cloud):
+  // STRICT RULE: Every new browser session MUST start with 0 and REQUIRE USERNAME + PASSWORD!
+  if (isMobile) {
+    const isMobileAuthed = sessionStorage.getItem('life_hub_mobile_authenticated') === 'true';
+    const mobileToken = sessionStorage.getItem('life_hub_token');
+    if (isLoggedOut || !isMobileAuthed || !mobileToken) {
+      sessionStorage.removeItem('life_hub_token');
+      sessionStorage.removeItem('life_hub_user');
+      sessionStorage.removeItem('life_hub_mobile_authenticated');
+      if (typeof window.resetAllUIToZero === 'function') {
+        window.resetAllUIToZero();
+      }
+      showAuthModal('Vui lòng nhập tên đăng nhập và mật khẩu để vào ứng dụng.', false);
+      return false;
+    }
+  }
+
+  // Desktop check
+  const token = sessionStorage.getItem('life_hub_token') || localStorage.getItem('life_hub_token');
+  if (isLoggedOut || !token) {
+    if (typeof window.resetAllUIToZero === 'function') {
+      window.resetAllUIToZero();
+    }
+    showAuthModal();
+    return false;
+  }
+
+  // Validate active token
+  try {
+    const res = await fetch('/api/auth/me');
+    if (res.ok) {
+      const data = await res.json();
+      if (isMobile) {
+        sessionStorage.setItem('life_hub_user', JSON.stringify(data.user));
+        sessionStorage.setItem('life_hub_last_active', Date.now().toString());
+      } else {
+        localStorage.setItem('life_hub_user', JSON.stringify(data.user));
+      }
+      updateAuthUI(data.user);
+      hideAuthModal();
+      return true;
+    }
+  } catch (e) {}
+
+  // If token is invalid or expired
+  localStorage.removeItem('life_hub_token');
+  sessionStorage.removeItem('life_hub_token');
+  sessionStorage.removeItem('life_hub_mobile_authenticated');
+  if (typeof window.resetAllUIToZero === 'function') {
+    window.resetAllUIToZero();
+  }
+  showAuthModal();
+  return false;
+}
+
+// Global App Font Family matching Vintage Editorial System
+const APP_FONT_FAMILY = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+if (typeof Chart !== 'undefined' && Chart.defaults) {
+  Chart.defaults.font.family = APP_FONT_FAMILY;
+}
+
 // =========================================================================
 // ANIMATE-UI ENGINE (Micro-interactions, Springs, Sliding Pills, Numbers, Ripples)
 // Inspired by: imskyleen/animate-ui
@@ -448,7 +976,7 @@ function renderNotesSkeletons() {
 }
 
 function renderTodoSkeletons() {
-  const container = document.getElementById('todoListContainer');
+  const container = document.getElementById('todoListItems') || document.getElementById('todoListContainer');
   if (!container) return;
   container.innerHTML = [1, 2, 3, 4].map(() => `
     <div class="p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#DECDB5]/70 shadow-xs flex items-start gap-3">
@@ -749,7 +1277,7 @@ async function loadDashboard() {
     const sideHabit = document.getElementById('sidebarHabitsBadge');
     if (sideHabit && data.habits) sideHabit.textContent = `${data.habits.completed_today}/${data.habits.total}`;
 
-    const sideNotes = document.getElementById('sidebarNotesBadge');
+    const sideNotes = document.getElementById('sidebarNotebookBadge') || document.getElementById('sidebarNotesBadge');
     if (sideNotes && data.notes) sideNotes.textContent = data.notes.length;
   } catch (err) {
     console.error('Error loading dashboard:', err);
@@ -788,7 +1316,7 @@ function renderDashboard(data) {
   const pulseExpenseSub = document.getElementById('dashPulseExpenseSub');
   if (pulseBalance && data.finance) {
     animateNumberValue(pulseBalance, data.finance.balance, 700, v => formatVND(v));
-    pulseBalance.className = `text-sm font-black mt-2 truncate ${data.finance.balance >= 0 ? 'text-[#5F7465]' : 'text-[#B14720]'}`;
+    pulseBalance.className = `text-sm font-extrabold mt-2 truncate ${data.finance.balance >= 0 ? 'text-[#5F7465]' : 'text-[#B14720]'}`;
   }
   if (pulseExpenseSub && data.finance) {
     pulseExpenseSub.textContent = `Chi ${formatVND(data.finance.total_expense)} (${data.finance.month_label})`;
@@ -948,7 +1476,7 @@ function renderDashboard(data) {
     if (finExpense) finExpense.textContent = formatVND(data.finance.total_expense);
     if (finBalance) {
       finBalance.textContent = formatVND(data.finance.balance);
-      finBalance.className = `text-xs sm:text-sm font-black truncate ${data.finance.balance >= 0 ? 'text-[#233329]' : 'text-[#B14720]'}`;
+      finBalance.className = `text-xs sm:text-sm font-extrabold truncate ${data.finance.balance >= 0 ? 'text-[#233329]' : 'text-[#B14720]'}`;
     }
 
     const recentList = document.getElementById('dashRecentTransList');
@@ -973,7 +1501,7 @@ function renderDashboard(data) {
                   <div class="text-[10px] text-[#786B60]">${escapeHtml(tx.category)} • ${formatDisplayDate(tx.date)}</div>
                 </div>
               </div>
-              <span class="font-black tabular-nums shrink-0 ml-2 text-xs ${isIncome ? 'text-[#5F7465]' : 'text-[#B14720]'}">
+              <span class="font-extrabold tabular-nums shrink-0 ml-2 text-xs ${isIncome ? 'text-[#5F7465]' : 'text-[#B14720]'}">
                 ${isIncome ? '+' : '-'}${formatVND(tx.amount)}
               </span>
             </div>
@@ -1114,7 +1642,8 @@ async function loadTodos() {
     }
     const res = await fetch(url);
     if (!res.ok) throw new Error('Không thể tải việc cần làm');
-    lifeState.todos = await res.json();
+    const todoData = await res.json();
+    lifeState.todos = Array.isArray(todoData) ? todoData : (todoData.todos || []);
     renderTodos();
     updateTodoBadges();
   } catch (err) {
@@ -1253,7 +1782,7 @@ function renderTodoCharts(stats) {
             legend: {
               position: 'top',
               labels: {
-                font: { family: 'inherit', size: 11, weight: '700' },
+                font: { family: APP_FONT_FAMILY, size: 11, weight: '700' },
                 color: '#2B231D',
                 boxWidth: 10,
                 boxHeight: 10,
@@ -1264,8 +1793,8 @@ function renderTodoCharts(stats) {
             },
             tooltip: {
               backgroundColor: '#233329',
-              titleFont: { family: 'inherit', size: 12, weight: 'bold' },
-              bodyFont: { family: 'inherit', size: 11 },
+              titleFont: { family: APP_FONT_FAMILY, size: 12, weight: 'bold' },
+              bodyFont: { family: APP_FONT_FAMILY, size: 11 },
               padding: 10,
               cornerRadius: 12,
               boxPadding: 4,
@@ -1293,7 +1822,7 @@ function renderTodoCharts(stats) {
               stacked: true,
               grid: { display: false },
               border: { color: '#DECDB5', width: 1 },
-              ticks: { font: { family: 'inherit', size: 11, weight: '600' }, color: '#6E6055', padding: 6 }
+              ticks: { font: { family: APP_FONT_FAMILY, size: 11, weight: '600' }, color: '#6E6055', padding: 6 }
             },
             y: {
               stacked: true,
@@ -1301,7 +1830,7 @@ function renderTodoCharts(stats) {
               grace: '10%',
               border: { display: false },
               grid: { color: 'rgba(222, 205, 181, 0.35)', drawTicks: false },
-              ticks: { stepSize: 1, precision: 0, font: { family: 'inherit', size: 10, weight: '600' }, color: '#8C7E72', padding: 8 }
+              ticks: { stepSize: 1, precision: 0, font: { family: APP_FONT_FAMILY, size: 10, weight: '600' }, color: '#8C7E72', padding: 8 }
             }
           }
         }
@@ -1349,7 +1878,7 @@ function renderTodoCharts(stats) {
         plugins: {
           legend: {
             position: 'bottom',
-            labels: { font: { family: 'inherit', size: 10, weight: '600' }, color: '#786B60', boxWidth: 10 }
+            labels: { font: { family: APP_FONT_FAMILY, size: 10, weight: '600' }, color: '#786B60', boxWidth: 10 }
           }
         }
       }
@@ -1408,7 +1937,7 @@ function renderTodoList() {
               </span>
             </button>
             <div class="min-w-0 flex-1">
-              <h4 class="font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-[#A49688]' : 'text-[#2B231D]'} break-words">${escapeHtml(t.title)}</h4>
+              <h4 class="font-bold text-xs sm:text-sm leading-snug ${isDone ? 'line-through text-[#786B60] opacity-80' : 'text-[#2B231D]'} break-words">${escapeHtml(t.title)}</h4>
               ${t.description ? `<p class="text-[11px] sm:text-xs text-[#786B60] mt-0.5 line-clamp-2 leading-relaxed break-words">${escapeHtml(t.description)}</p>` : ''}
             </div>
           </div>
@@ -1474,7 +2003,7 @@ function renderTodoKanban() {
     return `
       <div class="p-3.5 bg-[#FFFDF9] border border-[#DECDB5] rounded-2xl shadow-2xs space-y-2.5 hover:border-[#5F7465] transition group">
         <div class="flex items-start justify-between gap-2">
-          <span class="font-bold text-xs text-[#2B231D] ${isDone ? 'line-through text-[#A49688]' : ''}">${escapeHtml(t.title)}</span>
+          <span class="font-bold text-xs text-[#2B231D] ${isDone ? 'line-through text-[#786B60] opacity-80' : ''}">${escapeHtml(t.title)}</span>
           <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
             <button onclick="openTodoModal(${t.id})" class="p-1 text-[#786B60] hover:text-[#5F7465] rounded-lg transition" title="Sửa"><i data-lucide="edit-3" class="w-3 h-3"></i></button>
             <button onclick="deleteTodo(${t.id})" class="p-1 text-[#A49688] hover:text-[#B14720] rounded-lg transition" title="Xóa"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
@@ -1910,6 +2439,32 @@ function renderHabits(data) {
   const badge = document.getElementById('sidebarHabitsBadge');
   if (badge) badge.textContent = habits.length;
 
+  const areaChartBox = document.getElementById('habitAreaChartBox');
+
+  // Handle completely empty habits state (New user or no habits)
+  if (habits.length === 0) {
+    if (areaChartBox) areaChartBox.classList.add('hidden');
+    container.innerHTML = `
+      <div class="bg-[#FFFDF9] border border-[#DECDB5] rounded-3xl p-8 sm:p-12 text-center shadow-2xs space-y-3">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-[#F0F5F2] border border-[#D7E4DB] flex items-center justify-center text-[#5F7465]">
+          <i data-lucide="sparkles" class="w-7 h-7"></i>
+        </div>
+        <h4 class="font-extrabold text-base text-[#2B231D]">Chưa có thói quen nào</h4>
+        <p class="text-xs text-[#786B60] max-w-sm mx-auto">
+          Hãy bắt đầu xây dựng lối sống kỷ luật bằng cách thêm thói quen đầu tiên của bạn!
+        </p>
+        <button onclick="quickAddHabit()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] text-xs font-bold hover:bg-[#1A261F] transition shadow-xs cursor-pointer mt-2 tap-spring">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Thêm thói quen đầu tiên</span>
+        </button>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons({ root: container });
+    return;
+  } else {
+    if (areaChartBox) areaChartBox.classList.remove('hidden');
+  }
+
   container.innerHTML = habits.map(h => {
     // 1. Generate empty padding cells for 1st day offset in full month
     let paddingCells = '';
@@ -1984,8 +2539,8 @@ function renderHabits(data) {
           <button onclick="toggleHabitLogWithFeedback(event, ${h.id}, '${ws.date}')" 
                class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl ${isDone ? 'bg-[#5F7465] text-white shadow-2xs' : 'border-2 border-[#5F7465] bg-[#FFFDF9] text-[#5F7465]'} cursor-pointer transition select-none hover:scale-105 active:scale-95" 
                title="Hôm nay (${ws.day}): Bấm để ${isDone ? 'hủy' : 'hoàn thành'}">
-            <span class="text-[8px] uppercase font-bold opacity-80">${wdName}</span>
-            <span class="text-xs font-black mt-0.5">${ws.day}</span>
+            <span class="text-[10px] uppercase font-bold opacity-80">${wdName}</span>
+            <span class="text-xs font-extrabold mt-0.5">${ws.day}</span>
             <i data-lucide="${isDone ? 'check' : 'plus'}" class="w-3 h-3 mt-0.5 stroke-[2.5]"></i>
           </button>
         `;
@@ -1994,16 +2549,16 @@ function renderHabits(data) {
           return `
             <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#5F7465] text-white shadow-2xs select-none transition" 
                  title="Ngày ${ws.day}: Đã làm">
-              <span class="text-[8px] uppercase font-bold opacity-80">${wdName}</span>
+              <span class="text-[10px] uppercase font-bold opacity-80">${wdName}</span>
               <span class="text-xs font-bold mt-0.5">${ws.day}</span>
               <i data-lucide="check" class="w-3 h-3 mt-0.5 stroke-[2.5]"></i>
             </div>
           `;
         } else {
           return `
-            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#F7F2E8] text-[#A49688] select-none border border-[#DECDB5]/60" 
+            <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-[#F7F2E8] text-[#786B60] select-none border border-[#DECDB5]/60" 
                  title="Ngày ${ws.day}: Chưa làm">
-              <span class="text-[8px] uppercase font-semibold">${wdName}</span>
+              <span class="text-[10px] uppercase font-semibold">${wdName}</span>
               <span class="text-xs font-semibold mt-0.5">${ws.day}</span>
               <span class="w-1.5 h-1.5 rounded-full bg-[#DECDB5] mt-1"></span>
             </div>
@@ -2013,7 +2568,7 @@ function renderHabits(data) {
         return `
           <div class="flex flex-col items-center justify-center py-1 px-0.5 rounded-xl bg-transparent text-[#DECDB5] select-none" 
                title="Ngày ${ws.day}">
-            <span class="text-[8px] uppercase font-medium">${wdName}</span>
+            <span class="text-[10px] uppercase font-medium">${wdName}</span>
             <span class="text-xs font-medium mt-0.5">${ws.day}</span>
             <span class="w-1 h-1 rounded-full bg-[#DECDB5]/40 mt-1"></span>
           </div>
@@ -2193,8 +2748,8 @@ function renderHabitAreaChart(chartData) {
         },
         tooltip: {
           backgroundColor: '#233329',
-          titleFont: { family: 'inherit', size: 12, weight: 'bold' },
-          bodyFont: { family: 'inherit', size: 12 },
+          titleFont: { family: APP_FONT_FAMILY, size: 12, weight: 'bold' },
+          bodyFont: { family: APP_FONT_FAMILY, size: 12 },
           padding: 10,
           cornerRadius: 12,
           displayColors: false,
@@ -2216,7 +2771,7 @@ function renderHabitAreaChart(chartData) {
             display: false
           },
           ticks: {
-            font: { family: 'inherit', size: 10, weight: '600' },
+            font: { family: APP_FONT_FAMILY, size: 10, weight: '600' },
             color: '#786B60',
             maxRotation: 0,
             autoSkip: true,
@@ -2233,7 +2788,7 @@ function renderHabitAreaChart(chartData) {
           ticks: {
             stepSize: 1,
             precision: 0,
-            font: { family: 'inherit', size: 10 },
+            font: { family: APP_FONT_FAMILY, size: 10 },
             color: '#786B60'
           }
         }
@@ -2282,18 +2837,68 @@ async function toggleHabitLog(habitId, date) {
   }
 }
 
-async function quickAddHabit() {
-  const name = prompt('Nhập tên thói quen mới (ví dụ: Uống 2L nước, Đọc sách 30p, Đi ngủ trước 23h):');
-  if (!name || !name.trim()) return;
+function openHabitModal(habitId = null) {
+  const header = document.getElementById('habitModalHeader');
+  const idInput = document.getElementById('habitModalId');
+  const nameInput = document.getElementById('habitModalName');
+  const iconInput = document.getElementById('habitModalIcon');
+  const targetDaysInput = document.getElementById('habitModalTargetDays');
 
+  if (habitId) {
+    const habit = lifeState.habits.find(h => h.id === habitId);
+    if (!habit) return;
+    if (idInput) idInput.value = habit.id;
+    if (header) header.textContent = 'Chỉnh Sửa Thói Quen';
+    if (nameInput) nameInput.value = habit.name || '';
+    if (iconInput) iconInput.value = habit.icon || 'sparkles';
+    if (targetDaysInput) targetDaysInput.value = habit.target_days || 7;
+  } else {
+    if (idInput) idInput.value = '';
+    if (header) header.textContent = 'Thói Quen Mới';
+    if (nameInput) nameInput.value = '';
+    if (iconInput) iconInput.value = 'sparkles';
+    if (targetDaysInput) targetDaysInput.value = 7;
+  }
+
+  openAnimatedModal('habitModal');
+  setTimeout(() => nameInput?.focus(), 80);
+}
+
+function closeHabitModal() {
+  closeAnimatedModal('habitModal');
+}
+
+async function saveHabitModalAction() {
+  const idInput = document.getElementById('habitModalId');
+  const name = document.getElementById('habitModalName')?.value.trim();
+  const icon = document.getElementById('habitModalIcon')?.value || 'sparkles';
+  const target_days = parseInt(document.getElementById('habitModalTargetDays')?.value) || 7;
+
+  if (!name) {
+    showToast('Vui lòng nhập tên thói quen!', 'error');
+    return;
+  }
+
+  const isEdit = idInput && idInput.value;
   try {
-    const res = await fetch('/api/habits', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name.trim(), icon: 'sparkles', color: '#5F7465' })
-    });
-    if (!res.ok) throw new Error('Không thể thêm thói quen');
-    showToast('Đã thêm thói quen mới thành công!', 'success');
+    if (isEdit) {
+      const res = await fetch(`/api/habits/${idInput.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, icon, target_days })
+      });
+      if (!res.ok) throw new Error('Không thể cập nhật thói quen');
+      showToast(`Đã cập nhật thói quen: "${name}"`, 'success');
+    } else {
+      const res = await fetch('/api/habits', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, icon, color: '#5F7465', target_days })
+      });
+      if (!res.ok) throw new Error('Không thể thêm thói quen');
+      showToast('Đã thêm thói quen mới thành công!', 'success');
+    }
+    closeHabitModal();
     loadHabits();
     if (window.scheduleAutoSync) window.scheduleAutoSync(300);
   } catch (err) {
@@ -2301,33 +2906,12 @@ async function quickAddHabit() {
   }
 }
 
-async function editHabit(id) {
-  const habit = lifeState.habits.find(h => h.id === id);
-  if (!habit) return;
+function quickAddHabit() {
+  openHabitModal(null);
+}
 
-  const newName = prompt('Chỉnh sửa tên thói quen:', habit.name);
-  if (newName === null) return; // Người dùng ấn hủy
-  const trimmed = newName.trim();
-  if (!trimmed) {
-    showToast('Tên thói quen không được để trống!', 'error');
-    return;
-  }
-
-  if (trimmed === habit.name) return;
-
-  try {
-    const res = await fetch(`/api/habits/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: trimmed })
-    });
-    if (!res.ok) throw new Error('Không thể cập nhật tên thói quen');
-    showToast(`Đã đổi tên thói quen thành: "${trimmed}"`, 'success');
-    loadHabits();
-    if (window.scheduleAutoSync) window.scheduleAutoSync(300);
-  } catch (err) {
-    showToast(err.message, 'error');
-  }
+function editHabit(id) {
+  openHabitModal(id);
 }
 
 async function deleteHabit(id) {
@@ -2403,9 +2987,9 @@ function setJournalMood(mood) {
     const btn = document.getElementById(`moodBtn_${m}`);
     if (btn) {
       if (m === mood) {
-        btn.classList.add('border-[#5F7465]', 'bg-[#F0F5F2]', 'scale-105', 'font-black');
+        btn.classList.add('border-[#5F7465]', 'bg-[#F0F5F2]', 'scale-105', 'font-extrabold');
       } else {
-        btn.classList.remove('border-[#5F7465]', 'bg-[#F0F5F2]', 'scale-105', 'font-black');
+        btn.classList.remove('border-[#5F7465]', 'bg-[#F0F5F2]', 'scale-105', 'font-extrabold');
       }
     }
   });
@@ -2505,7 +3089,7 @@ function renderNotes() {
   const container = document.getElementById('notesGridContainer');
   if (!container) return;
 
-  const badge = document.getElementById('sidebarNotesBadge');
+  const badge = document.getElementById('sidebarNotebookBadge') || document.getElementById('sidebarNotesBadge');
   if (badge) badge.textContent = lifeState.notes.length;
 
   if (lifeState.notes.length === 0) {
@@ -2579,7 +3163,7 @@ function openNoteModal(noteId = null) {
     if (content) content.value = '';
   }
 
-  openAnimatedModal('todoModal');
+  openAnimatedModal('noteModal');
   setTimeout(() => title?.focus(), 80);
 }
 
@@ -2699,11 +3283,22 @@ function searchNotes(q) {
 // POMODORO FOCUS TIMER (Super Productivity) & RETRO AUDIO CHIME
 // =========================================================================
 
+let _globalAudioCtx = null;
+function getAudioContext() {
+  if (!_globalAudioCtx) {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) _globalAudioCtx = new AudioCtx();
+  }
+  if (_globalAudioCtx && _globalAudioCtx.state === 'suspended') {
+    _globalAudioCtx.resume();
+  }
+  return _globalAudioCtx;
+}
+
 function playPomodoroChime() {
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    const ctx = getAudioContext();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Dual-tone retro bell: Note 1 (D5: 587.33Hz) -> Note 2 (A5: 880Hz)
@@ -2736,9 +3331,8 @@ function playPomodoroChime() {
 function playTickSound() {
   triggerHaptic(25);
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    const ctx = getAudioContext();
+    if (!ctx) return;
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -2860,11 +3454,27 @@ function updatePomoUI() {
   const sessions = document.getElementById('pomoSessionCount');
   const banner = document.getElementById('pomoActiveTaskBanner');
   const activeTitle = document.getElementById('pomoActiveTaskTitle');
+  const mobilePomoTime = document.getElementById('mobilePomoHeaderTime');
+  const mobilePomoBtn = document.getElementById('mobilePomoHeaderBtn');
+
+  const mins = Math.floor(lifeState.pomoTimeLeft / 60);
+  const secs = lifeState.pomoTimeLeft % 60;
+  const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
   if (display) {
-    const mins = Math.floor(lifeState.pomoTimeLeft / 60);
-    const secs = lifeState.pomoTimeLeft % 60;
-    display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    display.textContent = timeStr;
+  }
+
+  if (mobilePomoTime) {
+    mobilePomoTime.textContent = timeStr;
+  }
+
+  if (mobilePomoBtn) {
+    if (lifeState.pomoIsRunning) {
+      mobilePomoBtn.classList.add('bg-[#F0F5F2]', 'border-[#5F7465]', 'text-[#233329]');
+    } else {
+      mobilePomoBtn.classList.remove('bg-[#F0F5F2]', 'border-[#5F7465]', 'text-[#233329]');
+    }
   }
 
   if (icon) {
@@ -2884,6 +3494,10 @@ function updatePomoUI() {
       banner.classList.add('hidden');
     }
   }
+}
+
+function toggleMobilePomodoro() {
+  togglePomo();
 }
 
 // Helper formatting functions
@@ -3226,6 +3840,7 @@ window.scheduleAutoSync = function(delayMs = 80) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  checkAuthSession();
   initRippleEffects();
   initAllCustomSelects();
   setTimeout(() => updateSlidingPills(lifeState.currentTab || 'dashboard'), 100);
@@ -3254,11 +3869,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // Reload active tab when user returns to app/tab (crucial on mobile phones)
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-      const isLocal = isLocalEnvironment();
-      if (isLocal) {
-        autoCloudSync(true);
-      } else {
+      const isMobile = isMobileApp();
+      if (isMobile) {
+        const lastActive = parseInt(sessionStorage.getItem('life_hub_last_active') || '0', 10);
+        // If inactive in background for more than 15 minutes on phone, require password again
+        if (lastActive > 0 && (Date.now() - lastActive > 15 * 60 * 1000)) {
+          sessionStorage.removeItem('life_hub_mobile_authenticated');
+          sessionStorage.removeItem('life_hub_token');
+          showAuthModal('Thời gian chờ đã hết. Vui lòng nhập lại mật khẩu để tiếp tục.');
+          return;
+        }
+        sessionStorage.setItem('life_hub_last_active', Date.now().toString());
         reloadActiveTabData(true);
+      } else {
+        autoCloudSync(true);
       }
     }
   });
@@ -3689,14 +4313,28 @@ if (document.readyState === 'loading') {
 }
 window.addEventListener('load', initAllCustomSelects);
 
-// Observer for dynamically added selects
+// Observer for dynamically added selects (optimized: checks for select elements only)
 try {
   let _selectObserverTimer = null;
-  const _selectObserver = new MutationObserver(() => {
+  const _selectObserver = new MutationObserver((mutations) => {
+    let hasNewSelect = false;
+    for (const m of mutations) {
+      if (m.addedNodes && m.addedNodes.length > 0) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === 1 && (node.tagName === 'SELECT' || (node.querySelector && node.querySelector('select')))) {
+            hasNewSelect = true;
+            break;
+          }
+        }
+      }
+      if (hasNewSelect) break;
+    }
+    if (!hasNewSelect) return;
+
     if (_selectObserverTimer) clearTimeout(_selectObserverTimer);
     _selectObserverTimer = setTimeout(() => {
       initAllCustomSelects();
-    }, 60);
+    }, 150);
   });
   if (document.body) {
     _selectObserver.observe(document.body, { childList: true, subtree: true });
