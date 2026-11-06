@@ -536,6 +536,134 @@
   }
 
   // =========================================================================
+  // 3B. SURFACE RIM REFRACTION FOR THE BAR GLASS BACKDROP (F120 / F253 / F293)
+  // =========================================================================
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  let svgDefs = null;
+
+  function canRefractBackdrop() {
+    if (typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent;
+    return /Chrom(e|ium)\/|Edg\//.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  }
+
+  function applyBarSurfaceRefraction(glassEl, width, height) {
+    if (!canRefractBackdrop() || width < 20 || height < 20) return;
+    const cw = Math.round(width);
+    const ch = Math.round(height);
+    const radius = ch / 2;
+    const bezel = 13;
+    const thickness = 18;
+    const ior = 1.5;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.createImageData(cw, ch);
+    const dx = new Float32Array(cw * ch);
+    const dy = new Float32Array(cw * ch);
+    let maxShift = 0.001;
+
+    const hw = cw / 2;
+    const hh = ch / 2;
+
+    for (let y = 0; y < ch; y++) {
+      for (let x = 0; x < cw; x++) {
+        const px = x + 0.5 - hw;
+        const py = y + 0.5 - hh;
+        const qx = Math.abs(px) - (hw - radius);
+        const qy = Math.abs(py) - (hh - radius);
+        const ox = Math.max(qx, 0);
+        const oy = Math.max(qy, 0);
+        const len = Math.hypot(ox, oy);
+        const d = radius - (len + Math.min(Math.max(qx, qy), 0));
+
+        if (d <= 0 || d >= bezel) continue;
+        const t = Math.max(0.005, d / bezel);
+        const q = 1 - t;
+        const base = 1 - Math.pow(q, 4);
+        const hVal = Math.pow(base, 0.25);
+        const slope = Math.pow(q, 3) / Math.max(1e-4, Math.pow(base, 0.75));
+        const inc = Math.atan(slope);
+        const ref = Math.asin(Math.sin(inc) / ior);
+        const shift = -Math.tan(inc - ref) * thickness * (0.35 + 0.65 * hVal);
+
+        let nx = 0;
+        let ny = 0;
+        if (len > 0) {
+          nx = (ox / len) * Math.sign(px);
+          ny = (oy / len) * Math.sign(py);
+        } else if (qx > qy) {
+          nx = Math.sign(px);
+        } else {
+          ny = Math.sign(py);
+        }
+
+        const i = y * cw + x;
+        dx[i] = nx * shift;
+        dy[i] = ny * shift;
+        const m = Math.max(Math.abs(dx[i]), Math.abs(dy[i]));
+        if (m > maxShift) maxShift = m;
+      }
+    }
+
+    for (let i = 0; i < cw * ch; i++) {
+      const o = i * 4;
+      imgData.data[o] = Math.round(127.5 + (dx[i] / maxShift) * 127.5);
+      imgData.data[o + 1] = Math.round(127.5 + (dy[i] / maxShift) * 127.5);
+      imgData.data[o + 2] = 128;
+      imgData.data[o + 3] = 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    const mapUrl = canvas.toDataURL();
+
+    if (!svgDefs || !svgDefs.isConnected) {
+      const rootSvg = document.createElementNS(SVG_NS, 'svg');
+      rootSvg.setAttribute('width', '0');
+      rootSvg.setAttribute('height', '0');
+      rootSvg.setAttribute('aria-hidden', 'true');
+      rootSvg.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
+      svgDefs = document.createElementNS(SVG_NS, 'defs');
+      rootSvg.appendChild(svgDefs);
+      document.body.appendChild(rootSvg);
+    }
+
+    const filterId = 'lg-bar-surface-refract';
+    const old = document.getElementById(filterId);
+    if (old) old.remove();
+
+    const filter = document.createElementNS(SVG_NS, 'filter');
+    filter.setAttribute('id', filterId);
+    filter.setAttribute('x', '-0.1');
+    filter.setAttribute('y', '-0.1');
+    filter.setAttribute('width', '1.2');
+    filter.setAttribute('height', '1.2');
+    filter.setAttribute('color-interpolation-filters', 'sRGB');
+
+    const feImg = document.createElementNS(SVG_NS, 'feImage');
+    feImg.setAttribute('href', mapUrl);
+    feImg.setAttribute('x', '0');
+    feImg.setAttribute('y', '0');
+    feImg.setAttribute('width', String(cw));
+    feImg.setAttribute('height', String(ch));
+    feImg.setAttribute('preserveAspectRatio', 'none');
+    feImg.setAttribute('result', 'field');
+
+    const feDisp = document.createElementNS(SVG_NS, 'feDisplacementMap');
+    feDisp.setAttribute('in', 'SourceGraphic');
+    feDisp.setAttribute('in2', 'field');
+    feDisp.setAttribute('scale', String((maxShift * 2).toFixed(2)));
+    feDisp.setAttribute('xChannelSelector', 'R');
+    feDisp.setAttribute('yChannelSelector', 'G');
+
+    filter.appendChild(feImg);
+    filter.appendChild(feDisp);
+    svgDefs.appendChild(filter);
+    glassEl.style.setProperty('--lg-bar-refract', `url(#${filterId})`);
+  }
+
+  // =========================================================================
   // 4. INTERACTIVE LENS TRACK CONTROLLER
   // =========================================================================
   function initLiquidGlassNav() {
@@ -625,6 +753,7 @@
       if (glRenderer && (sizeChanged || !textureReady)) {
         glRenderer.resizeCanvas(W, H);
         refreshTexture();
+        applyBarSurfaceRefraction(glass, cw, ch);
       }
     };
 
