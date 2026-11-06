@@ -249,6 +249,17 @@ html, body {
     padding-top: max(env(safe-area-inset-top, 0px), 44px) !important;
     padding-bottom: 6px !important;
   }
+  .app-top-header #headerDashboardControls,
+  .app-top-header #headerTodosControls,
+  .app-top-header #headerHabitsControls,
+  .app-top-header #headerJournalControls,
+  .app-top-header #headerNotesControls,
+  .app-top-header #mobilePomoHeaderBtn,
+  .app-top-header #liveSyncStatus,
+  .app-top-header #reloadBtn,
+  .app-top-header #headerFinanceControls > :not(#monthNavContainer) {
+    display: none !important;
+  }
 }
 
 .app-bottom-nav {

@@ -562,7 +562,7 @@ function switchLifeTab(tabName) {
   const titles = {
     dashboard: { title: 'Tổng quan', sub: '' },
     finance: { title: 'Tài chính', sub: '' },
-    todos: { title: 'Việc cần làm', sub: '' },
+    todos: { title: 'Việc làm', sub: '' },
     habits: { title: 'Thói quen', sub: '' },
     notebook: { title: 'Sổ tay', sub: '' }
   };
