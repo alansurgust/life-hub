@@ -6,40 +6,40 @@
 
 :root {
   /* Vintage Canvas & Surfaces */
-  --vintage-bg: #F0F4FA;              /* Warm Parchment / Retro Paper Canvas */
-  --vintage-surface: #FDFDFF;         /* Pure Warm Ivory Card Surface */
-  --vintage-surface-muted: #E4ECF7;   /* Subtle Secondary Paper Surface */
-  --vintage-surface-subtle: #EBF1FA;  /* Inset / Table Header Tone */
+  --vintage-bg: #FCF5EF;              /* Warm Parchment / Retro Paper Canvas */
+  --vintage-surface: #FFFDFB;         /* Pure Warm Ivory Card Surface */
+  --vintage-surface-muted: #E6F1F4;   /* Subtle Secondary Paper Surface */
+  --vintage-surface-subtle: #EDF5F7;  /* Inset / Table Header Tone */
 
   /* Vintage Borders */
-  --vintage-border: #CBD7E8;          /* Soft Tactile Paper Border */
-  --vintage-border-strong: #9FB5D1;   /* Pronounced Vintage Outline */
-  --vintage-border-focus: #B8171F;    /* Terracotta Focus Outline */
+  --vintage-border: #B8D8E0;          /* Soft Tactile Paper Border */
+  --vintage-border-strong: #6DB5CA;   /* Pronounced Vintage Outline */
+  --vintage-border-focus: #FF7235;    /* Terracotta Focus Outline */
 
   /* Vintage Typography Inks */
-  --vintage-text: #032D65;            /* Deep Warm Espresso Ink (Primary) */
-  --vintage-text-muted: #4A658A;      /* Warm Sepia (Secondary / Caption) */
-  --vintage-text-subtle: #7B93B2;     /* Faded Vintage Ink */
+  --vintage-text: #1E3D47;            /* Deep Warm Espresso Ink (Primary) */
+  --vintage-text-muted: #527987;      /* Warm Sepia (Secondary / Caption) */
+  --vintage-text-subtle: #7FA3B0;     /* Faded Vintage Ink */
 
   /* 8 Authentic Vintage Palette Swatches */
-  --vintage-swatch-1-sage: #032D65;   /* Swatch 1: Sage Slate Green */
-  --vintage-swatch-2-gold: #F9BD04;   /* Swatch 2: Vintage Mustard Gold */
-  --vintage-swatch-3-terracotta: #B8171F; /* Swatch 3: Terracotta Red */
-  --vintage-swatch-4-olive: #032D65;  /* Swatch 4: Heritage Olive Moss */
-  --vintage-swatch-5-rust: #B8171F;   /* Swatch 5: Warm Amber Rust */
-  --vintage-swatch-6-sienna: #B8171F; /* Swatch 6: Tobacco / Warm Sienna */
-  --vintage-swatch-7-brick: #961219;  /* Swatch 7: Vintage Brick Crimson */
-  --vintage-swatch-8-espresso: #032D65; /* Swatch 8: Deep Mahogany */
+  --vintage-swatch-1-sage: #6DB5CA;   /* Swatch 1: Sage Slate Green */
+  --vintage-swatch-2-gold: #FF7235;   /* Swatch 2: Vintage Mustard Gold */
+  --vintage-swatch-3-terracotta: #FF7235; /* Swatch 3: Terracotta Red */
+  --vintage-swatch-4-olive: #2B677A;  /* Swatch 4: Heritage Olive Moss */
+  --vintage-swatch-5-rust: #FF7235;   /* Swatch 5: Warm Amber Rust */
+  --vintage-swatch-6-sienna: #FF7235; /* Swatch 6: Tobacco / Warm Sienna */
+  --vintage-swatch-7-brick: #E05A20;  /* Swatch 7: Vintage Brick Crimson */
+  --vintage-swatch-8-espresso: #1E3D47; /* Swatch 8: Deep Mahogany */
 
   /* Deep Forest Accent (for primary buttons & logo) */
-  --vintage-forest: #032D65;
-  --vintage-forest-hover: #021F47;
+  --vintage-forest: #6DB5CA;
+  --vintage-forest-hover: #529BB0;
 
   /* Vintage Paper Elevation / Shadows */
-  --vintage-shadow-xs: 0 1px 2px rgba(3, 45, 101, 0.04);
-  --vintage-shadow-sm: 0 2px 6px rgba(3, 45, 101, 0.05), 0 1px 2px rgba(3, 45, 101, 0.03);
-  --vintage-shadow-md: 0 6px 18px rgba(3, 45, 101, 0.06), 0 2px 6px rgba(3, 45, 101, 0.04);
-  --vintage-shadow-lg: 0 14px 32px rgba(3, 45, 101, 0.09), 0 4px 10px rgba(3, 45, 101, 0.05);
+  --vintage-shadow-xs: 0 1px 2px rgba(30, 61, 71, 0.04);
+  --vintage-shadow-sm: 0 2px 6px rgba(30, 61, 71, 0.05), 0 1px 2px rgba(30, 61, 71, 0.03);
+  --vintage-shadow-md: 0 6px 18px rgba(30, 61, 71, 0.06), 0 2px 6px rgba(30, 61, 71, 0.04);
+  --vintage-shadow-lg: 0 14px 32px rgba(30, 61, 71, 0.09), 0 4px 10px rgba(30, 61, 71, 0.05);
 }
 
 @layer base {
@@ -74,9 +74,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD7E8;
+  background: #B8D8E0;
   border-radius: 9999px;
-  border: 1px solid #E4ECF7;
+  border: 1px solid #E6F1F4;
 }
 
 /* Subtle animation for today's active check ring */
@@ -90,7 +90,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9FB5D1;
+  background: #6DB5CA;
 }
 
 /* Vintage Paper Card Hover Animation */
@@ -147,7 +147,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #EBF1FA 25%, #E4ECF7 50%, #EBF1FA 75%);
+  background: linear-gradient(90deg, #EDF5F7 25%, #E6F1F4 50%, #EDF5F7 75%);
   background-size: 200% 100%;
   animation: vintageShimmer 1.8s infinite;
 }
@@ -165,10 +165,10 @@
 }
 
 /* Enhanced Soft Elevation & Contrast for Ivory/White Cards */
-.bg-\[\#FDFDFF\],
+.bg-\[\#FFFDFB\],
 .bg-white,
 .card-vintage {
-  box-shadow: 0 1px 3px rgba(3, 45, 101, 0.05), 0 5px 16px rgba(3, 45, 101, 0.045);
+  box-shadow: 0 1px 3px rgba(30, 61, 71, 0.05), 0 5px 16px rgba(30, 61, 71, 0.045);
 }
 
 /* Swipe Actions on Mobile */
@@ -272,16 +272,16 @@ html, body {
   display: flex !important;
   align-items: center !important;
   justify-content: space-around !important;
-  background: rgba(253, 253, 255, 0.96) !important;
+  background: rgba(252, 245, 239, 0.96) !important;
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
-  border-top: 1px solid #CBD7E8 !important;
+  border-top: 1px solid #B8D8E0 !important;
   padding-top: 6px !important;
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 18px) !important;
   padding-left: env(safe-area-inset-left, 0px) !important;
   padding-right: env(safe-area-inset-right, 0px) !important;
   min-height: 4rem !important;
-  box-shadow: 0 -4px 20px rgba(3, 45, 101, 0.08) !important;
+  box-shadow: 0 -4px 20px rgba(30, 61, 71, 0.08) !important;
 }
 
 @media (max-width: 768px) {
@@ -301,11 +301,11 @@ html, body {
 
 /* Minimalist Hairline Borders & Clean Elevation */
 .border-hairline {
-  border-color: rgba(3, 45, 101, 0.16) !important;
+  border-color: rgba(109, 181, 202, 0.16) !important;
 }
 
 .border-hairline-subtle {
-  border-color: rgba(3, 45, 101, 0.09) !important;
+  border-color: rgba(109, 181, 202, 0.09) !important;
 }
 
 /* Modal Responsive Dialog */
@@ -342,14 +342,14 @@ html, body {
   top: 6px;
   left: 0;
   height: 46px;
-  background: rgba(3, 45, 101, 0.12);
-  border: 1px solid rgba(3, 45, 101, 0.24);
+  background: rgba(109, 181, 202, 0.12);
+  border: 1px solid rgba(109, 181, 202, 0.24);
   border-radius: 14px;
   pointer-events: none;
   z-index: 1;
   transition: transform 0.32s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.24s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
   will-change: transform, width;
-  box-shadow: 0 2px 8px rgba(3, 45, 101, 0.08);
+  box-shadow: 0 2px 8px rgba(109, 181, 202, 0.08);
 }
 
 .sidebar-nav-pill {
@@ -357,13 +357,13 @@ html, body {
   top: 0;
   left: 12px;
   right: 12px;
-  background: #032D65;
+  background: #6DB5CA;
   border-radius: 12px;
   pointer-events: none;
   z-index: 1;
   transition: transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1), height 0.22s ease, opacity 0.2s ease;
   will-change: transform, height;
-  box-shadow: 0 4px 12px rgba(3, 45, 101, 0.2);
+  box-shadow: 0 4px 12px rgba(109, 181, 202, 0.2);
 }
 
 /* Icon spring bounce when tab becomes active */
@@ -396,7 +396,7 @@ html, body {
 .ripple-wave {
   position: absolute;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(3, 45, 101, 0.35) 0%, rgba(3, 45, 101, 0) 70%);
+  background: radial-gradient(circle, rgba(109, 181, 202, 0.35) 0%, rgba(109, 181, 202, 0) 70%);
   transform: scale(0);
   pointer-events: none;
   animation: rippleSpread 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -542,7 +542,7 @@ html, body {
     width: 36px;
     height: 4px;
     border-radius: 9999px;
-    background: #CBD7E8;
+    background: #B8D8E0;
     margin: 0 auto 12px auto;
   }
 }
@@ -573,28 +573,28 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: #FDFDFF;
-  border: 1px solid #CBD7E8;
+  background: #FFFDFB;
+  border: 1px solid #B8D8E0;
   border-radius: 14px;
   padding: 6.5px 12px;
   font-size: 12px;
   font-weight: 600;
-  color: #032D65;
+  color: #1E3D47;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(3, 45, 101, 0.04);
+  box-shadow: 0 1px 2px rgba(30, 61, 71, 0.04);
 }
 
 .custom-dropdown-trigger:hover {
-  border-color: #032D65;
-  background: #FDFDFF;
+  border-color: #6DB5CA;
+  background: #FFFDFB;
 }
 
 .custom-dropdown-trigger:focus,
 .custom-dropdown-trigger.active {
-  border-color: #032D65;
+  border-color: #6DB5CA;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(3, 45, 101, 0.18);
+  box-shadow: 0 0 0 2px rgba(109, 181, 202, 0.18);
 }
 
 .custom-dropdown-menu {
@@ -606,10 +606,10 @@ select {
   max-width: 320px;
   max-height: 250px;
   overflow-y: auto;
-  background: #FDFDFF;
-  border: 1px solid #CBD7E8;
+  background: #FFFDFB;
+  border: 1px solid #B8D8E0;
   border-radius: 18px !important;
-  box-shadow: 0 16px 36px -4px rgba(3, 45, 101, 0.16), 0 8px 16px -2px rgba(3, 45, 101, 0.08);
+  box-shadow: 0 16px 36px -4px rgba(30, 61, 71, 0.16), 0 8px 16px -2px rgba(30, 61, 71, 0.08);
   padding: 6px;
   z-index: 9999;
   animation: dropdownFadeScale 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -624,7 +624,7 @@ select {
 }
 
 .custom-dropdown-menu::-webkit-scrollbar-thumb {
-  background: #CBD7E8;
+  background: #B8D8E0;
   border-radius: 9999px;
 }
 
@@ -647,19 +647,19 @@ select {
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
-  color: #032D65;
+  color: #1E3D47;
   transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .custom-dropdown-item:hover {
-  background: #EBF1FA;
-  color: #021F47;
+  background: #EDF5F7;
+  color: #529BB0;
 }
 
 .custom-dropdown-item.selected {
-  background: rgba(3, 45, 101, 0.14);
-  color: #032D65;
+  background: rgba(109, 181, 202, 0.14);
+  color: #6DB5CA;
   font-weight: 700;
 }
 
