@@ -1,4 +1,77 @@
 
+// Weekly Archive & Rollover Logic
+let currentArchiveWeeks = [];
+
+async function loadArchiveWeeks() {
+  const sel = document.getElementById('todoArchiveWeekSelect');
+  if (!sel) return;
+  try {
+    const res = await fetch('/api/todos/archive/weeks');
+    if (!res.ok) return;
+    currentArchiveWeeks = await res.json();
+    if (!currentArchiveWeeks || currentArchiveWeeks.length === 0) {
+      sel.innerHTML = '<option value="">Chưa có dữ liệu tuần trước</option>';
+      const listEl = document.getElementById('todoArchiveListItems');
+      if (listEl) {
+        listEl.innerHTML = `
+          <div class="p-6 text-center text-[#786B60] bg-[#FFFDF9] rounded-xl border border-dashed border-[#DECDB5]">
+            <p class="text-xs font-semibold text-[#2B231D]">Chưa có tuần nào hoàn thành trước đó</p>
+            <p class="text-[11px] text-[#786B60] mt-0.5">Các công việc hoàn thành trong tuần này sẽ được lưu trữ khi sang tuần mới!</p>
+          </div>
+        `;
+      }
+      return;
+    }
+    sel.innerHTML = currentArchiveWeeks.map(w => `<option value="${w.start}_${w.end}">${w.label}</option>`).join('');
+    // Load first week
+    if (currentArchiveWeeks.length > 0) {
+      loadArchiveWeekTasks(`${currentArchiveWeeks[0].start}_${currentArchiveWeeks[0].end}`);
+    }
+  } catch (e) {
+    sel.innerHTML = '<option value="">Lỗi tải danh sách tuần</option>';
+  }
+}
+
+async function loadArchiveWeekTasks(val) {
+  if (!val) return;
+  const [start, end] = val.split('_');
+  const listEl = document.getElementById('todoArchiveListItems');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="text-center py-4 text-xs text-[#786B60]">Đang tải công việc...</div>';
+  try {
+    const res = await fetch(`/api/todos?filter_by=completed&week_start=${start}&week_end=${end}`);
+    const data = await res.json();
+    const tasks = Array.isArray(data) ? data : (data.todos || []);
+    if (tasks.length === 0) {
+      listEl.innerHTML = '<div class="p-4 text-center text-xs text-[#786B60] bg-[#FFFDF9] rounded-xl border border-[#DECDB5]">Không có công việc nào trong tuần này.</div>';
+      return;
+    }
+    listEl.innerHTML = tasks.map(t => `
+      <div class="p-3 rounded-xl bg-[#FFFDF9] border border-[#DECDB5] flex items-center justify-between gap-3 shadow-2xs">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-5 h-5 rounded-full bg-[#5F7465] text-white flex items-center justify-center shrink-0">
+            <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>
+          </span>
+          <div class="min-w-0">
+            <h5 class="font-bold text-xs text-[#2B231D] line-through opacity-85 truncate">${escapeHtml(t.title)}</h5>
+            <div class="flex items-center gap-1.5 text-[10px] text-[#786B60] mt-0.5">
+              <span>${escapeHtml(t.category || 'Công việc')}</span>
+              <span>•</span>
+              <span>Hạn: ${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
+              ${t.completed_at ? `<span>• Xong: ${formatDisplayDate(t.completed_at.slice(0, 10))}</span>` : ''}
+            </div>
+          </div>
+        </div>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F0F5F2] text-[#5F7465] border border-[#C5D7CC] shrink-0">Đã xong</span>
+      </div>
+    `).join('');
+    if (window.lucide) lucide.createIcons({ root: listEl });
+  } catch(e) {
+    listEl.innerHTML = '<div class="p-4 text-center text-xs text-[#B14720]">Lỗi kết nối khi tải danh sách tuần.</div>';
+  }
+}
+
+
 // Early clean slate on mobile if unauthenticated
 (function() {
   const isTouch = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (window.innerWidth <= 768);
@@ -1924,6 +1997,9 @@ function renderTodoList() {
     const isDone = t.status === 'completed';
     const pri = priorityMeta[t.priority] || priorityMeta.normal;
     const isOverdue = !isDone && t.due_date && t.due_date < todayStr;
+    const nowD = new Date();
+    const currMonday = new Date(nowD.setDate(nowD.getDate() - (nowD.getDay() === 0 ? 6 : nowD.getDay() - 1))).toISOString().split('T')[0];
+    const isPastWeekRollover = !isDone && t.due_date && t.due_date < currMonday;
 
     return `
       <div ontouchstart="handleTodoTouchStart(event, ${t.id})" ontouchend="handleTodoTouchEnd(event, ${t.id})" 
@@ -1961,7 +2037,7 @@ function renderTodoList() {
             <span class="text-[#DECDB5]">•</span>
             <span class="${isOverdue ? 'text-[#B14720] font-bold' : 'text-[#786B60]'}">${t.due_date ? formatDisplayDate(t.due_date) : 'Không hạn'}</span>
             ${t.priority === 'urgent' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#DECDB5]/60 ml-1">Khẩn cấp</span>' : (t.priority === 'high' ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF6E2] text-[#D39526] border border-[#DECDB5]/60 ml-1">Ưu tiên</span>' : '')}
-            ${isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] ml-1">Tồn đọng</span>' : ''}
+            ${isPastWeekRollover ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] ml-1 flex items-center gap-1"><i data-lucide="alert-circle" class="w-3 h-3"></i> Tồn đọng tuần trước</span>' : (isOverdue ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FDF3EE] text-[#B14720] border border-[#F4DDD2] ml-1">Tồn đọng</span>' : '')}
           </div>
 
           <!-- Right: Pomodoro Quick Trigger -->

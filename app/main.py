@@ -1717,11 +1717,72 @@ def get_dashboard_summary(user: Optional[dict] = Depends(get_current_user_option
 # SECTION 2: TO-DO & PRODUCTIVITY TRACKING (Vikunja & Super Productivity)
 # =========================================================================
 
+
+@app.get("/api/todos/archive/weeks")
+def get_todo_archive_weeks(user: Optional[dict] = Depends(get_current_user_optional)):
+    """Returns list of past weeks that have completed tasks for weekly archival view."""
+    if not user:
+        return []
+    conn = get_db_connection()
+    c = conn.cursor()
+    today = get_vn_today()
+    monday_current = today - datetime.timedelta(days=today.weekday())
+    monday_curr_str = monday_current.isoformat()
+
+    c.execute("""
+        SELECT DISTINCT 
+            COALESCE(date(completed_at), due_date) as comp_date
+        FROM todos
+        WHERE status = 'completed' AND user_id = ?
+          AND (date(completed_at) < ? OR (completed_at IS NULL AND due_date < ?))
+        ORDER BY comp_date DESC
+    """, (user["id"], monday_curr_str, monday_curr_str))
+    rows = c.fetchall()
+
+    weeks_set = set()
+    weeks_list = []
+
+    for r in rows:
+        d_val = r["comp_date"]
+        if not d_val:
+            continue
+        try:
+            d_obj = datetime.date.fromisoformat(d_val[:10])
+            w_mon = d_obj - datetime.timedelta(days=d_obj.weekday())
+            w_sun = w_mon + datetime.timedelta(days=6)
+            w_key = w_mon.isoformat()
+            if w_key not in weeks_set:
+                weeks_set.add(w_key)
+                # Count completed tasks in this week
+                c.execute("""
+                    SELECT COUNT(*) FROM todos 
+                    WHERE status = 'completed' AND user_id = ?
+                      AND (
+                        (date(completed_at) >= ? AND date(completed_at) <= ?)
+                        OR (completed_at IS NULL AND due_date >= ? AND due_date <= ?)
+                      )
+                """, (user["id"], w_mon.isoformat(), w_sun.isoformat(), w_mon.isoformat(), w_sun.isoformat()))
+                count = c.fetchone()[0]
+                weeks_list.append({
+                    "week_key": w_key,
+                    "start": w_mon.isoformat(),
+                    "end": w_sun.isoformat(),
+                    "label": f"Tuần {w_mon.strftime('%d/%m')} - {w_sun.strftime('%d/%m/%Y')} ({count} việc)",
+                    "count": count
+                })
+        except Exception:
+            continue
+
+    conn.close()
+    return sorted(weeks_list, key=lambda x: x["start"], reverse=True)
+
 @app.get("/api/todos")
 def get_todos(
     filter_by: str = "all",
     category: Optional[str] = None,
     status: Optional[str] = None,
+    week_start: Optional[str] = None,
+    week_end: Optional[str] = None,
     user: Optional[dict] = Depends(get_current_user_optional)
 ):
     if not user:
@@ -1732,8 +1793,29 @@ def get_todos(
     today_str = today.isoformat()
     week_end = (today + datetime.timedelta(days=7)).isoformat()
 
+    today = get_vn_today()
+    monday_current = (today - datetime.timedelta(days=today.weekday())).isoformat()
+    sunday_current = (today - datetime.timedelta(days=today.weekday()) + datetime.timedelta(days=6)).isoformat()
+
     query = "SELECT * FROM todos WHERE user_id = ?"
     params = [user["id"]]
+
+    # If querying a specific archived week
+    if week_start and week_end:
+        query += """ AND status = 'completed' AND (
+            (date(completed_at) >= ? AND date(completed_at) <= ?)
+            OR (completed_at IS NULL AND due_date >= ? AND due_date <= ?)
+        )"""
+        params.extend([week_start, week_end, week_start, week_end])
+    elif filter_by != "completed":
+        # By default for active lists: do NOT show tasks completed in past weeks (archived!)
+        # Show: all pending/in_progress tasks + tasks completed IN CURRENT WEEK
+        query += """ AND (
+            status != 'completed'
+            OR date(completed_at) >= ?
+            OR (completed_at IS NULL AND due_date >= ?)
+        )"""
+        params.extend([monday_current, monday_current])
 
     if filter_by == "today":
         # Today includes:
@@ -1994,10 +2076,12 @@ def get_todo_stats(user: Optional[dict] = Depends(get_current_user_optional)):
         created_series = []
         day_names = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
 
-        for i in range(6, -1, -1):
-            d = today - datetime.timedelta(days=i)
+        # Strictly full calendar week: Monday (T2) to Sunday (CN)
+        monday = today - datetime.timedelta(days=today.weekday())
+        for i in range(7):
+            d = monday + datetime.timedelta(days=i)
             d_str = d.isoformat()
-            day_label = f"{day_names[d.weekday()]} ({d.strftime('%d/%m')})"
+            day_label = f"{day_names[i]} ({d.strftime('%d/%m')})"
             daily_labels.append(day_label)
 
             # 1. Đã hoàn thành trong ngày d: việc có completed_at vào ngày d
