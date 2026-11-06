@@ -2084,6 +2084,14 @@ def get_todo_stats(user: Optional[dict] = Depends(get_current_user_optional)):
             day_label = f"{day_names[i]} ({d.strftime('%d/%m')})"
             daily_labels.append(day_label)
 
+            # NẾU NGÀY CHƯA ĐẾN (TƯƠNG LAI: d > today) -> KHÔNG VẼ CỘT, GIỮ 0 CHỜ ĐẾN NGÀY
+            if d > today:
+                completed_series.append(0)
+                backlog_series.append(0)
+                new_series.append(0)
+                created_series.append(0)
+                continue
+
             # 1. Đã hoàn thành trong ngày d: việc có completed_at vào ngày d
             c.execute("""
                 SELECT COUNT(*) FROM todos 
