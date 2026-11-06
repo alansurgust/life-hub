@@ -198,9 +198,7 @@
 
         <!-- Storage Info & Settings -->
         <div class="flex items-center justify-between px-1 text-xs text-[#786B60]">
-          <span class="text-[10px] font-semibold text-[#626037] flex items-center gap-1">
-            <i data-lucide="hard-drive" class="w-3 h-3 text-[#5F7465]"></i> D:\app\finance
-          </span>
+
           <button onclick="openSettingsModal()" class="p-1.5 rounded-lg hover:bg-[#E7DEC8] text-[#786B60] hover:text-[#2B231D] transition cursor-pointer" title="Cài đặt">
             <i data-lucide="settings" class="w-3.5 h-3.5"></i>
           </button>
@@ -225,7 +223,7 @@
           <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
             
             <!-- 0. Dashboard Tab Controls -->
-            <div id="headerDashboardControls" class="hidden sm:flex items-center gap-2">
+            <div id="headerDashboardControls" class="hidden md:flex items-center gap-2">
               <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#EFE7D8] text-[#626037] border border-[#DECDB5]">
                 <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#D39526]"></i>
                 <span id="dashHeaderDate">Thứ Hai, 02/11/2026</span>
@@ -330,22 +328,6 @@
               </button>
             </div>
 
-            <!-- Mobile Pomodoro Header Trigger -->
-            <button onclick="toggleMobilePomodoro()" id="mobilePomoHeaderBtn" class="md:hidden flex items-center gap-1 px-2 h-9 rounded-xl bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 transition text-xs font-bold text-[#786B60] cursor-pointer" title="Đồng hồ Pomodoro">
-              <i data-lucide="timer" class="w-4 h-4 text-[#C3651F]"></i>
-              <span id="mobilePomoHeaderTime" class="tabular-nums">25:00</span>
-            </button>
-
-            <!-- Mobile Quick Settings Button -->
-            <button onclick="openSettingsModal()" class="md:hidden w-9 h-9 rounded-xl flex items-center justify-center bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 transition text-[#786B60] hover:text-[#2B231D] cursor-pointer" title="Cài đặt">
-              <i data-lucide="settings" class="w-4 h-4"></i>
-            </button>
-
-            <!-- Mobile Direct Logout Button (Always visible on phone) -->
-            <button onclick="handleAuthLogout()" id="mobileDirectLogoutBtn" class="w-9 h-9 rounded-xl flex items-center justify-center bg-[#FDF3EE] hover:bg-[#F9E2D8] text-[#B14720] border border-[#F4DDD2] transition cursor-pointer active:scale-95 shrink-0" title="Đăng xuất">
-                <i data-lucide="log-out" class="w-4 h-4 text-[#B14720]"></i>
-              </button>
-
             <!-- Live Realtime Sync Status: FIXED ICON ONLY (No jumping text, strictly 36x36) -->
             <button onclick="triggerCloudSyncNow()" id="liveSyncStatus" class="w-9 h-9 rounded-xl flex items-center justify-center bg-[#FFFDF9] hover:bg-[#EFE7D8] border border-[#DECDB5] shadow-2xs shrink-0 select-none relative transition cursor-pointer" title="Đồng bộ thời gian thực: Đã kết nối & sẵn sàng">
               <i data-lucide="cloud" id="liveSyncCloudIcon" class="w-4 h-4 text-[#5F7465] transition-transform"></i>
@@ -355,7 +337,7 @@
 
 
             <!-- Global Reload Button -->
-            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu từ ổ D:\app\finance" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
+            <button onclick="reloadActiveTabData()" id="reloadBtn" title="Làm mới dữ liệu" class="hidden sm:inline-flex p-1.5 sm:p-2 rounded-xl text-[#786B60] hover:text-[#2B231D] hover:bg-[#EFE7D8] border border-[#DECDB5] bg-[#FFFDF9] transition group items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer">
               <i data-lucide="rotate-cw" id="reloadIcon" class="w-4 h-4 text-[#786B60] group-hover:text-[#5F7465] transition"></i>
               <span class="hidden lg:inline">Làm mới</span>
             </button>
@@ -461,7 +443,7 @@
 
                 <!-- Quick add To-do directly from Dashboard -->
                 <div class="flex items-center gap-2 pt-2 border-t border-[#DECDB5]/50">
-                  <input type="text" id="dashQuickTodoTitle" placeholder="Thêm nhanh việc cần làm... (nhấn Enter)" 
+                  <input type="text" id="dashQuickTodoTitle" placeholder="Thêm nhanh việc cần làm..." 
                          class="flex-1 bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs text-[#2B231D] placeholder-[#A49688] focus:bg-[#FFFDF9] focus:outline-none focus:ring-1 focus:ring-[#5F7465]"
                          onkeydown="if(event.key==='Enter') quickAddTodoFromDash()">
                   <button onclick="quickAddTodoFromDash()" class="px-3 py-2 rounded-xl bg-[#233329] text-[#FFFDF9] text-xs font-bold hover:bg-[#1A261F] transition cursor-pointer flex items-center gap-1">
@@ -665,7 +647,7 @@
           <div class="flex items-center justify-between mb-1">
             <div>
               <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Phân Bổ Chi Tiêu</h3>
-              <p class="text-xs text-[#786B60]">Tỷ lệ theo từng danh mục</p>
+              
             </div>
             <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#786B60] font-semibold border border-[#DECDB5]" id="pieChartMonthLabel">Tháng này</span>
           </div>
@@ -753,7 +735,7 @@
             <h3 class="font-extrabold text-base sm:text-lg text-[#2B231D] tracking-tight">Chi Tiết Phân Loại Giao Dịch (3 Cột)</h3>
             <span id="columnsTotalBadge" class="text-xs px-2.5 py-0.5 rounded-full bg-[#EFE7D8] text-[#2B231D] font-bold border border-[#DECDB5]">0 mục</span>
           </div>
-          <p class="text-xs text-[#786B60]">Mục AI tự đoán có độ chính xác dưới 65% ở cột giữa. Chọn danh mục để tự động chuyển sang cột tương ứng.</p>
+          
         </div>
 
         <!-- Controls: View Mode & Search -->
@@ -1046,7 +1028,7 @@
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-[#F7F2E8] p-2 rounded-2xl border border-[#DECDB5]">
           <div class="flex items-center gap-2 flex-1 px-3">
             <i data-lucide="plus" class="w-4 h-4 text-[#786B60] shrink-0"></i>
-            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới... (Gõ tiêu đề và nhấn Enter)" class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
+            <input type="text" id="todoQuickTitle" onkeydown="quickAddTodo(event)" placeholder="Thêm việc cần làm mới..." class="w-full bg-transparent border-none text-xs font-semibold text-[#2B231D] outline-none placeholder-[#A49688]">
           </div>
           <div class="flex items-center gap-2 shrink-0 flex-wrap">
             <select id="todoQuickPriority" class="bg-[#FFFDF9] border border-[#DECDB5] rounded-xl px-2.5 py-1.5 text-xs font-semibold text-[#2B231D] outline-none cursor-pointer">
@@ -1381,7 +1363,7 @@
           </div>
           <div>
             <h3 class="font-extrabold text-base text-[#2B231D] tracking-tight">Tải Lên Sao Kê Ngân Hàng</h3>
-            <p class="text-xs text-[#786B60]">Lưu vào D:\app\finance • Hỗ trợ Excel, CSV, PDF</p>
+            <p class="text-xs text-[#786B60]">Hỗ trợ Excel, CSV, PDF</p>
           </div>
         </div>
         <button onclick="closeUploadModal()" class="text-[#A49688] hover:text-[#2B231D] p-1.5 rounded-xl hover:bg-[#EFE7D8] transition">
@@ -1472,7 +1454,7 @@
         <div>
           <label class="block font-bold text-[#2B231D] mb-1">API Key</label>
           <input type="password" id="settingsApiKey" placeholder="Nhập API Key nếu muốn dùng AI đám mây" class="w-full bg-[#F7F2E8] border border-[#DECDB5] rounded-xl px-3 py-2 text-xs font-mono outline-none focus:bg-[#FFFDF9] focus:border-[#5F7465] text-[#2B231D] transition">
-          <p class="text-[11px] text-[#786B60] mt-1">Dữ liệu được lưu tại: <strong class="text-[#2B231D] font-mono">D:\app\finance\expense_data.db</strong></p>
+          
         </div>
 
         <!-- Google Cloud Run Sync Section -->
@@ -1491,9 +1473,7 @@
               <span>Đồng bộ ngay</span>
             </button>
           </div>
-          <p class="text-[10px] text-[#786B60] leading-relaxed">
-            Nhập đường link Cloud Run sau khi triển khai. Nhấn <strong>Đồng bộ ngay</strong> để kéo mọi dữ liệu bạn nhập trên iPhone về máy tính và ngược lại!
-          </p>
+          
         </div>
 
 
@@ -1998,7 +1978,7 @@
   <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm"></div>
 
   <!-- Application Logic -->
-  <script src="/static/js/app.js?v=2.13.0"></script>
-  <script src="/static/js/life_hub.js?v=2.13.0"></script>
+  <script src="/static/js/app.js?v=2.13.1"></script>
+  <script src="/static/js/life_hub.js?v=2.13.1"></script>
 </body>
 </html>
