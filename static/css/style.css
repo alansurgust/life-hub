@@ -263,15 +263,15 @@ html, body {
 }
 
 /* ==========================================================================
-   APPLE iOS 26 LIQUID GLASS TAB BAR (120fps Mobile GPU Optimized Edition)
+   APPLE iOS 26 LIQUID GLASS TAB BAR (Exact zakisheriff/Liquid-Glass Demo Optics + 120fps Mobile Engine)
    ========================================================================== */
 :root {
   --lg-fg: #6F7C6B;
   --lg-fg-muted: rgba(111, 124, 107, 0.65);
   --lg-accent: #3E5247;
   --lg-track-active: #3E5247;
-  --lg-fill: rgba(255, 249, 246, 0.62);
-  --lg-navigation-fill: rgba(255, 249, 246, 0.58);
+  --lg-fill: rgba(255, 249, 246, 0.60);
+  --lg-navigation-fill: rgba(255, 249, 246, 0.56);
   --lg-blur: 18px;
   --lg-saturate: 1.9;
   --lg-brightness: 1.04;
@@ -282,7 +282,7 @@ html, body {
   --lg-tab-selection: rgba(62, 82, 71, 0.12);
 }
 
-.app-bottom-nav.lg-track {
+.app-bottom-nav.lg-track:not([data-lg-copy]) {
   --lg-pad: 4px;
   --lg-item-h: 56px;
   --lg-item-w: 56px;
@@ -308,6 +308,19 @@ html, body {
   box-shadow: none !important;
 }
 
+.lg-track[data-lg-copy] {
+  --lg-pad: 4px;
+  --lg-item-h: 56px;
+  --lg-item-w: 56px;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(var(--lg-item-w), 1fr) !important;
+  padding: var(--lg-pad) !important;
+  border-radius: 999px !important;
+  pointer-events: none !important;
+  will-change: transform;
+}
+
 .lg-glass {
   position: relative;
   box-sizing: border-box;
@@ -328,10 +341,10 @@ html, body {
   background-size: 100% 100%;
   opacity: var(--lg-rim-opacity);
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
-/* Pure GPU-composited light bloom under the finger (translated via translate3d) */
+/* Pure GPU-composited light bloom under the finger */
 .lg-glass__bloom {
   position: absolute;
   top: -10%;
@@ -365,7 +378,7 @@ html, body {
 
 .lg-track__item {
   position: relative;
-  z-index: 3;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -393,9 +406,9 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 2px;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
 }
 
 .lg-track__item[aria-selected='true'] {
@@ -444,44 +457,53 @@ html, body {
   transform: translate3d(0, 0, 0);
 }
 
-/* The Lifted Liquid Glass Droplet Lens (Pre-rasterized 3D bevel, zero per-frame shadow repaint) */
+/* The Lifted Liquid Glass Droplet Lens (WebGL Optical Shader) */
 .lg-track__lens.lg-glass {
-  z-index: 2;
+  z-index: 4;
   opacity: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 249, 246, 0.34) 48%,
-    rgba(238, 241, 237, 0.56) 100%
-  );
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   box-shadow:
-    0 10px 26px rgba(53, 33, 22, 0.20),
-    0 2px 6px rgba(62, 82, 71, 0.12),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.88),
-    inset 0 3px 7px rgba(53, 33, 22, 0.08),
-    inset 0 -2px 4px rgba(255, 255, 255, 0.92);
+    0 10px 26px rgba(53, 33, 22, 0.22),
+    0 2px 6px rgba(62, 82, 71, 0.14),
+    inset 0 0 0 0.75px rgba(255, 255, 255, 0.55),
+    inset 0 2px 6px rgba(53, 33, 22, 0.08),
+    inset 0 -1.5px 3px rgba(255, 255, 255, 0.88);
   transition: none;
 }
 
 .lg-track__lens.lg-glass::before {
-  opacity: 0.95;
+  opacity: 0.9;
   z-index: 2;
+}
+
+.lg-lens__canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  display: block;
+}
+
+/* Cut out the lens's capsule footprint on the real buttons underneath so only the WebGL refracted & prism-dispersed view shows inside the lens */
+.lg-track[data-lifted] > .lg-track__item {
+  -webkit-mask: var(--lg-content-hide, none);
+  mask: var(--lg-content-hide, none);
+  -webkit-mask-composite: source-out, source-over, source-over, source-over;
+  mask-composite: subtract, add, add, add;
 }
 
 /* The Resting Selection Pill */
 .lg-track__select {
   z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(238, 241, 237, 0.70) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow:
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
-    0 2px 8px rgba(62, 82, 71, 0.10);
+  background: var(--lg-tab-selection);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.85);
 }
 
 @media (max-width: 768px) {
